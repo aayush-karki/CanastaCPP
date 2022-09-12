@@ -38,7 +38,7 @@ private:
 	// m_discardPile holds cards that are discarded by players,
 	// additional player can pick up the whole discarded pile if
 	// the last added to the pile help them in making a meld.
-	std::stack<Card> m_discardPile
+	std::stack<Card> m_discardPile;
 
 };
 
