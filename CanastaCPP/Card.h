@@ -45,10 +45,10 @@ public:
 	~Card() {};
 
 	// copy constructor
-	Card( const Card& a_cardToCopy );
+	Card( const Card& a_other );
 
 	// assignment constructor
-	Card& operator = ( const Card& a_cardToAssign );
+	Card& operator = ( const Card& a_other );
 
 	// Getter functions
 	const char GetRank() const { return m_rank; }
@@ -58,6 +58,9 @@ public:
 
 	// returns the rank and suit as string 
 	std::string GetRankSuit() const { return std::string( { m_rank, m_suit } ); }
+
+	// prints all the information of the card
+	void Debug();
 
 private:
 	// m_rank holds the rank of the card

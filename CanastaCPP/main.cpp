@@ -33,41 +33,19 @@ int main()
 
 	for( auto currPtr = myCards.begin(); currPtr != myCards.end(); ++currPtr )
 	{
-		std::cout << "my card rank: " << ( *currPtr )->GetRank() << std::endl;
-		std::cout << "my card suit: " << ( *currPtr )->GetSuit() << std::endl;
-		std::cout << "my card point: " << ( *currPtr )->GetPoint() << std::endl;
-
-		switch( ( *currPtr )->GetCardType() )
-		{
-			case ( ENUM_CardType::CARDTYPE_natural ):
-			{
-				std::cout << "my card type: CARDTYPE_natural" << std::endl;
-				break;
-			}
-			case ( ENUM_CardType::CARDTYPE_wildCard ):
-			{
-				std::cout << "my card type: CARDTYPE_wildCard" << std::endl;
-				break;
-			}
-			case ( ENUM_CardType::CARDTYPE_redThree ):
-			{
-				std::cout << "my card type: CARDTYPE_redThree" << std::endl;
-				break;
-			}
-			case ( ENUM_CardType::CARDTYPE_blackThree ):
-			{
-				std::cout << "my card type: CARDTYPE_blackThree" << std::endl;
-				break;
-			}
-			default:
-				std::cout << "my card type: error" << std::endl;
-
-				break;
-		}
-
-		std::cout << "my card print function: " << ( *currPtr )->GetRankSuit() << std::endl << std::endl;
-
+		( *currPtr )->Debug();
 	}
+
+	std::cout << "copying last element of the vector" << std:: endl;
+	Card* copyCard = new Card( *( *( --( myCards.end() ) ) ) );
+	copyCard->Debug();
+
+	std::cout << "assginming last element of the vector" << std::endl;
+	Card assignCard;
+	assignCard = *copyCard;
+
+	assignCard.Debug();
+
 	return 0;
 }
 

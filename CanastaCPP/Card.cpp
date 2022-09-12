@@ -85,7 +85,7 @@ Function Name: Card
 Purpose: To create a new card object and copy the passed Card object's
 		member variables data into the newly created card object
 Parameters:
-			a_cardToCopy, a constant object of card class passed by
+			a_other, a constant object of card class passed by
 				reference. It holds a constant memory address of the
 				card object to be copied.
 Return Value: none
@@ -94,12 +94,12 @@ Algorithm:
 				to the correspnding member variable of this object
 Assistance Received: none
 ********************************************************************* */
-Card::Card( const Card& a_cardToCopy )
+Card::Card( const Card& a_other )
 {
-	this->m_rank = a_cardToCopy.GetRank();
-	this->m_suit = a_cardToCopy.GetSuit();
-	this->m_point = a_cardToCopy.GetPoint();
-	this->m_cardType = a_cardToCopy.GetCardType();
+	this->m_rank = a_other.GetRank();
+	this->m_suit = a_other.GetSuit();
+	this->m_point = a_other.GetPoint();
+	this->m_cardType = a_other.GetCardType();
 }
 
 /* *********************************************************************
@@ -117,12 +117,59 @@ Algorithm:
 			2) return its own memory address
 Assistance Received: none
 ********************************************************************* */
-Card& Card::operator=( const Card& a_cardToAssign )
+Card& Card::operator=( const Card& a_other )
 {
-	this->m_rank = a_cardToAssign.GetRank();
-	this->m_suit = a_cardToAssign.GetSuit();
-	this->m_point = a_cardToAssign.GetPoint();
-	this->m_cardType = a_cardToAssign.GetCardType();
+	this->m_rank = a_other.GetRank();
+	this->m_suit = a_other.GetSuit();
+	this->m_point = a_other.GetPoint();
+	this->m_cardType = a_other.GetCardType();
 
 	return *this;
+}
+
+/* *********************************************************************
+Function Name: Debug
+Purpose: To see if the card was properly set uped or not
+Parameters: none
+Return Value: none
+Algorithm:
+			1) print all the member variable to the screen
+Assistance Received: none
+********************************************************************* */
+void Card::Debug()
+{
+	std::cout << "Rank: " << m_rank << std::endl;
+	std::cout << "Suit: " << m_suit << std::endl;
+	std::cout << "Point: " << m_point << std::endl;
+
+	switch( ( m_cardType ) )
+	{
+		case ( ENUM_CardType::CARDTYPE_natural ):
+		{
+			std::cout << "Card type: CARDTYPE_natural" << std::endl;
+			break;
+		}
+		case ( ENUM_CardType::CARDTYPE_wildCard ):
+		{
+			std::cout << "Card type: CARDTYPE_wildCard" << std::endl;
+			break;
+		}
+		case ( ENUM_CardType::CARDTYPE_redThree ):
+		{
+			std::cout << "Card type: CARDTYPE_redThree" << std::endl;
+			break;
+		}
+		case ( ENUM_CardType::CARDTYPE_blackThree ):
+		{
+			std::cout << "Card type: CARDTYPE_blackThree" << std::endl;
+			break;
+		}
+		default:
+			std::cout << "Card type: error" << std::endl;
+
+			break;
+	}
+
+	std::cout << "my card print function: " << GetRankSuit() << std::endl << std::endl;
+
 }
