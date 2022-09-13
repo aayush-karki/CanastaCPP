@@ -103,7 +103,7 @@ Card::Card( const Card& a_other )
 }
 
 /* *********************************************************************
-Function Name: operator=
+Function Name: operator=, assignment operator
 Purpose: To copy the passed Card object's member variables data into
 		this card object
 Parameters:
@@ -172,4 +172,164 @@ void Card::Debug()
 
 	std::cout << "my card print function: " << GetRankSuit() << std::endl << std::endl;
 
+}
+
+/* *********************************************************************
+Function Name: operator==, equal to operator
+Purpose: to compare if two card are the same
+Parameters:
+			a_lhs, a constant object of card class passed by
+				reference. It holds a constant memory address of the
+				card object to be assigned.
+			a_rhs, a constant object of card class passed by
+				reference. It holds a constant memory address of the
+				card object to be assigned.
+Return Value: boolean value, true if a_lhs is equal a_rhs
+Algorithm:
+			1) compare the return of RankSuit() of the each card with
+				each other, if both of them are equal then the two
+				card is equal
+Assistance Received: none
+********************************************************************* */
+bool operator==( const Card& a_lhs, const Card& a_rhs )
+{
+	return ( a_lhs.GetRankSuit() == a_rhs.GetRankSuit() );
+}
+
+/* *********************************************************************
+Function Name: operator!=, not equal to operator
+Purpose: to compare if two card are not the same
+Parameters:
+			a_lhs, a constant object of card class passed by
+				reference. It holds a constant memory address of the
+				card object to be assigned.
+			a_rhs, a constant object of card class passed by
+				reference. It holds a constant memory address of the
+				card object to be assigned.
+Return Value: boolean value, true if a_lhs is not equal to a_rhs
+Algorithm:
+			1) return the negated result of a_lhs == a_rhs
+Assistance Received: none
+********************************************************************* */
+bool operator!=( const Card& a_lhs, const Card& a_rhs )
+{
+	return !( a_lhs == a_rhs );
+}
+
+/* *********************************************************************
+Function Name: operator<, less than operator
+Purpose: to compare if the card on the left hand side is less than the
+	card on the right. the hierarchy is J <	2 < 3 < 4 < 5 < 6 < 7 < 8 <
+	9 < x < j < q < k < a, and the suit is c < d < h < s
+Parameters:
+			a_lhs, a constant object of card class passed by
+				reference. It holds a constant memory address of the
+				card object to be assigned.
+			a_rhs, a constant object of card class passed by
+				reference. It holds a constant memory address of the
+				card object to be assigned.
+Return Value: boolean value, true if a_lhs is less than a_rhs
+Algorithm:
+			1) if a_lhs == a_rhs is true then return false
+			2) else if the rank is equal compare the suit and
+				return the result
+			3) else if a_lhs's rank is 'j' return true
+			4) else if a_lhs's rank is 'a' return false
+			5) else if a_rhs's rank is 'a' return true
+			6) else compare the ranksuit and return the result
+Assistance Received: none
+********************************************************************* */
+bool operator<( const Card& a_lhs, const Card& a_rhs )
+{
+	// checking if they are equal 
+	if( a_lhs == a_rhs )
+	{
+		return false;
+	}
+	// checking if the rank is equal then compare the suits
+	else if( a_lhs.GetRank() == a_rhs.GetRank() )
+	{
+		return a_lhs.GetSuit() < a_rhs.GetSuit();
+	}
+	else if( a_lhs.GetRank() == 'J' )
+	{
+		return true;
+	}
+	else if( a_lhs.GetRank() == 'a' )
+	{
+		return false;
+	}
+	else if( a_rhs.GetRank() == 'a' )
+	{
+		return true;
+	}
+	else
+	{
+		return (a_lhs.GetRankSuit() < a_rhs.GetRankSuit());
+	}
+}
+
+/* *********************************************************************
+Function Name: operator<=, less than or equal to operator
+Purpose: to compare if the card on the left hand side is less than
+	or equal to the card on the right.
+Parameters:
+			a_lhs, a constant object of card class passed by
+				reference. It holds a constant memory address of the
+				card object to be assigned.
+			a_rhs, a constant object of card class passed by
+				reference. It holds a constant memory address of the
+				card object to be assigned.
+Return Value: boolean value, true if a_lhs is less than or euqal
+	to a_rhs
+Algorithm:
+			1) return the result of a_lhs == a_rhs or a_lhs < a_rhs
+Assistance Received: none
+********************************************************************* */
+bool operator<=( const Card& a_lhs, const Card& a_rhs )
+{
+	return ( a_lhs == a_rhs || a_lhs < a_rhs );
+}
+
+/* *********************************************************************
+Function Name: operator>, more than operator
+Purpose: to compare if the card on the left hand side is more than
+	the card on the right.
+Parameters:
+			a_lhs, a constant object of card class passed by
+				reference. It holds a constant memory address of the
+				card object to be assigned.
+			a_rhs, a constant object of card class passed by
+				reference. It holds a constant memory address of the
+				card object to be assigned.
+Return Value: boolean value, true if a_lhs is more than a_rhs
+Algorithm:
+			1) return the negated result of a_lhs <= a_rhs
+Assistance Received: none
+********************************************************************* */
+bool operator>( const Card& a_lhs, const Card& a_rhs )
+{
+	return ( !( a_lhs <= a_rhs ) );
+}
+
+/* *********************************************************************
+Function Name: operator>=, more than or equal to operator
+Purpose: to compare if the card on the left hand side is more than
+	or equal to the card on the right.
+Parameters:
+			a_lhs, a constant object of card class passed by
+				reference. It holds a constant memory address of the
+				card object to be assigned.
+			a_rhs, a constant object of card class passed by
+				reference. It holds a constant memory address of the
+				card object to be assigned.
+Return Value: boolean value, true if a_lhs is more than or equal to
+	a_rhs
+Algorithm:
+			1) return the negated result of a_lhs < a_rhs
+Assistance Received: none
+********************************************************************* */
+bool operator>=( const Card& a_lhs, const Card& a_rhs )
+{
+	return ( !( a_lhs < a_rhs ) );
 }

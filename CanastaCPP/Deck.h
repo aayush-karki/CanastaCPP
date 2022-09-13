@@ -17,6 +17,9 @@ public:
 	// default constructor
 	Deck();
 
+	// constructor when passing string containing the cards of m_stock
+	Deck(std::string a_stock);
+
 	// default destructor
 	~Deck();
 
@@ -30,11 +33,27 @@ public:
 	const std::vector<Card*> GetStock() const { return m_stock; }
 	const std::vector<Card*> GetDealt() const { return m_dealt;}
 
+	// returns true if m_stock is empty
+	bool IsStockEmpty() { return m_stock.empty(); }
+
+	// moves a card from m_stock to m_deal and returns a copy of that card
+	const Card DealCard();
+
+	// prints the deck
+	void PrintDeck();
+
+private:
+	// shuffels the cards in m_stock
+	void Shuffel();
+
+	// moves cards in dealt pile to stock pile
+	void ConsodilateDeck();
+
 private:
 	
 	// m_rankList lists all the rank of card in a standard deck
 	// of card and J for Joker
-	const std::string m_rankList = "a23456789xjqkJ";
+	const std::string m_rankList = "23456789xjqkaJ";
 
 	// m_suitList lists all the suit of card in a standard deck
 	// of card and 1 and 2 for Joker

@@ -63,6 +63,21 @@
 	was not worth the trouble ( 1 hour 30 minute ).
 
 - Populating the deck class with its copy constructor and assignment 
-	constructor. Researched deep copy and assignment constructor ( 1 hour ).
+	constructor. Researched deep copy and assignment constructor 
+	( 1 hour and 30 minutes).
 
-###### Total: 4 hours
+- Populating the deck class with getter function created a Shuffel, DealCard,
+	PrintDeck and Cosolidate function.
+	( 1 hour ).
+
+###### Total: 4 hours 30 minutes
+
+## Sep 13, 2022:
+
+- Designed an algorithm for Deck constructor when a m_stock is passed as string. 
+	Created operator overload for Card Class (1 hours 30 minutes).
+
+- Tested and debugged the Card Class's overloaded operators. Fixed a lhs and 
+	rhs mixup, and added a one more logical check for < operator (1 hour).
+
+###### Total: 2 hours 30 minutes

@@ -24,10 +24,10 @@ int main()
 
 	std::vector<Card*> myCards;
 
-	myCards.push_back( new Card( '4', 's' ) );
+	myCards.push_back( new Card( 'J', '1' ) );
+	myCards.push_back( new Card( 'J', '2' ) );
 	myCards.push_back( new Card( 'k', 'd' ) );
 	myCards.push_back( new Card( '2', 'c' ) );
-	myCards.push_back( new Card( 'J', '1' ) );
 	myCards.push_back( new Card( '3', 'd' ) );
 	myCards.push_back( new Card( '3', 's' ) );
 
@@ -36,15 +36,39 @@ int main()
 		( *currPtr )->Debug();
 	}
 
-	std::cout << "copying last element of the vector" << std:: endl;
-	Card* copyCard = new Card( *( *( --( myCards.end() ) ) ) );
-	copyCard->Debug();
+	std::cout << std::boolalpha << myCards[ 0 ]->GetRankSuit() << " == " << myCards[ 0 ]->GetRankSuit() << " " << ( *( myCards[ 0 ] ) == *( myCards[ 0 ] ) ) << std::endl;
+	std::cout << std::boolalpha << myCards[ 0 ]->GetRankSuit() << " == " << myCards[ 1 ]->GetRankSuit() << " " << ( *( myCards[ 0 ] ) == *( myCards[ 1 ] ) ) << std::endl;
+	std::cout << std::boolalpha << myCards[ 0 ]->GetRankSuit() << " != " << myCards[ 0 ]->GetRankSuit() << " " << ( *( myCards[ 0 ] ) != *( myCards[ 0 ] ) ) << std::endl;
+	std::cout << std::boolalpha << myCards[ 0 ]->GetRankSuit() << " != " << myCards[ 1 ]->GetRankSuit() << " " << ( *( myCards[ 0 ] ) != *( myCards[ 1 ] ) ) << std::endl << std::endl;
 
-	std::cout << "assginming last element of the vector" << std::endl;
-	Card assignCard;
-	assignCard = *copyCard;
+	std::cout << std::boolalpha << myCards[ 0 ]->GetRankSuit() << " <  " << myCards[ 1 ]->GetRankSuit() << " " << ( *( myCards[ 0 ] ) < *( myCards[ 1 ] ) ) << std::endl;
+	std::cout << std::boolalpha << myCards[ 1 ]->GetRankSuit() << " <  " << myCards[ 0 ]->GetRankSuit() << " " << ( *( myCards[ 1 ] ) < *( myCards[ 0 ] ) ) << std::endl;
+	std::cout << std::boolalpha << myCards[ 0 ]->GetRankSuit() << " <= " << myCards[ 1 ]->GetRankSuit() << " " << ( *( myCards[ 0 ] ) <= *( myCards[ 1 ] ) ) << std::endl;
+	std::cout << std::boolalpha << myCards[ 1 ]->GetRankSuit() << " <= " << myCards[ 0 ]->GetRankSuit() << " " << ( *( myCards[ 1 ] ) <= *( myCards[ 0 ] ) ) << std::endl << std::endl;
 
-	assignCard.Debug();
+	std::cout << std::boolalpha << myCards[ 0 ]->GetRankSuit() << " > " << myCards[ 1 ]->GetRankSuit() << " " << ( *( myCards[ 0 ] ) > *( myCards[ 1 ] ) ) << std::endl;
+	std::cout << std::boolalpha << myCards[ 1 ]->GetRankSuit() << " > " << myCards[ 0 ]->GetRankSuit() << " " << ( *( myCards[ 1 ] ) > *( myCards[ 0 ] ) ) << std::endl;
+	std::cout << std::boolalpha << myCards[ 1 ]->GetRankSuit() << " >= " << myCards[ 0 ]->GetRankSuit() << " " << ( *( myCards[ 1 ] ) >= *( myCards[ 0 ] ) ) << std::endl;
+	std::cout << std::boolalpha << myCards[ 0 ]->GetRankSuit() << " >= " << myCards[ 1 ]->GetRankSuit() << " " << ( *( myCards[ 0 ] ) >= *( myCards[ 1 ] ) ) << std::endl << std::endl;
+
+	//std::cout << "copying last element of the vector" << std:: endl;
+	//Card* copyCard = new Card( *( *( --( myCards.end() ) ) ) );
+	//copyCard->Debug();
+
+	//std::cout << "assginming last element of the vector" << std::endl;
+	//Card assignCard;
+	//assignCard = *copyCard;
+
+	//assignCard.Debug();
+
+	//Deck myDeck;
+	//myDeck.PrintDeck();
+	//myDeck.Shuffel();
+	//myDeck.PrintDeck();
+
+	//myDeck.DealCard();
+
+	//myDeck.PrintDeck();
 
 	return 0;
 }

@@ -47,7 +47,7 @@ public:
 	// copy constructor
 	Card( const Card& a_other );
 
-	// assignment constructor
+	// assignment operator
 	Card& operator = ( const Card& a_other );
 
 	// Getter functions
@@ -92,3 +92,10 @@ private:
 	ENUM_CardType m_cardType;
 };
 
+// Relational operators
+bool operator==( const Card& a_lhs, const Card& a_rhs );
+bool operator!=( const Card& a_lhs, const Card& a_rhs );
+bool operator<( const Card& a_lhs, const Card& a_rhs );
+bool operator<=( const Card& a_lhs, const Card& a_rhs );
+bool operator>( const Card& a_lhs, const Card& a_rhs );
+bool operator>=( const Card& a_lhs, const Card& a_rhs );
