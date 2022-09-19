@@ -35,11 +35,39 @@ enum class ENUM_CardType
 	CARDTYPE_redThree,
 };
 
+// describes the valid ranks and valid suits
+struct ST_ValidRankSuit
+{
+	// stm_rankList lists all the rank of card in a standard deck
+	// of card and J for Joker
+	const std::string stm_rankList = "23456789xjqkaJ";
+
+	// stm_suitList lists all the suit of card in a standard deck
+	// of card and 1 and 2 for Joker
+	// s = spade, c = club, h = heart, and d = diamond
+	const std::string stm_suitList = "schd12";
+
+	// default constructor
+	ST_ValidRankSuit() {};
+
+	// checks to see of the a_rank to in valid rank list
+	bool IsRankValid( const char a_rank);
+
+	// checks to see of the a_suit to in valid suit list
+	bool IsSuitValid( const char a_suit );
+
+	// checks to see of the a_rankSuit is valid or not
+	bool IsRankSuitValid( const std::string a_rankSuit);
+};
+
 class Card
 {
 public:
 	// default constructor
 	Card( char a_rank = 'a', char a_suit = 'c' );
+
+	// constructor
+	Card( std::string a_rankSuit );
 
 	// default destructor
 	~Card() {};
@@ -92,7 +120,7 @@ private:
 	ENUM_CardType m_cardType;
 };
 
-// Relational operators
+// Relational operators for Card class
 bool operator==( const Card& a_lhs, const Card& a_rhs );
 bool operator!=( const Card& a_lhs, const Card& a_rhs );
 bool operator<( const Card& a_lhs, const Card& a_rhs );

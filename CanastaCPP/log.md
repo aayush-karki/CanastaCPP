@@ -75,9 +75,61 @@
 ## Sep 13, 2022:
 
 - Designed an algorithm for Deck constructor when a m_stock is passed as string. 
-	Created operator overload for Card Class (1 hours 30 minutes).
+	Created operator overload for Card Class ( 1 hours 30 minutes ).
 
 - Tested and debugged the Card Class's overloaded operators. Fixed a lhs and 
-	rhs mixup, and added a one more logical check for < operator (1 hour).
+	rhs mixup, and added a one more logical check for < operator ( 1 hour ).
 
-###### Total: 2 hours 30 minutes
+- Created Deck constructor when m_stock is passed. Refined the design of its 
+	algorithm, and tested it. Fixed the bug where the swapping was happening
+	with the start of the deck insead of last as we deal the card from the 
+	back of the m_stock list ( 2 hour ).
+
+- Set up Hand and player class ( 15 minutes ). 
+
+- Created hand's default constructor. Designed and created an algorithm for
+	the hand constructor when a string is passed as hand and a string 
+	is passed as melds. In the process created a card constructor that accepts 
+	a rank and suit as a parameter ( 1 hour and 30 minutes ).
+
+- Moved the constant rankList and suitList member variable of the Deck Class 
+	to a struct name ST_ValidRankList in the "Card.h" file. Created its default
+	constructor, and function to check if the passed rank, or suit, or rankSuit 
+	is valid or not. in the process found a bug that was overlooked previously
+	where the copy constructor was seted up incorred as a result of not testing
+	the class properly ( 1 hour ).
+
+- Researched exception handeling and how to make CustomException ( 1 hour ). 
+
+###### Total: 8 hours 15 minutes
+
+## Sep 18, 2022:
+
+- In the process of hand's constructor when a string is passed as hand
+	and a string is passed as melds found previously designed algorith to be
+	insufficent. So redesigned and implement a new algorithm. Created a 
+	PrintHand() funciton to print the hand ( 1 hour and 30 minutes ).
+
+- Created copy contructor and destructor for the hand class ( 30 minutes ).
+
+- Designed and implemented algorithm for aAddCardToMeld funciton. 
+	Tested and debugged it ( 1 hour and 30 minutes ).
+
+- Filled the Hand Class with the designed funciton definations and created 
+	the declaration for inline functions ( 1 hour and 15 minutes ). 
+
+- Changed the AddCardToMeld funciton to be more generic and made it into
+	a private helper function. Designed and implemented AddNaturalCardToMeld(),
+	AddWildCardToMeld(), AddRed3CardToMeld() ( 1 hour and 15 minutes )
+
+- Designed, implement, tested and debugged MakeMeld() function. Adjusted 
+	AddCardToMeld() funciton to be more generic by added more or conditions
+	to its main if logic ( 1 hour ).
+
+- Created TakeOutWildCard(), Discard(), SwaphandPos(), tallyPoints() functions.
+	( 1 hour ).
+
+- Finished the Hand class and did a final test and pushed to github 
+	( 1 hour and 15 minutes )
+
+###### Total: 8 hours 45 minutes

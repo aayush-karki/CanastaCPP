@@ -14,27 +14,38 @@ Parameters:
 			a_suit, a character. It holds the suit of the card
 Return Value: none
 Algorithm:
-			1) assigns each of the parameters to the correspnding
+			1) check if the rank and suit is valid
+			2) assigns each of the parameters to the correspnding
 				member variable
-			2) if the rank is '2' or 'J' then assign the type to be
+			3) if the rank is '2' or 'J' then assign the type to be
 				ENUM_CardType::CARDTYPE_wildCard
-			3) else if the rank is '3'
-				4) Check the suit of the card, if it is 'h' or 'd'
+			4) else if the rank is '3'
+				5) Check the suit of the card, if it is 'h' or 'd'
 					then assign the type to be ENUM_CardType::CARDTYPE_redThree
-				5) Else the type is ENUM_CardType::CARDTYPE_blackThree
-			6) else the rank is ENUM_CardType::CARDTYPE_natural
-			7) if the type is ENUM_CardType::CARDTYPE_redThree
+				6) Else the type is ENUM_CardType::CARDTYPE_blackThree
+			7) else the rank is ENUM_CardType::CARDTYPE_natural
+			8) if the type is ENUM_CardType::CARDTYPE_redThree
 				then assign the point to be 100
-			8) else if the rank is 'J' then assign the point to be 50
-			9) else if the rank is '2' or 'a' then assign the point to
+			9) else if the rank is 'J' then assign the point to be 50
+			10) else if the rank is '2' or 'a' then assign the point to
 				be 20
-			10) else if the rank is '8', or '9', or 'x', or 'j', or 'q',
+			11) else if the rank is '8', or '9', or 'x', or 'j', or 'q',
 				or 'k'then assign the point to be 10
-			11) else assign the point to be 5
+			12) else assign the point to be 5
 Assistance Received: none
 ********************************************************************* */
 Card::Card( char a_rank, char a_suit ) : m_rank( a_rank ), m_suit( a_suit )
 {
+	ST_ValidRankSuit validRankSuit;
+
+	if( !( validRankSuit.IsRankValid( a_rank ) ) ||
+		!( validRankSuit.IsSuitValid( a_suit ) ) )
+	{
+		std::cerr << "Rank Suit passed is not valid!!!! " << m_rank << m_suit
+			<< std::endl;
+			return;
+	}
+
 	// figuring out the card type and assigning it to the m_cardType
 	if( m_rank == '2' || m_rank == 'J' )
 	{
@@ -82,6 +93,26 @@ Card::Card( char a_rank, char a_suit ) : m_rank( a_rank ), m_suit( a_suit )
 
 /* *********************************************************************
 Function Name: Card
+Purpose: To construct a Card object and to populate its member variables
+Parameters:
+			a_rankSuit, a string. It holds the rank as the 0th character
+				and suit as the 1th character
+Return Value: none
+Algorithm:
+			1) call the default constructor by constructor delegation and
+				pass the 0th character of string as first parameter and
+				1st character as second parameter
+Assistance Received: none
+********************************************************************* */
+Card::Card( std::string a_rankSuit ) :
+	Card( a_rankSuit[ 0 ], a_rankSuit[ 1 ] )
+{
+	// here the a_rankSuit is not checked as the Card class checks for
+	// rank and suit
+}
+
+/* *********************************************************************
+Function Name: Card
 Purpose: To create a new card object and copy the passed Card object's
 		member variables data into the newly created card object
 Parameters:
@@ -107,18 +138,26 @@ Function Name: operator=, assignment operator
 Purpose: To copy the passed Card object's member variables data into
 		this card object
 Parameters:
-			a_cardToAssign, a constant object of card class passed by
+			a_other, a constant object of card class passed by
 				reference. It holds a constant memory address of the
 				card object to be assigned.
 Return Value: its own memory address
 Algorithm:
-			1) assigns each of the member of the passed card object
+			1) check for self assignment if yes return itself
+			2) assigns each of the member of the passed card object
 				to the correspnding member variable of this object
-			2) return its own memory address
+			3) return its own memory address
 Assistance Received: none
 ********************************************************************* */
 Card& Card::operator=( const Card& a_other )
 {
+	// checking for self assigmnet 
+	if( this == &a_other )
+	{
+		return *this;
+	}
+
+	// copying the data
 	this->m_rank = a_other.GetRank();
 	this->m_suit = a_other.GetSuit();
 	this->m_point = a_other.GetPoint();
@@ -219,8 +258,8 @@ bool operator!=( const Card& a_lhs, const Card& a_rhs )
 /* *********************************************************************
 Function Name: operator<, less than operator
 Purpose: to compare if the card on the left hand side is less than the
-	card on the right. the hierarchy is J <	2 < 3 < 4 < 5 < 6 < 7 < 8 <
-	9 < x < j < q < k < a, and the suit is c < d < h < s
+		card on the right. the hierarchy is J <	2 < 3 < 4 < 5 < 6 < 7 <
+		8 < 9 < x < j < q < k < a, and the suit is c < d < h < s
 Parameters:
 			a_lhs, a constant object of card class passed by
 				reference. It holds a constant memory address of the
@@ -265,14 +304,14 @@ bool operator<( const Card& a_lhs, const Card& a_rhs )
 	}
 	else
 	{
-		return (a_lhs.GetRankSuit() < a_rhs.GetRankSuit());
+		return ( a_lhs.GetRankSuit() < a_rhs.GetRankSuit() );
 	}
 }
 
 /* *********************************************************************
 Function Name: operator<=, less than or equal to operator
 Purpose: to compare if the card on the left hand side is less than
-	or equal to the card on the right.
+		or equal to the card on the right.
 Parameters:
 			a_lhs, a constant object of card class passed by
 				reference. It holds a constant memory address of the
@@ -294,7 +333,7 @@ bool operator<=( const Card& a_lhs, const Card& a_rhs )
 /* *********************************************************************
 Function Name: operator>, more than operator
 Purpose: to compare if the card on the left hand side is more than
-	the card on the right.
+		the card on the right.
 Parameters:
 			a_lhs, a constant object of card class passed by
 				reference. It holds a constant memory address of the
@@ -315,7 +354,7 @@ bool operator>( const Card& a_lhs, const Card& a_rhs )
 /* *********************************************************************
 Function Name: operator>=, more than or equal to operator
 Purpose: to compare if the card on the left hand side is more than
-	or equal to the card on the right.
+		or equal to the card on the right.
 Parameters:
 			a_lhs, a constant object of card class passed by
 				reference. It holds a constant memory address of the
@@ -332,4 +371,75 @@ Assistance Received: none
 bool operator>=( const Card& a_lhs, const Card& a_rhs )
 {
 	return ( !( a_lhs < a_rhs ) );
+}
+
+
+/* *********************************************************************
+Function Name: IsRankValid
+Purpose: to see if the passed rank is valid rank or not
+Parameters:
+			a_rank, a const character. It holds the rank that needs to
+				be validated
+Return Value: boolean value, true if a_rank is valid
+Algorithm:
+			1) use std::find() to see if the char is in stm_rankList
+			2) if return of step 1 is the end() of stm_rankList then
+				return false else return true
+Assistance Received: none
+********************************************************************* */
+bool ST_ValidRankSuit::IsRankValid( const char a_rank )
+{
+	std::string::const_iterator findReturnIte = std::find( stm_rankList.begin(),
+														   stm_rankList.end(),
+														   a_rank );
+	return ( findReturnIte != stm_rankList.end() );
+}
+
+/* *********************************************************************
+Function Name: IsSuitValid
+Purpose: to see if the passed suit is valid suit or not
+Parameters:
+			a_suit, a const character. It holds the suit that needs to
+				be validated
+Return Value: boolean value, true if a_suit is valid
+Algorithm:
+			1) use std::find() to see if the char is in stm_suit
+			2) if return of step 1 is the end() of stm_suit then
+				return false else return true
+Assistance Received: none
+********************************************************************* */
+bool ST_ValidRankSuit::IsSuitValid( const char a_suit )
+{
+	std::string::const_iterator findReturnIte = std::find( stm_suitList.begin(),
+														   stm_suitList.end(),
+														   a_suit );
+	return ( findReturnIte != stm_suitList.end() );
+}
+
+/* *********************************************************************
+Function Name: IsRankSuitValid
+Purpose: to to see of the passeda_rankSuit is valid or not
+Parameters:
+			a_rankSuit, a const string. It holds the rank and suit
+				that needs to be validated. The rank is the 0th character
+			and suit is the 1th character
+Return Value: boolean value, true if a_suit is valid
+Algorithm:
+			1) check to see if the a_rankSuit is size 2, if not return
+				false
+			2) use the IsRankValid() and IsSuitFunction to validate the
+				suit and return the result
+Assistance Received: none
+********************************************************************* */
+bool ST_ValidRankSuit::IsRankSuitValid( const std::string a_rankSuit )
+{
+	// the size should always be 2
+	if( a_rankSuit.size() != 2 )
+	{
+		return false;
+	}
+
+	// validating the rank and suit
+	return ( IsRankValid( a_rankSuit.at( 0 ) ) &&
+			 IsSuitValid( a_rankSuit.at( 1 ) ) );
 }

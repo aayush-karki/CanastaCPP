@@ -13,16 +13,20 @@ Purpose: To construct a Deck object and to populate its member variables
 Parameters: none
 Return Value: none
 Algorithm:
-			1) repeate twice
-				2) for first 4 char in m_suitList
-					3) for first 13 char in m_rankList
-						4) create a new Card object
-						5) push the newly created card object to m_stock
-				6) create 2 new card object for J1 and J2
+			1) initialize a struct ST_ValidRankSuit and name it
+				validRankSuit
+			2) repeate twice
+				3) for first 4 char in m_suitList
+					4) for first 13 char in stmm_rankList
+						5) create a new Card object
+						6) push the newly created card object to m_stock
+				7) create 2 new card object for J1 and J2
 Assistance Received: none
 ********************************************************************* */
 Deck::Deck()
 {
+	ST_ValidRankSuit validRankSuit;
+
 	// creating the deck of cards
 	for( unsigned currDeckNum = 0; currDeckNum < 2; ++currDeckNum )
 	{
@@ -30,36 +34,148 @@ Deck::Deck()
 		{
 			for( unsigned currRankIdx = 0; currRankIdx < 13; ++currRankIdx )
 			{
-				m_stock.push_back( new Card( m_rankList.at( currRankIdx ), m_suitList.at( currSuitIdx ) ) );
+				m_stock.push_back( new Card( validRankSuit.stm_rankList.at( currRankIdx ),
+											 validRankSuit.stm_suitList.at( currSuitIdx ) ) );
 			}
 		}
 
 		// creating a card for joker1 and joker2 and adding it to the m_stock
-		m_stock.push_back( new Card( m_rankList.at( 13 ), m_suitList.at( 4 ) ) );
-		m_stock.push_back( new Card( m_rankList.at( 13 ), m_suitList.at( 5 ) ) );
+		m_stock.push_back( new Card( validRankSuit.stm_rankList.at( 13 ),
+									 validRankSuit.stm_suitList.at( 4 ) ) );
+		m_stock.push_back( new Card( validRankSuit.stm_rankList.at( 13 ),
+									 validRankSuit.stm_suitList.at( 5 ) ) );
 	}
 }
 
 /* *********************************************************************
 Function Name: Deck
-Purpose: To construct a Deck object and to populate its member variables. 
-	m_stock is populated using the passed parameter. while the rest is 
-	in m_dealt.
-Parameters: a_string, a string containing the rank and suit of cards in the
-	m_stock. Each card is seperated by blank space--even the last card has
-	extra space
+Purpose: To construct a Deck object and to populate its member variables.
+			m_stock is populated using the passed parameter. while the
+			remaining cards not in the passed string are kept in m_dealt.
+Parameters:
+			a_stock, a string containing the rank and suit of cards in the
+				m_stock. Each card is seperated by blank space
 Return Value: none
 Algorithm:
-			1) 
-Assistance Received: none
+			1) Initialize a new deck called tempDeck
+			2) Initialize a new vector of string RankSuitList
+			3) extract the ranksuit from each card of tempDeck and add
+				it to the back of RankSuitList
+			4) initialize a string stream with the passed string as
+				parameter called passedStringStream
+			5) initialize a string called streamExtractdRankSuit
+				and assign it a value of ""
+			6) initialize a unsinged interger called totalSwappedNum
+				and assign it a value of 0
+			while(  a ranksuit can be extracted form passedStringStream
+				into the streamExtractdRankSuit )
+			{
+				7) initialize a unsinged interger called firstUnswappedIdx
+					and assign it a value of RankSuitList.size() - 1 -
+					totalSwappedNum
+				8) use std::find() to find the position of the ranksuit
+					in RankSuitList using the streamExtractdRankSuit
+					starting form start of the list to (end of
+					RankSuitList's - totalSwappedNum) and
+					save its return to returedIte
+				9) use std::distance to get the distance between the
+					found iterator and the begin() and save it to
+					rankSuitIdx
+				10) For RankSuitList swap the string at the index
+					indicated by rankSuitIdx with the string at index
+					firstUnswappedIdx
+				11) For the m_stock of tempDeck swap the card at the
+					index indicated by rankSuitIdx with the string at index
+					firstUnswappedIdx
+				12) increment the totalSwappedNum
+			}
+			13) for totalSwappedNum times
+				14) deal tempDeck
+			15) swap the m_stock of tempDeck with the m_dealt of this deck
+			16) swap the m_dealt of tempDeck with the m_stock of this deck
+Assistance Received: cppreference
 ********************************************************************* */
 Deck::Deck( std::string a_stock )
-{}
+{
+	// initailizing the temp deck
+	Deck tempDeck;
+
+	// extracting the rank and suit
+	// this extracted rankSuit is in the same order of as the deck
+	// so to find at what pos our stock card is in the deck we 
+	// can use this extracted ranksuit
+	std::vector<std::string> RankSuitList;
+	std::vector<Card*>::iterator currStockCardPtr = tempDeck.m_stock.begin();
+
+	while( currStockCardPtr != tempDeck.m_stock.end() )
+	{
+		RankSuitList.push_back( ( *currStockCardPtr )->GetRankSuit() );
+		++currStockCardPtr;
+	}
+
+	// rearraning the cards in the m_stock of the tempDeck to match the
+	// order of cards in the passed a_stock
+	std::stringstream passedStringStream( a_stock );
+	std::string extractdRankSuit = "";
+	unsigned totalSwappedNum = 0;
+
+	while( passedStringStream >> extractdRankSuit )
+	{
+		// finding the index of first unswapped element from the back
+		unsigned firstUnswappedIdx = RankSuitList.size() - 1 - totalSwappedNum;
+
+		// finding the position fo the extractdRankSuit
+		// in the extractedRankSuitList
+		std::vector<std::string>::iterator returedIte =
+			std::find( RankSuitList.begin(),
+					   RankSuitList.end() - totalSwappedNum,
+					   extractdRankSuit );
+
+		// chekcing if the returedIte is not an error
+		// this should not be the case as we had validated it before 
+		// todo: make this try catch
+		if( returedIte == RankSuitList.end() )
+		{
+			std::cerr << "Extracted Rank and Suit not in the unswapped list!!!!!"
+				<< std::endl;
+			exit( -1 );
+		}
+
+		// gettng the index of the rank and suit in the vector
+		int rankSuitIdx = std::distance( RankSuitList.begin(), returedIte );
+
+		// swapping the string
+		std::string tempRankSuit = RankSuitList.at( firstUnswappedIdx );
+		RankSuitList.at( firstUnswappedIdx ) = RankSuitList.at( rankSuitIdx );
+		RankSuitList.at( rankSuitIdx ) = tempRankSuit;
+
+		// swapping the card
+		Card* tempCard = tempDeck.m_stock.at( firstUnswappedIdx );
+		tempDeck.m_stock.at( firstUnswappedIdx ) = tempDeck.m_stock.at( rankSuitIdx );
+		tempDeck.m_stock.at( rankSuitIdx ) = tempCard;
+
+		// incrementing the totalSwappedNum as we just swapped a element
+		++totalSwappedNum;
+	}
+
+	// dealing the card for tempDeck firstUnswappedIdx times
+	// so that the dealt card list matches out pass m_stock
+	for( unsigned toatlCardDealt = 0; toatlCardDealt < totalSwappedNum; ++toatlCardDealt )
+	{
+		tempDeck.DealCard();
+	}
+
+	// swapping the m_stock of tempCard with m_dealt of this deck
+	std::swap( tempDeck.m_stock, this->m_dealt );
+
+	// swapping the m_dealt of tempCard with m_stock of this deck
+	std::swap( tempDeck.m_dealt, this->m_stock );
+}
 
 /* *********************************************************************
 Function Name: Deck
 Purpose: To destruct a Deck object and to its dynamically allocated
-		memory
+			memory
 Parameters: none
 Return Value: none
 Algorithm:
@@ -92,7 +208,7 @@ Function Name: Deck
 Purpose: To create a new Deck object and copy the passed Deck object's
 		member variables data into the newly created Deck object
 Parameters:
-			a_deckToCopy, a constant object of Deck class passed by
+			a_other, a constant object of Deck class passed by
 				reference. It holds a constant memory address of the
 				Deck object to be copied.
 Return Value: none
@@ -114,8 +230,7 @@ Deck::Deck( const Deck& a_other )
 		 currPtr != a_other.GetStock().end();
 		 ++currPtr )
 	{
-		m_stock.push_back( new Card( m_rankList.at( ( *currPtr )->GetRank() ),
-									 m_suitList.at( ( *currPtr )->GetSuit() ) ) );
+		m_stock.push_back( new Card( ( *currPtr )->GetRankSuit() ) );
 	}
 
 	// copying the data from m_stock of the passed deck to this deck
@@ -124,19 +239,18 @@ Deck::Deck( const Deck& a_other )
 		 currPtr != a_other.GetDealt().end();
 		 ++currPtr )
 	{
-		m_stock.push_back( new Card( m_rankList.at( ( *currPtr )->GetRank() ),
-									 m_suitList.at( ( *currPtr )->GetSuit() ) ) );
+		m_dealt.push_back( new Card( ( *currPtr )->GetRankSuit() ) );
 	}
 }
 
 /* *********************************************************************
 Function Name: operator=
 Purpose: To deep-copy the passed deck object's member variables data into
-		this card object
+		this deck object
 Parameters:
-			a_cardToAssign, a constant object of card class passed by
+			a_other, a constant object of deck class passed by
 				reference. It holds a constant memory address of the
-				card object to be assigned.
+				deck object to be assigned.
 Return Value: its own memory address
 Algorithm:
 			1) check for self assignment, if yes then return the
@@ -178,11 +292,11 @@ Assistance Received: cppreference, stackoverflow forum
 const Card Deck::DealCard()
 {
 	unsigned lastIdx = m_stock.size() - 1;
-	m_dealt.push_back(m_stock.at( lastIdx ));
-	m_stock.at(lastIdx) = nullptr;
+	m_dealt.push_back( m_stock.at( lastIdx ) );
+	m_stock.at( lastIdx ) = nullptr;
 	m_stock.pop_back();
-	
-	return *(m_dealt.back());
+
+	return *( m_dealt.back() );
 }
 
 /* *********************************************************************
@@ -220,7 +334,8 @@ void Deck::PrintDeck()
 		std::cout << toPrint << std::endl;
 	}
 	std::cout << std::endl;
-
+	std::cout << "total nubmer of cards in m_stock: " << m_stock.size() <<
+		std::endl << std::endl;
 	// iterating over m_dealt and calling GetRankSuit funciton
 	std::cout << "m_dealt: " << std::endl;
 	currPtr = m_dealt.begin();
@@ -243,6 +358,9 @@ void Deck::PrintDeck()
 		std::cout << toPrint << std::endl;
 	}
 	std::cout << std::endl;
+
+	std::cout << "total nubmer of cards in m_dealt: " << m_dealt.size() <<
+		std::endl << std::endl;
 }
 
 /* *********************************************************************

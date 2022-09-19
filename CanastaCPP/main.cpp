@@ -8,6 +8,7 @@
 #include <iostream>
 #include "CanastaGame.h"
 
+
 /* *********************************************************************
 Function Name: main
 Purpose: Entry point to the game application
@@ -61,14 +62,57 @@ int main()
 
 	//assignCard.Debug();
 
-	//Deck myDeck;
-	//myDeck.PrintDeck();
+	Deck myDeck;
+	myDeck.PrintDeck();
 	//myDeck.Shuffel();
 	//myDeck.PrintDeck();
 
-	//myDeck.DealCard();
+	myDeck.DealCard();
 
-	//myDeck.PrintDeck();
+	myDeck.PrintDeck();
+
+	Deck myDeck1( "6s 7d 2h 9s 3c 8h J2 2c ks xh qd 6c xc kd" );
+	myDeck1.PrintDeck();
+
+	Hand myhand( "2s qc qs 2c qc 3h", "[3h]" );
+	myhand.PrintHand();
+
+	Hand myhand2( myhand );
+	myhand2.PrintHand();
+
+	Hand myhand3;
+	myhand3 = myhand;
+	myhand3.PrintHand();
+
+	myhand3.AddCardToHand( Card( "qh" ) );
+	myhand3.PrintHand();
+
+	myhand3.AddRed3CardToMeld( 5  );
+	myhand3.MakeMeld( { 0, 1, 2, 3 } );
+
+	myhand3.PrintHand();
+
+	myhand3.AddCardToHand( Card( "J1" ) );
+
+	myhand3.AddWildCardToMeld( myhand3.GetTotalMeldNum(), myhand3.GetTotalHandCardNum() - 1 );
+	myhand3.PrintHand();
+	std::cout << myhand3.TallyPoints() << std::endl;
+
+	myhand3.SwapHandCardPos( 0,1 );
+	myhand3.PrintHand();
+	myhand3.TakeOutWildCard( myhand3.GetTotalMeldNum(), 3 );
+	myhand3.PrintHand();
+	myhand3.TakeOutWildCard( myhand3.GetTotalMeldNum(), 3 );
+	myhand3.PrintHand();
+	myhand3.TakeOutWildCard( myhand3.GetTotalMeldNum(), 2 );
+	myhand3.PrintHand();
+
+	std::cout << myhand3.TallyPoints() << std::endl;
+	myhand3.Discard(0);
+
+
+	std::cout << myhand3.TallyPoints() << std::endl;
+
 
 	return 0;
 }

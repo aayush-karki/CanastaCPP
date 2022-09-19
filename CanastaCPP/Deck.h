@@ -9,6 +9,7 @@
 #include <vector>
 #include <algorithm>
 #include <string>
+#include <sstream>
 #include "Card.h"
 
 class Deck
@@ -42,7 +43,8 @@ public:
 	// prints the deck
 	void PrintDeck();
 
-private:
+	//todo: change this to private
+public:
 	// shuffels the cards in m_stock
 	void Shuffel();
 
@@ -50,15 +52,6 @@ private:
 	void ConsodilateDeck();
 
 private:
-	
-	// m_rankList lists all the rank of card in a standard deck
-	// of card and J for Joker
-	const std::string m_rankList = "23456789xjqkaJ";
-
-	// m_suitList lists all the suit of card in a standard deck
-	// of card and 1 and 2 for Joker
-	// s = spade, c = club, h = heart, and d = diamond
-	const std::string m_suitList = "schd12";
 
 	// stack of undelt cards
 	std::vector<Card*> m_stock;
