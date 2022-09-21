@@ -26,15 +26,18 @@ Algorithm:
 			7) else the rank is ENUM_CardType::CARDTYPE_natural
 			8) if the type is ENUM_CardType::CARDTYPE_redThree
 				then assign the point to be 100
-			9) else if the rank is 'J' then assign the point to be 50
-			10) else if the rank is '2' or 'a' then assign the point to
+			9) else if the rank is < 'A' then assign the point to be 50
+			10) else if the rank is '2' or 'A' then assign the point to
 				be 20
-			11) else if the rank is '8', or '9', or 'x', or 'j', or 'q',
-				or 'k'then assign the point to be 10
+			11) else if the rank is '8', or '9', or 'X', or 'J', or 'Q',
+				or 'K'then assign the point to be 10
 			12) else assign the point to be 5
 Assistance Received: none
 ********************************************************************* */
-Card::Card( char a_rank, char a_suit ) : m_rank( a_rank ), m_suit( a_suit )
+Card::Card( char a_rank, char a_suit ) : 
+	m_rank( a_rank ),m_suit( a_suit ), m_point( 20 ),
+	m_cardType( ENUM_CardType::CARDTYPE_natural )
+	
 {
 	ST_ValidRankSuit validRankSuit;
 
@@ -43,17 +46,17 @@ Card::Card( char a_rank, char a_suit ) : m_rank( a_rank ), m_suit( a_suit )
 	{
 		std::cerr << "Rank Suit passed is not valid!!!! " << m_rank << m_suit
 			<< std::endl;
-			return;
+		return;
 	}
 
 	// figuring out the card type and assigning it to the m_cardType
-	if( m_rank == '2' || m_rank == 'J' )
+	if( m_rank == '2' || (m_rank == 'J' && m_suit < 'A') )
 	{
 		m_cardType = ENUM_CardType::CARDTYPE_wildCard;
 	}
 	else if( m_rank == '3' )
 	{
-		if( m_suit == 'h' || m_suit == 'd' )
+		if( m_suit == 'H' || m_suit == 'D' )
 		{
 			m_cardType = ENUM_CardType::CARDTYPE_redThree;
 		}
@@ -72,16 +75,16 @@ Card::Card( char a_rank, char a_suit ) : m_rank( a_rank ), m_suit( a_suit )
 	{
 		m_point = 100;
 	}
-	else if( m_rank == 'J' )
+	else if( m_suit < 'A' )
 	{
 		m_point = 50;
 	}
-	else if( m_rank == '2' || m_rank == 'a' )
+	else if( m_rank == '2' || m_rank == 'A' )
 	{
 		m_point = 20;
 	}
-	else if( m_rank == '8' || m_rank == '9' || m_rank == 'x' ||
-			 m_rank == 'j' || m_rank == 'q' || m_rank == 'k' )
+	else if( m_rank == '8' || m_rank == '9' || m_rank == 'X' ||
+			 m_rank == 'J' || m_rank == 'Q' || m_rank == 'K' )
 	{
 		m_point = 10;
 	}
@@ -117,8 +120,7 @@ Purpose: To create a new card object and copy the passed Card object's
 		member variables data into the newly created card object
 Parameters:
 			a_other, a constant object of card class passed by
-				reference. It holds a constant memory address of the
-				card object to be copied.
+				reference. It holds the card object to be copied.
 Return Value: none
 Algorithm:
 			1) assigns each of the member of the passed card object
@@ -138,9 +140,9 @@ Function Name: operator=, assignment operator
 Purpose: To copy the passed Card object's member variables data into
 		this card object
 Parameters:
-			a_other, a constant object of card class passed by
-				reference. It holds a constant memory address of the
-				card object to be assigned.
+			a_other, a constant object of card class passed by reference.
+				It holds a card object that is used to assign this
+				card object.
 Return Value: its own memory address
 Algorithm:
 			1) check for self assignment if yes return itself
@@ -258,8 +260,9 @@ bool operator!=( const Card& a_lhs, const Card& a_rhs )
 /* *********************************************************************
 Function Name: operator<, less than operator
 Purpose: to compare if the card on the left hand side is less than the
-		card on the right. the hierarchy is J <	2 < 3 < 4 < 5 < 6 < 7 <
-		8 < 9 < x < j < q < k < a, and the suit is c < d < h < s
+		card on the right. the hierarchy is J (Joker) <	2 < 3 < 4 < 5 < 6
+		< 7 < 8 < 9 < x < J ( Jack ) < Q < K < A,
+		and the suit is C < D < H < S
 Parameters:
 			a_lhs, a constant object of card class passed by
 				reference. It holds a constant memory address of the
@@ -272,10 +275,17 @@ Algorithm:
 			1) if a_lhs == a_rhs is true then return false
 			2) else if the rank is equal compare the suit and
 				return the result
-			3) else if a_lhs's rank is 'j' return true
-			4) else if a_lhs's rank is 'a' return false
-			5) else if a_rhs's rank is 'a' return true
-			6) else compare the ranksuit and return the result
+			3) else if a_lhs's suit is less than 'A' return true
+			4) else if a_rhs's suit is less than 'A' return false
+			5) else if a_lhs's rank is 'A' return false
+			6) else if a_rhs's rank is 'A' return true
+			7) else if a_lhs's rank is 'K' return false
+			8) else if a_rhs's rank is 'K' return true
+			9) else if a_lhs's rank is 'Q' return false
+			10) else if a_rhs's rank is 'Q' return true
+			11) else if a_lhs's rank is 'J' return false
+			12) else if a_rhs's rank is 'J' return true
+			13) else compare the rank and return the result
 Assistance Received: none
 ********************************************************************* */
 bool operator<( const Card& a_lhs, const Card& a_rhs )
@@ -286,25 +296,70 @@ bool operator<( const Card& a_lhs, const Card& a_rhs )
 		return false;
 	}
 	// checking if the rank is equal then compare the suits
+	// here we do not need to worry about 'J' ( Joker ) and
+	// 'J' (Jack) because Joker can only have 1 or 2 as suit 
+	//  which would be less than Jack's suit as they are 
+	// alphabhets
 	else if( a_lhs.GetRank() == a_rhs.GetRank() )
 	{
 		return a_lhs.GetSuit() < a_rhs.GetSuit();
 	}
-	else if( a_lhs.GetRank() == 'J' )
+	// from before if know that from now the ranks of lCard and
+	// rCard is different
+	// checking for Joker which is the smallest
+	// if left hand is joker then return true
+	else if( a_lhs.GetSuit() < 'A' )
 	{
 		return true;
 	}
-	else if( a_lhs.GetRank() == 'a' )
+	// if right hand is joker then return false
+	else if( a_rhs.GetSuit() < 'A' )
 	{
 		return false;
 	}
-	else if( a_rhs.GetRank() == 'a' )
+	// checking for A which is the largest
+	else if( a_lhs.GetRank() == 'A' )
+	{
+		return false;
+	}
+	else if( a_rhs.GetRank() == 'A' )
 	{
 		return true;
 	}
+	// checking for K which is the next largest
+	else if( a_lhs.GetRank() == 'K' )
+	{
+		return false;
+	}
+	else if( a_rhs.GetRank() == 'K' )
+	{
+		return true;
+	}
+	// checking for Q which is the next largest
+	else if( a_lhs.GetRank() == 'Q' )
+	{
+		return false;
+	}
+	else if( a_rhs.GetRank() == 'Q' )
+	{
+		return true;
+	}
+	// checking for J (Jack) which is the next largest
+	// here we have already checked for Joker so we
+	// do not have to worry about that
+	else if( a_lhs.GetRank() == 'J' )
+	{
+		return false;
+	}
+	else if( a_rhs.GetRank() == 'J' )
+	{
+		return true;
+	}
+	// rest of them which are 2, 3, 4, 5, 6, 7, 8, 9, and X
+	// order in Ascii follow our order
 	else
 	{
-		return ( a_lhs.GetRankSuit() < a_rhs.GetRankSuit() );
+		return ( a_lhs.GetRank() < a_rhs.GetRank() );
 	}
 }
 

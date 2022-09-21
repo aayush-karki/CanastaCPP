@@ -39,13 +39,13 @@ enum class ENUM_CardType
 struct ST_ValidRankSuit
 {
 	// stm_rankList lists all the rank of card in a standard deck
-	// of card and J for Joker
-	const std::string stm_rankList = "23456789xjqkaJ";
+	// of card and last J for Joker
+	const std::string stm_rankList = "23456789XJQKAJ";
 
 	// stm_suitList lists all the suit of card in a standard deck
 	// of card and 1 and 2 for Joker
-	// s = spade, c = club, h = heart, and d = diamond
-	const std::string stm_suitList = "schd12";
+	// S = spade, C = club, H = heart, and D = diamond
+	const std::string stm_suitList = "SCHD12";
 
 	// default constructor
 	ST_ValidRankSuit() {};
@@ -64,7 +64,7 @@ class Card
 {
 public:
 	// default constructor
-	Card( char a_rank = 'a', char a_suit = 'c' );
+	Card( char a_rank = 'A', char a_suit = 'C' );
 
 	// constructor
 	Card( std::string a_rankSuit );
@@ -93,12 +93,16 @@ public:
 private:
 	// m_rank holds the rank of the card
 	// can be one of a, 2, 3, 4, 5, 6, 7, 8, 9, 
-	// x ( 10 ), j, q, k, or J ( joker )
+	// X ( 10 ), J, Q, K, or J ( joker )
+	// joker and jack can only be distinguished 
+	// by looking at the rank
+	// joker has a rank of 1 or 2, while 
+	// jack has rank of S, or D, or H, or D
 	char m_rank;
 
 	// m_suit holds the suit of the card
-	// can be one of c ( club ), s ( spade ), 
-	// h ( heart ), d ( diamond ), 1, or 2
+	// can be one of C ( club ), D ( spade ), 
+	// H ( heart ), D ( diamond ), 1, or 2
 	//
 	// only the standard card rank has c, s, h, and d 
 	// as its suit. while only joker can have 1, and 2 

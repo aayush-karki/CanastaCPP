@@ -9,6 +9,22 @@
 
 /* *********************************************************************
 Function Name: Hand
+Purpose: To construct a Hand object and to populate its member variables.
+Parameters: none
+Return Value: none
+Algorithm:
+		1) set the m_hasCanasta to false
+		2) resize m_hanCard to 1
+Assistance Received: none
+********************************************************************* */
+Hand::Hand()
+	: m_hasCanasta( false )
+{
+	m_handCard.resize( 1 );
+}
+
+/* *********************************************************************
+Function Name: Hand
 Purpose: To construct a Hand object and to populate its member variables
 		m_handCard is populated using the passed parameter.
 Parameters:
@@ -178,10 +194,7 @@ Hand::Hand( std::string a_handCards, std::string a_meldCards ) :
 			std::cerr << "Error while process a_meld" << std::endl;
 			break;
 		}
-
 	}
-
-
 }
 
 /* *********************************************************************
@@ -221,20 +234,22 @@ Purpose: To create a new Hand object and copy the passed Hand object's
 		member variables data into the newly created Hand object
 Parameters:
 			a_other, a constant object of Hand class passed by
-				reference. It holds a constant memory address of the
-				hand object to be copied.
+				reference. It holds a hand object to be copied.
 Return Value: none
 Algorithm:
-			1) resize the m_handCard of this class to the size of
+			1) copy the data of hasCanasta
+			2) resize the m_handCard of this class to the size of
 				a_other's m_handCard
-			2) for each vector in the m_handCard of the passed hand object
-				3)	for each card in the vector
-					4) dyanmically create a card and push it back to
+			3) for each vector in the m_handCard of the passed hand object
+				4)	for each card in the vector
+					5) dyanmically create a card and push it back to
 						this hand's vector
 Assistance Received: none
 ********************************************************************* */
 Hand::Hand( const Hand& a_other )
 {
+	this->m_hasCanasta = a_other.m_hasCanasta;
+
 	m_handCard.resize( a_other.m_handCard.size() );
 
 	std::vector<std::vector<Card*>>::iterator thisCurrVecIte = this->m_handCard.begin();
@@ -261,9 +276,9 @@ Function Name: operator=
 Purpose: To deep-copy the passed Hand object's member variables data into
 		this hand object
 Parameters:
-			a_other, a constant object of hand class passed by
-				reference. It holds a constant memory address of the
-				hand object to be assigned.
+			a_other, a constant object of hand class passed by reference.
+				It holds a hand object that is used to assign this
+				hand object.
 Return Value: its own memory address
 Algorithm:
 			1) check for self assignment, if yes then return the
@@ -281,7 +296,7 @@ Hand& Hand::operator=( const Hand& a_other )
 		return *this;
 	}
 
-	// creating a coyp of the passed hand object
+	// creating a copy of the passed hand object
 	Hand temphand( a_other );
 
 	// swapping m_stock
@@ -317,39 +332,138 @@ bool Hand::MeldHasWildCard( unsigned a_meldIdx ) const
 }
 
 /* *********************************************************************
-Function Name: AddNaturalCardToMeld
-Purpose: To move the the card at index from actual hand and a already
-	existing meld if possible
+Function Name: UpdateCanasta
+Purpose: to check all the meld for a conasta and update the m_hasCanasta
+	accordingly
+Parameters: none
+Return Value: true if a changes was made t0 m_hasConasta; else false
+Algorithm:
+			1) loop over the melds
+				2) check for canasta by using IsCanasta
+					3) if yes update m_hasCanasta and return
+Assistance Received: none
+********************************************************************* */
+bool Hand::UpdateCanasta()
+{
+	bool currCanasta = m_hasCanasta;
+
+	// looping over the melds
+	for( unsigned meldIdx = 1; meldIdx < m_handCard.size(); ++meldIdx )
+	{
+		if( IsCanasta( meldIdx ) )
+		{
+			m_hasCanasta = true;
+			break;
+		}
+	}
+
+	return currCanasta == m_hasCanasta;
+}
+
+
+/* *********************************************************************
+Function Name: AddCardToHand
+Purpose: to add a card to hand
+Parameters: 
+			a_cardToAdd, a constant object of hand class passed by value.
+				It holds a hand object that is used to assign this
+				hand object.
+Return Value: true as it changes m_handCard
+Algorithm:
+			1) crete a new card using the passed parameters and push it
+				back to actual hand
+			2) return true to indicate a change was made to member
+				variable
+Assistance Received: none
+********************************************************************* */
+bool Hand::AddCardToHand( const Card a_cardToAdd )
+{
+	m_handCard.begin()->push_back( new Card( a_cardToAdd ) );
+	return true;
+}
+
+/* *********************************************************************
+Function Name: CanAddToMeld
+Purpose: Tries to see if the passed card can be added to the meld or not
 Parameters:
-			a_handCardIdx, a unsigned integer. It holds the index of the
-				the card at actual hand that need to be moved
-Return Value: true if the card was moved to a meld successfully
+			 a_cardToAdd, a constant object of hand class passed by value.
+				It holds a hand object that is used to assign this
+				hand object.
+Return Value: a pair of < bool, string >, < true, empty string > if the 
+		card can be added to a meld . else  < false, message string >
 Algorithm:
 			1) if card is not a natural card return false
 			2) else the card is a natural card
 				) for each of meld vector, call AddCardToMeld()
 				and pass the a_handCardIdx, and the meld index as
 				parameters
+			3) if meld was successfull update the hasCanasta by calling
+				UpdateCanasta()
 Assistance Received: none
 ********************************************************************* */
-std::pair<bool, std::string> Hand::AddNaturalCardToMeld( unsigned a_handCardIdx )
+std::pair<bool, std::string> Hand::CanAddToMeld( const Card a_cardToAdd ) const
+{
+	if( a_cardToAdd.GetCardType() != ENUM_CardType::CARDTYPE_natural )
+	{
+		return { false, "Card is  not a natural card" };
+	}
+
+	// looping over the meld to check if the card can be added to it
+	for( unsigned currMeldIdx = 1; currMeldIdx < m_handCard.size(); ++currMeldIdx )
+	{
+		// checking if any of the meld's first card's rank is the same as 
+		// the rank of the passed card
+		if( m_handCard.at( currMeldIdx ).front()->GetRank() ==
+			a_cardToAdd.GetRank() )
+		{
+			return { true, "" };
+		}
+	}
+
+	return { false, "Card can not be melded" };
+}
+
+/* *********************************************************************
+Function Name: AddNaturalCardToMeld
+Purpose: To move the the card at index from actual hand and a already
+	existing meld if possible
+Parameters:
+			a_handCardIdx, a unsigned integer. It holds the index of the
+				the card at actual hand that need to be moved
+			a_meldIdx, a unsigned integer. It holds the index of the
+				meld to move the card to actual hand that need to be moved
+Return Value: a pair of < bool, string >, < true, empty string > if the card was
+				moved to a meld successfully. else  < false, message string >
+Algorithm:
+			1) if card is not a natural card return false
+			2) else the card is a natural card
+				call AddCardToMeld() and pass the a_handCardIdx, and the
+				meld index as parameters
+			3) if meld was successfull update the hasCanasta by calling
+				UpdateCanasta()
+Assistance Received: none
+********************************************************************* */
+std::pair<bool, std::string> Hand::AddNaturalCardToMeld( unsigned a_handCardIdx, unsigned a_meldIdx )
 {
 	if( m_handCard.front().at( a_handCardIdx )->GetCardType() != ENUM_CardType::CARDTYPE_natural )
 	{
 		return { false, "Card at index " + std::to_string( a_handCardIdx ) + " is not a natural card" };
 	}
 
-	// looping over the meld to check if the card can be added to it
-	for( unsigned currMeldIdx = 1; currMeldIdx < m_handCard.size(); ++currMeldIdx )
+	// holds the return value of AddCardToMeld
+	std::pair<bool, std::string> returnVal;
+
+	// trying to move the card to the meld
+	returnVal = AddCardToMeld( a_handCardIdx, a_meldIdx );
+
+	// if successfull
+	if( returnVal.first )
 	{
-		// trying to move the card to the meld
-		if( AddCardToMeld( currMeldIdx, a_handCardIdx ).first )
-		{
-			return { true, "" };
-		}
+		// updating hasCanasta value
+		UpdateCanasta();
 	}
 
-	return { true, "No valid meld found!" };
+	return returnVal;
 }
 
 /* *********************************************************************
@@ -357,10 +471,10 @@ Function Name: AddWildCardToMeld
 Purpose: To move the the wildcard at index from actual hand and a
 	already existing meld if possible
 Parameters:
-			a_meldIdx, a unsigned integer. It holds the index of the
-				meld to move the card to actual hand that need to be moved
 			a_handCardIdx, a unsigned integer. It holds the index of the
 				the card at actual hand that need to be moved
+			a_meldIdx, a unsigned integer. It holds the index of the
+				meld to move the card to actual hand that need to be moved
 Return Value:
 			a pair of < bool, string >, < true, empty string > if the card was
 				moved to a meld successfully. else  < false, message string >
@@ -368,10 +482,12 @@ Algorithm:
 			1) if card is not a wild card return false
 			2) loop over the meld and count the number of wild card if it is 3
 				return false
-			3) call the addCardToMeld and return its value
+			3) call the addCardToMeld
+			4) if meld was successfull update the hasCanasta by calling
+				UpdateCanasta()return its value
 Assistance Received: none
 ********************************************************************* */
-std::pair<bool, std::string> Hand::AddWildCardToMeld( unsigned a_meldIdx, unsigned a_handCardIdx )
+std::pair<bool, std::string> Hand::AddWildCardToMeld( unsigned a_handCardIdx, unsigned a_meldIdx )
 {
 	if( m_handCard.front().at( a_handCardIdx )->GetCardType() != ENUM_CardType::CARDTYPE_wildCard )
 	{
@@ -395,7 +511,17 @@ std::pair<bool, std::string> Hand::AddWildCardToMeld( unsigned a_meldIdx, unsign
 		return { false, "Cannot add to the meld, it already has 3 wildcards" };
 	}
 
-	return AddCardToMeld( a_meldIdx, a_handCardIdx );
+	// trying to move the card to the meld
+	std::pair<bool, std::string> returnVal = AddCardToMeld( a_handCardIdx, a_meldIdx );
+
+	// chekcing if the meld was a success
+	if( returnVal.first )
+	{
+		// updating hasCanasta value
+		UpdateCanasta();
+	}
+
+	return returnVal;
 }
 
 
@@ -427,7 +553,7 @@ std::pair<bool, std::string> Hand::AddRed3CardToMeld( unsigned a_handCardIdx )
 	// inserting the red 3 at index 1 of m_handCard as a new meld
 	// removing the red 3 from actual hand
 	// removing the card from the hand
-	return AddCardToMeld( 1, a_handCardIdx );
+	return AddCardToMeld( a_handCardIdx, 1 );
 }
 
 /* *********************************************************************
@@ -573,15 +699,27 @@ std::pair<bool, std::string> Hand::MakeMeld( std::vector<unsigned> a_handCardIdx
 	// of the card from at the start
 	std::sort( a_handCardIdxList.rbegin(), a_handCardIdxList.rend() );
 
+
+	// holds the return value of AddCardToMeld
+	std::pair<bool, std::string> returnVal;
+
 	// adding the card from the back
 	for( unsigned passedListIdx = 0;
 		 passedListIdx < a_handCardIdxList.size();
 		 ++passedListIdx )
 	{
-		AddCardToMeld( meldIndex, a_handCardIdxList.at( passedListIdx ) );
+		returnVal = AddCardToMeld( a_handCardIdxList.at( passedListIdx ), meldIndex );
+
+		if( !returnVal.first )
+		{
+			break;
+		}
 	}
 
-	return std::pair<bool, std::string>( true, "" );
+	// updating m_hasCanasta
+	UpdateCanasta();
+
+	return returnVal;
 }
 
 /* *********************************************************************
@@ -594,7 +732,7 @@ Parameters:
 			a_handCardIdx2, a unsigned integer. It holds the index of the
 				another card at actual hand that whose position is to be
 				swapped with the a_handCardIdx1
-Return Value: none
+Return Value: true to indicate the swapping was successful
 Algorithm:
 			1) create a temp card pointer and assign it the pointer to the
 				card at first vector of m_handCard at index a_handCardIdx1
@@ -606,11 +744,13 @@ Algorithm:
 
 Assistance Received: none
 ********************************************************************* */
-void Hand::SwapHandCardPos( unsigned a_handCardIdx1, unsigned a_handCardIdx2 )
+bool Hand::SwapHandCardPos( unsigned a_handCardIdx1, unsigned a_handCardIdx2 )
 {
 	Card* tempCardPtr = m_handCard.front().at( a_handCardIdx1 );
 	m_handCard.front().at( a_handCardIdx1 ) = m_handCard.front().at( a_handCardIdx2 );
 	m_handCard.front().at( a_handCardIdx2 ) = tempCardPtr;
+
+	return true;
 }
 
 /* *********************************************************************
@@ -637,8 +777,8 @@ Algorithm:
 
 Assistance Received: none
 ********************************************************************* */
-std::pair<bool, std::string> Hand::TakeOutWildCard( unsigned a_meldIdx,
-													unsigned a_meldcardIdx )
+std::pair<bool, std::string> Hand::TakeOutWildCard( unsigned a_meldcardIdx,
+													unsigned a_meldIdx )
 {
 	// checking if the a_meldcardIdx is a wild card or not 
 	if( m_handCard.at( a_meldIdx ).at( a_meldcardIdx )->GetCardType() !=
@@ -675,6 +815,7 @@ std::pair<bool, std::string> Hand::TakeOutWildCard( unsigned a_meldIdx,
 
 		return { true,"disolvingTheMeld" };
 	}
+
 
 	return { true,"" };
 }
@@ -744,14 +885,18 @@ void Hand::PrintHand()
 			toPrint += " ";
 			++currPtr;
 		}
+		std::cout << std::setw( 5 ) << "";
 		std::cout << toPrint << std::endl;
 	}
+
+	std::cout << std::endl;
 
 	// iterating over rest of the m_handCards and print the meld
 	std::cout << "Melds: " << std::endl;
 	std::vector<std::vector<Card*>>::iterator currMeldPtr = m_handCard.begin() + 1;
 	while( currMeldPtr != m_handCard.end() )
 	{
+		std::cout << std::setw( 5 ) << "";
 		std::vector<Card*>::iterator currPtr = currMeldPtr->begin();
 		while( currPtr != currMeldPtr->end() )
 		{
@@ -759,9 +904,10 @@ void Hand::PrintHand()
 			++currPtr;
 
 		}
-		std::cout << std::endl << std::endl;
+		std::cout << std::endl;
 		++currMeldPtr;
 	}
+	std::cout << std::endl;
 }
 
 
@@ -801,7 +947,7 @@ const int Hand::TallyPoints() const
 		}
 
 		// checking if this meld was a conasta
-		if( IsConasta( meldIdx ) )
+		if( IsCanasta( meldIdx ) )
 		{
 			// chekcing if the meld was all natural cards
 			if( isAllNaturalCard )
@@ -831,10 +977,10 @@ Function Name: AddCardToMeld
 Purpose: To move the the card at index from actual hand and a already
 	existing meld if possible.
 Parameters:
-			a_meldIdx, a unsigned integer. It holds the index of the
-				meld to move the card to actual hand that need to be moved
 			a_handCardIdx, a unsigned integer. It holds the index of the
 				the card at actual hand that need to be moved
+			a_meldIdx, a unsigned integer. It holds the index of the
+				meld to move the card to actual hand that need to be moved
 Return Value: a pair of < bool, string >, < true, empty string > if the card was
 				moved to a meld successfully. else  < false, mesage string >
 Algorithm:
@@ -844,7 +990,7 @@ Algorithm:
 					return true
 Assistance Received: none
 ********************************************************************* */
-std::pair<bool, std::string> Hand::AddCardToMeld( unsigned a_meldIdx, unsigned a_handCardIdx )
+std::pair<bool, std::string> Hand::AddCardToMeld( unsigned a_handCardIdx, unsigned   a_meldIdx )
 {
 	// trying to move the card to the meld
 	// a card can move to a meld if the meld is empty, 
@@ -886,15 +1032,18 @@ Algorithm:
 			call the sort algorithm from stl library
 Assistance Received: cplusplus
 ********************************************************************* */
-void Hand::SortMeld( unsigned a_meldIdx )
+std::pair<bool, std::string> Hand::SortMeld( unsigned a_meldIdx )
 {
 	// validating the passed meld index
 	if( a_meldIdx >= m_handCard.size() )
 	{
-		std::cerr << "Invalid meld index" << std::endl;
+		return { false,"Invalid meld index" };
 	}
 
 	std::sort( m_handCard.at( a_meldIdx ).begin(),
 			   m_handCard.at( a_meldIdx ).end(),
 			   []( Card* a_first, Card* a_second ) {return ( ( *a_first ) > ( *a_second ) ); } );
+
+	return { true, "" };
+
 }

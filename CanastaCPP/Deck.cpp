@@ -209,8 +209,7 @@ Purpose: To create a new Deck object and copy the passed Deck object's
 		member variables data into the newly created Deck object
 Parameters:
 			a_other, a constant object of Deck class passed by
-				reference. It holds a constant memory address of the
-				Deck object to be copied.
+				reference. It holds the Deck object to be copied.
 Return Value: none
 Algorithm:
 			1) for each element in the m_stock of the passed deck object
@@ -249,8 +248,8 @@ Purpose: To deep-copy the passed deck object's member variables data into
 		this deck object
 Parameters:
 			a_other, a constant object of deck class passed by
-				reference. It holds a constant memory address of the
-				deck object to be assigned.
+				reference. It holds a deck object that is used to assign 
+				this deck object.
 Return Value: its own memory address
 Algorithm:
 			1) check for self assignment, if yes then return the
@@ -270,7 +269,7 @@ Deck& Deck::operator=( const Deck& a_other )
 		return *this;
 	}
 
-	// creating a coyp of the passed deck object
+	// creating a copy of the passed deck object
 	Deck tempDeck( a_other );
 
 	// swapping m_stock
@@ -367,25 +366,27 @@ void Deck::PrintDeck()
 Function Name: Shuffel
 Purpose: To randomly shuffle the order of cards in m_stock
 Parameters: none
-Return Value: none
+Return Value: true to indicate successful shuffel
 Algorithm:
 			1) Call ConsodilateDeck fuinction to move card in m_dealt to
 				m_stock
 			2) call random_shuffle function from standard library
 Assistance Received: cppreference
 ********************************************************************* */
-void Deck::Shuffel()
+bool Deck::Shuffel()
 {
 	// moving all the card in m_dealt to m_stock
 	ConsodilateDeck();
 	std::random_shuffle( m_stock.begin(), m_stock.end() );
+
+	return true;
 }
 
 /* *********************************************************************
 Function Name: ConsodilateDeck
 Purpose: To move all the card in m_dealt to m_stock
 Parameters: none
-Return Value: none
+Return Value: true to indicate successful deck consodilatiion
 Algorithm:
 			1) for all the element in m_dealt
 				2) push_back that element to m_stock
@@ -393,7 +394,7 @@ Algorithm:
 Assistance Received: none
 ********************************************************************* */
 
-void Deck::ConsodilateDeck()
+bool Deck::ConsodilateDeck()
 {
 	// moving all the card in m_dealt to m_stock
 	std::vector<Card*>::iterator currPtr = m_dealt.begin();
@@ -403,4 +404,6 @@ void Deck::ConsodilateDeck()
 		*currPtr = nullptr;
 		++currPtr;
 	}
+
+	return true;
 }

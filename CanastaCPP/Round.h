@@ -16,6 +16,51 @@ class Round
 {
 public:
 
+	// default constructor
+	Round();
+
+	// default destructor
+	~Round() {};
+
+	// copy constructor
+	Round( const Round& a_other );
+
+	// assignment operator
+	Round& operator = ( const Round& a_other );
+
+	// getter function to ge tteh discard pile
+	const std::stack<Card> GetDiscardPile() const { return m_discardPile; }
+
+	// Gets the rankSuit of the top card in the discard pile
+	const std::string GetDiscardPileTopRankSuit() const { return m_discardPile.top().GetRankSuit(); }
+
+	bool IsRoundOver()
+	{
+		//return std::any_of( m_playerList.begin(), m_playerList.end(), []( const Player* a_player ){a_player->CanGoOut(); } );
+	}
+
+	// increase the round number by one
+	bool IncrementRoundNumber() {return ++m_currRoundNum;}
+
+	// empties the discard pile
+	bool EmptyDiscardPile();
+
+	// adds a card to discardPile
+	bool AddToDiscardPile( Card a_cardToAdd );
+
+	// simulates a coin toss
+	bool TossACoin();
+
+	// print the Game info
+	void PrintRound();
+
+	// starts a new round
+	bool StartRound();
+
+	// Continues the round
+	bool ConinueRound();
+
+
 private:
 	unsigned m_currRoundNum;
 
@@ -39,6 +84,8 @@ private:
 	// additional player can pick up the whole discarded pile if
 	// the last added to the pile help them in making a meld.
 	std::stack<Card> m_discardPile;
+
+
 
 };
 

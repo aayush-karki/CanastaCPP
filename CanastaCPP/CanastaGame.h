@@ -17,9 +17,15 @@ public:
 	// default destructor
 	~CanastaGame();
 
+	void RunGame();
 
 private:
+
+	// holds the actual game logics and component
 	Round m_round;
+
+	// holds boolean value to quit the game
+	bool m_gameStart;
 
 };
 

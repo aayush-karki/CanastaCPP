@@ -133,3 +133,41 @@
 	( 1 hour and 15 minutes )
 
 ###### Total: 8 hours 45 minutes
+
+## Sep 18, 2022:
+
+- Populated the header file of Player Class with member function defination 
+	which were previously designed. Changed the parameters of all different 
+	meld functions ( 1 hour ).
+
+- Populated the header file of Player Class with member function declaration 
+	( 1 hour ).
+
+###### Total: 2 hours
+
+## Sep 18, 2022:
+
+- Changed the Cards class to now use the capitalized rank and suit ( 30 minutes ).
+
+- Reworked the card's '<' relation operator. Tried to tweek the previously designed
+	algorithm to work with the new capitalized rank and suit, but found a massive
+	bug instead, so, decided to Redesign the algorith from scrap. Implemented, and
+	tested the new algorithm ( 2 hour ).
+
+- Added input validation for hand class member function then removed the again as 
+	I decided to valid the meldIdx and cardIdx as soon as users enters it
+	( 30 minutes ).
+
+- Finished the Player class by adding rest of the member funciton declaration.
+	( 1 hour 30 minutes ).
+
+- Tested the Player class ( 30 min ).
+
+- Created new function in player class that allows access to hand's function. 
+	Created EmptyHand function, while creating the function tried to figure
+	out if there was a memory leak or not ( 1 hour 30 minutes ).
+
+- Did final test for the Player class and pushed it to github ( 1 hour ).
+
+
+###### Total: 6 hours 30 minutes

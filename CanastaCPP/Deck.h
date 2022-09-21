@@ -46,10 +46,10 @@ public:
 	//todo: change this to private
 public:
 	// shuffels the cards in m_stock
-	void Shuffel();
+	bool Shuffel();
 
 	// moves cards in dealt pile to stock pile
-	void ConsodilateDeck();
+	bool ConsodilateDeck();
 
 private:
 
