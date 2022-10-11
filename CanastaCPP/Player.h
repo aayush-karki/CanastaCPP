@@ -32,6 +32,8 @@ public:
 	// gets the saved current point
 	const int GetTotalPoint() const { return m_totalPoints; }
 
+	// get player melds
+
 	// tallys the hand Point
 	const int TallyHandPoint() const { return m_playerHand.TallyPoints(); }
 
@@ -42,7 +44,7 @@ public:
 	bool AddCardToHand( const Card a_drawnCard ) { return m_playerHand.AddCardToHand( a_drawnCard ); }
 
 	// Empties the cards in the hand
-	bool EmptyHand() { m_playerHand = Hand(); }
+	void EmptyHand() { m_playerHand = Hand(); }
 
 	// swaps the cards at the passed index 
 	bool SwapHandCardPos( unsigned a_handCardIdx1, unsigned a_handCardIdx2 ) { return m_playerHand.SwapHandCardPos( a_handCardIdx1, a_handCardIdx2 ); }
@@ -72,7 +74,7 @@ public:
 	bool ValidateCardIdx( unsigned a_meldIdx, unsigned a_CardIdx ) const { return m_playerHand.ValidateCardIdx( a_meldIdx, a_CardIdx ); }
 
 	// checks if go out is possible or not
-	const bool CanGoOut() const { return m_playerHand.IsActualHandEmpty() && m_playerHand.GetHasCanasta(); }
+	bool CanGoOut() const { return m_playerHand.IsActualHandEmpty() && m_playerHand.GetHasCanasta(); }
 
 	// prints the playern
 	void PrintPlayer();

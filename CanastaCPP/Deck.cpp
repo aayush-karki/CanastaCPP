@@ -224,9 +224,10 @@ Deck::Deck( const Deck& a_other )
 {
 	// copying the data from m_stock of the passed deck to this deck and
 	// dynamically created a Card
-	std::vector<Card*>::const_iterator currPtr;
-	for( currPtr = a_other.GetStock().begin();
-		 currPtr != a_other.GetStock().end();
+	const std::vector<Card*> tempStock = a_other.GetStock();
+
+	for( std::vector<Card*>::const_iterator currPtr = tempStock.begin();
+		 currPtr != tempStock.end();
 		 ++currPtr )
 	{
 		m_stock.push_back( new Card( ( *currPtr )->GetRankSuit() ) );
@@ -234,8 +235,9 @@ Deck::Deck( const Deck& a_other )
 
 	// copying the data from m_stock of the passed deck to this deck
 	// dynamically created a Card
-	for( currPtr = a_other.GetDealt().begin();
-		 currPtr != a_other.GetDealt().end();
+	const std::vector<Card*> tempDealt = a_other.GetDealt();
+	for( std::vector<Card*>::const_iterator currPtr = tempDealt.begin();
+		 currPtr != tempDealt.end();
 		 ++currPtr )
 	{
 		m_dealt.push_back( new Card( ( *currPtr )->GetRankSuit() ) );
@@ -248,7 +250,7 @@ Purpose: To deep-copy the passed deck object's member variables data into
 		this deck object
 Parameters:
 			a_other, a constant object of deck class passed by
-				reference. It holds a deck object that is used to assign 
+				reference. It holds a deck object that is used to assign
 				this deck object.
 Return Value: its own memory address
 Algorithm:
@@ -290,10 +292,9 @@ Assistance Received: cppreference, stackoverflow forum
 ********************************************************************* */
 const Card Deck::DealCard()
 {
-	unsigned lastIdx = m_stock.size() - 1;
-	m_dealt.push_back( m_stock.at( lastIdx ) );
-	m_stock.at( lastIdx ) = nullptr;
-	m_stock.pop_back();
+	m_dealt.push_back( m_stock.at( 0 ) );
+	m_stock.at( 0 ) = nullptr;
+	m_stock.erase( m_stock.begin() );
 
 	return *( m_dealt.back() );
 }

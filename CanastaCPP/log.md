@@ -145,7 +145,7 @@
 
 ###### Total: 2 hours
 
-## Sep 18, 2022:
+## Sep 19, 2022:
 
 - Changed the Cards class to now use the capitalized rank and suit ( 30 minutes ).
 
@@ -171,3 +171,73 @@
 
 
 ###### Total: 6 hours 30 minutes
+
+
+## Sep 23, 2022:
+
+-  Populated the header file of Round Class with member function defination 
+	which were previously designed ( 1 hour ).
+
+###### Total: 1 hours 00 minute
+
+## Sep 26, 2022:
+
+-  Populated the header file of Round Class with inline member function declaration
+	( 1 hour ).
+
+- Populated the source file of Round Class with Constructor, destructor,
+	copy constructor, assignment operator ( 1 hour ).
+
+###### Total: 2 hours 00 minute
+
+## Sep 27, 2022:
+
+- Added emptyDiscard funciton ( 15 minutes ).
+
+- Designed and implemented the print funciton for the round ( 30  minutes ).
+
+- Redesigned and implemented the print funciton for the round ( 1 hour ).
+
+- Implemented  the StartNewRound funciton researched methods to terminal
+	screen clearing ( 45 minutes ).
+
+###### Total: 2 hours 30 minutes
+
+## Sep 28, 2022:
+
+- started the main game class. Populated the header file of CanastaGame Class with 
+	inline member function declaration ( 1 hour ).
+
+- Populated the source file of Round Class with Constructor, destructor,
+	copy constructor, assignment operator ( 45 minutes ).
+
+- Designed and implemented the main Game logic and main menu funciton for the 
+	game ( 1  hour 45 minutes ).
+
+###### Total: 3 hours 30 minutes
+
+## Oct 10, 2022:
+
+- Did some bug fixing, fixed the input validation for the coin toss where capital
+	letter were not accepted even when using to lower function. Turns out its
+	code had std::tolower( userInput.at( 0 == 'h') ) instead of 
+	std::tolower( userInput.at( 0 ) ) == 'h' for both head and tail 
+	( 1 hour and 30 minutes ).
+
+- Trying to fix another bug where two lines were printed to the screen. Narrowed 
+	it down to something after the coin toss function is calling a card constructor
+	by sttepped through the card shows. But still have not figured out what is calling 
+	it ( 1 hour )
+
+###### Total: 2 hours 30 minutes
+
+
+## Oct 11, 2022:
+
+- Continued to fix where coin toss function is calling a card constructor
+	by sttepped through the card shows. Managed to figure it out, it turns out
+	was comaparing string with a char and my best guess for why would be that 
+	the compiler was trying to be a good piece of software and was trying to convert string
+	into a card as the card has a compare function ( 1 hour ).
+
+###### Total: 2 hours 30 minutes

@@ -34,10 +34,10 @@ Algorithm:
 			12) else assign the point to be 5
 Assistance Received: none
 ********************************************************************* */
-Card::Card( char a_rank, char a_suit ) : 
-	m_rank( a_rank ),m_suit( a_suit ), m_point( 20 ),
+Card::Card( char a_rank, char a_suit ) :
+	m_rank( a_rank ), m_suit( a_suit ), m_point( 20 ),
 	m_cardType( ENUM_CardType::CARDTYPE_natural )
-	
+
 {
 	ST_ValidRankSuit validRankSuit;
 
@@ -50,7 +50,7 @@ Card::Card( char a_rank, char a_suit ) :
 	}
 
 	// figuring out the card type and assigning it to the m_cardType
-	if( m_rank == '2' || (m_rank == 'J' && m_suit < 'A') )
+	if( m_rank == '2' || ( m_rank == 'J' && m_suit < 'A' ) )
 	{
 		m_cardType = ENUM_CardType::CARDTYPE_wildCard;
 	}
@@ -98,8 +98,8 @@ Card::Card( char a_rank, char a_suit ) :
 Function Name: Card
 Purpose: To construct a Card object and to populate its member variables
 Parameters:
-			a_rankSuit, a string. It holds the rank as the 0th character
-				and suit as the 1th character
+			a_rankSuit, a const string. It holds the rank as the 0th
+				character and suit as the 1th character
 Return Value: none
 Algorithm:
 			1) call the default constructor by constructor delegation and
@@ -107,7 +107,7 @@ Algorithm:
 				1st character as second parameter
 Assistance Received: none
 ********************************************************************* */
-Card::Card( std::string a_rankSuit ) :
+Card::Card( const std::string a_rankSuit ) :
 	Card( a_rankSuit[ 0 ], a_rankSuit[ 1 ] )
 {
 	// here the a_rankSuit is not checked as the Card class checks for
@@ -127,13 +127,12 @@ Algorithm:
 				to the correspnding member variable of this object
 Assistance Received: none
 ********************************************************************* */
-Card::Card( const Card& a_other )
-{
-	this->m_rank = a_other.GetRank();
-	this->m_suit = a_other.GetSuit();
-	this->m_point = a_other.GetPoint();
-	this->m_cardType = a_other.GetCardType();
-}
+Card::Card( const Card& a_other ) :
+	m_rank( a_other.GetRank() ),
+	m_suit( a_other.GetSuit() ),
+	m_point( a_other.GetPoint() ),
+	m_cardType( a_other.GetCardType() )
+{}
 
 /* *********************************************************************
 Function Name: operator=, assignment operator

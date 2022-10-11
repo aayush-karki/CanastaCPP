@@ -38,7 +38,7 @@ public:
 	const unsigned GetTotalHandCardNum() const { return m_handCard.front().size(); }
 
 	// getter function get if the hand has a canasta or not
-	const bool GetHasCanasta() const { return m_hasCanasta; }
+	bool GetHasCanasta() const { return m_hasCanasta; }
 
 	// getter function to get the card in a meld.
 	// pass 0 for meldIdx for actual hand
@@ -97,6 +97,7 @@ public:
 	{
 		return a_meldcardIdx < m_handCard.at( a_meldIdx ).size();
 	}
+
 private:
 
 	// list of card that the player has in their hand 

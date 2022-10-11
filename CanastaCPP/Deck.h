@@ -31,8 +31,8 @@ public:
 	Deck& operator = ( const Deck& a_other );
 
 	// getter functions
-	const std::vector<Card*> GetStock() const { return m_stock; }
-	const std::vector<Card*> GetDealt() const { return m_dealt;}
+	const std::vector<Card*> GetStock() const { return this->m_stock; }
+	const std::vector<Card*> GetDealt() const { return this->m_dealt;}
 
 	// returns true if m_stock is empty
 	bool IsStockEmpty() { return m_stock.empty(); }
@@ -43,8 +43,6 @@ public:
 	// prints the deck
 	void PrintDeck();
 
-	//todo: change this to private
-public:
 	// shuffels the cards in m_stock
 	bool Shuffel();
 

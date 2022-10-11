@@ -246,10 +246,9 @@ Algorithm:
 						this hand's vector
 Assistance Received: none
 ********************************************************************* */
-Hand::Hand( const Hand& a_other )
+Hand::Hand( const Hand& a_other ) :
+	m_hasCanasta( a_other.m_hasCanasta )
 {
-	this->m_hasCanasta = a_other.m_hasCanasta;
-
 	m_handCard.resize( a_other.m_handCard.size() );
 
 	std::vector<std::vector<Card*>>::iterator thisCurrVecIte = this->m_handCard.begin();
@@ -364,21 +363,30 @@ bool Hand::UpdateCanasta()
 /* *********************************************************************
 Function Name: AddCardToHand
 Purpose: to add a card to hand
-Parameters: 
+Parameters:
 			a_cardToAdd, a constant object of hand class passed by value.
 				It holds a hand object that is used to assign this
 				hand object.
-Return Value: true as it changes m_handCard
+Return Value: false if the card to add was red three else true
 Algorithm:
 			1) crete a new card using the passed parameters and push it
 				back to actual hand
-			2) return true to indicate a change was made to member
-				variable
+			2) if the card was red three meld it and return false
+			3) return true
 Assistance Received: none
 ********************************************************************* */
 bool Hand::AddCardToHand( const Card a_cardToAdd )
 {
+	// adding the card to the hand
 	m_handCard.begin()->push_back( new Card( a_cardToAdd ) );
+
+	// checking if the card was red three
+	if( a_cardToAdd.GetCardType() == ENUM_CardType::CARDTYPE_redThree )
+	{
+		AddRed3CardToMeld( m_handCard.at(0).size() - 1 );
+		return false;
+	}
+
 	return true;
 }
 
@@ -389,7 +397,7 @@ Parameters:
 			 a_cardToAdd, a constant object of hand class passed by value.
 				It holds a hand object that is used to assign this
 				hand object.
-Return Value: a pair of < bool, string >, < true, empty string > if the 
+Return Value: a pair of < bool, string >, < true, empty string > if the
 		card can be added to a meld . else  < false, message string >
 Algorithm:
 			1) if card is not a natural card return false
@@ -866,7 +874,7 @@ Assistance Received: none
 void Hand::PrintHand()
 {
 	// iterating over hand cards and calling GetRankSuit funciton
-	std::cout << "Hand: " << std::endl;
+	std::cout << "\t" << "Hand: " << std::endl;
 	std::vector<Card*>::iterator currPtr = m_handCard.front().begin();
 	while( currPtr != m_handCard.front().end() )
 	{
@@ -885,18 +893,18 @@ void Hand::PrintHand()
 			toPrint += " ";
 			++currPtr;
 		}
-		std::cout << std::setw( 5 ) << "";
+		std::cout << "\t" << std::setw( 5 ) << "";
 		std::cout << toPrint << std::endl;
 	}
 
 	std::cout << std::endl;
 
 	// iterating over rest of the m_handCards and print the meld
-	std::cout << "Melds: " << std::endl;
+	std::cout << "\t" << "Melds: " << std::endl;
 	std::vector<std::vector<Card*>>::iterator currMeldPtr = m_handCard.begin() + 1;
 	while( currMeldPtr != m_handCard.end() )
 	{
-		std::cout << std::setw( 5 ) << "";
+		std::cout << "\t" << std::setw( 5 ) << "";
 		std::vector<Card*>::iterator currPtr = currMeldPtr->begin();
 		while( currPtr != currMeldPtr->end() )
 		{

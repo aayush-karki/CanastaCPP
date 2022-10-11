@@ -23,84 +23,174 @@ int main()
 {
 	CanastaGame gameApp();
 
-	//std::vector<Card*> myCards;
+	////std::vector<Card*> myCards;
 
-	//myCards.push_back( new Card( 'J', '1' ) );
-	//myCards.push_back( new Card( 'J', '2' ) );
-	//myCards.push_back( new Card( 'k', 'd' ) );
-	//myCards.push_back( new Card( '2', 'c' ) );
-	//myCards.push_back( new Card( '3', 'd' ) );
-	//myCards.push_back( new Card( '3', 's' ) );
+	////myCards.push_back( new Card( 'J', '1' ) );
+	////myCards.push_back( new Card( 'J', '2' ) );
+	////myCards.push_back( new Card( 'k', 'd' ) );
+	////myCards.push_back( new Card( '2', 'c' ) );
+	////myCards.push_back( new Card( '3', 'd' ) );
+	////myCards.push_back( new Card( '3', 's' ) );
 
-	//for( auto currPtr = myCards.begin(); currPtr != myCards.end(); ++currPtr )
-	//{
-	//	( *currPtr )->Debug();
-	//}
+	////for( auto currPtr = myCards.begin(); currPtr != myCards.end(); ++currPtr )
+	////{
+	////	( *currPtr )->Debug();
+	////}
 
-	//std::cout << std::boolalpha << myCards[ 0 ]->GetRankSuit() << " == " << myCards[ 0 ]->GetRankSuit() << " " << ( *( myCards[ 0 ] ) == *( myCards[ 0 ] ) ) << std::endl;
-	//std::cout << std::boolalpha << myCards[ 0 ]->GetRankSuit() << " == " << myCards[ 1 ]->GetRankSuit() << " " << ( *( myCards[ 0 ] ) == *( myCards[ 1 ] ) ) << std::endl;
-	//std::cout << std::boolalpha << myCards[ 0 ]->GetRankSuit() << " != " << myCards[ 0 ]->GetRankSuit() << " " << ( *( myCards[ 0 ] ) != *( myCards[ 0 ] ) ) << std::endl;
-	//std::cout << std::boolalpha << myCards[ 0 ]->GetRankSuit() << " != " << myCards[ 1 ]->GetRankSuit() << " " << ( *( myCards[ 0 ] ) != *( myCards[ 1 ] ) ) << std::endl << std::endl;
+	////std::cout << std::boolalpha << myCards[ 0 ]->GetRankSuit() << " == " << myCards[ 0 ]->GetRankSuit() << " " << ( *( myCards[ 0 ] ) == *( myCards[ 0 ] ) ) << std::endl;
+	////std::cout << std::boolalpha << myCards[ 0 ]->GetRankSuit() << " == " << myCards[ 1 ]->GetRankSuit() << " " << ( *( myCards[ 0 ] ) == *( myCards[ 1 ] ) ) << std::endl;
+	////std::cout << std::boolalpha << myCards[ 0 ]->GetRankSuit() << " != " << myCards[ 0 ]->GetRankSuit() << " " << ( *( myCards[ 0 ] ) != *( myCards[ 0 ] ) ) << std::endl;
+	////std::cout << std::boolalpha << myCards[ 0 ]->GetRankSuit() << " != " << myCards[ 1 ]->GetRankSuit() << " " << ( *( myCards[ 0 ] ) != *( myCards[ 1 ] ) ) << std::endl << std::endl;
 
-	//std::cout << std::boolalpha << myCards[ 0 ]->GetRankSuit() << " <  " << myCards[ 1 ]->GetRankSuit() << " " << ( *( myCards[ 0 ] ) < *( myCards[ 1 ] ) ) << std::endl;
-	//std::cout << std::boolalpha << myCards[ 1 ]->GetRankSuit() << " <  " << myCards[ 0 ]->GetRankSuit() << " " << ( *( myCards[ 1 ] ) < *( myCards[ 0 ] ) ) << std::endl;
-	//std::cout << std::boolalpha << myCards[ 0 ]->GetRankSuit() << " <= " << myCards[ 1 ]->GetRankSuit() << " " << ( *( myCards[ 0 ] ) <= *( myCards[ 1 ] ) ) << std::endl;
-	//std::cout << std::boolalpha << myCards[ 1 ]->GetRankSuit() << " <= " << myCards[ 0 ]->GetRankSuit() << " " << ( *( myCards[ 1 ] ) <= *( myCards[ 0 ] ) ) << std::endl << std::endl;
+	////std::cout << std::boolalpha << myCards[ 0 ]->GetRankSuit() << " <  " << myCards[ 1 ]->GetRankSuit() << " " << ( *( myCards[ 0 ] ) < *( myCards[ 1 ] ) ) << std::endl;
+	////std::cout << std::boolalpha << myCards[ 1 ]->GetRankSuit() << " <  " << myCards[ 0 ]->GetRankSuit() << " " << ( *( myCards[ 1 ] ) < *( myCards[ 0 ] ) ) << std::endl;
+	////std::cout << std::boolalpha << myCards[ 0 ]->GetRankSuit() << " <= " << myCards[ 1 ]->GetRankSuit() << " " << ( *( myCards[ 0 ] ) <= *( myCards[ 1 ] ) ) << std::endl;
+	////std::cout << std::boolalpha << myCards[ 1 ]->GetRankSuit() << " <= " << myCards[ 0 ]->GetRankSuit() << " " << ( *( myCards[ 1 ] ) <= *( myCards[ 0 ] ) ) << std::endl << std::endl;
 
-	//std::cout << std::boolalpha << myCards[ 0 ]->GetRankSuit() << " > " << myCards[ 1 ]->GetRankSuit() << " " << ( *( myCards[ 0 ] ) > *( myCards[ 1 ] ) ) << std::endl;
-	//std::cout << std::boolalpha << myCards[ 1 ]->GetRankSuit() << " > " << myCards[ 0 ]->GetRankSuit() << " " << ( *( myCards[ 1 ] ) > *( myCards[ 0 ] ) ) << std::endl;
-	//std::cout << std::boolalpha << myCards[ 1 ]->GetRankSuit() << " >= " << myCards[ 0 ]->GetRankSuit() << " " << ( *( myCards[ 1 ] ) >= *( myCards[ 0 ] ) ) << std::endl;
-	//std::cout << std::boolalpha << myCards[ 0 ]->GetRankSuit() << " >= " << myCards[ 1 ]->GetRankSuit() << " " << ( *( myCards[ 0 ] ) >= *( myCards[ 1 ] ) ) << std::endl << std::endl;
+	////std::cout << std::boolalpha << myCards[ 0 ]->GetRankSuit() << " > " << myCards[ 1 ]->GetRankSuit() << " " << ( *( myCards[ 0 ] ) > *( myCards[ 1 ] ) ) << std::endl;
+	////std::cout << std::boolalpha << myCards[ 1 ]->GetRankSuit() << " > " << myCards[ 0 ]->GetRankSuit() << " " << ( *( myCards[ 1 ] ) > *( myCards[ 0 ] ) ) << std::endl;
+	////std::cout << std::boolalpha << myCards[ 1 ]->GetRankSuit() << " >= " << myCards[ 0 ]->GetRankSuit() << " " << ( *( myCards[ 1 ] ) >= *( myCards[ 0 ] ) ) << std::endl;
+	////std::cout << std::boolalpha << myCards[ 0 ]->GetRankSuit() << " >= " << myCards[ 1 ]->GetRankSuit() << " " << ( *( myCards[ 0 ] ) >= *( myCards[ 1 ] ) ) << std::endl << std::endl;
 
-	////std::cout << "copying last element of the vector" << std:: endl;
-	////Card* copyCard = new Card( *( *( --( myCards.end() ) ) ) );
-	////copyCard->Debug();
+	//////std::cout << "copying last element of the vector" << std:: endl;
+	//////Card* copyCard = new Card( *( *( --( myCards.end() ) ) ) );
+	//////copyCard->Debug();
 
-	////std::cout << "assginming last element of the vector" << std::endl;
-	////Card assignCard;
-	////assignCard = *copyCard;
+	//////std::cout << "assginming last element of the vector" << std::endl;
+	//////Card assignCard;
+	//////assignCard = *copyCard;
 
-	////assignCard.Debug();
+	//////assignCard.Debug();
 
-	//Deck myDeck;
-	//myDeck.PrintDeck();
+	////Deck myDeck;
+	////myDeck.PrintDeck();
 	////myDeck.Shuffel();
 	////myDeck.PrintDeck();
 
-	//myDeck.DealCard();
+	////myDeck.DealCard();
 
-	//myDeck.PrintDeck();
+	////myDeck.PrintDeck();
 
-	//Deck myDeck1( "6S 7D 2H 9S 3C 8H J2 2C KS XH QD 6C XC KD" );
-	//myDeck1.PrintDeck();
+	////Deck myDeck1( "6S 7D 2H 9S 3C 8H J2 2C KS XH QD 6C XC KD" );
+	////myDeck1.PrintDeck();
 
-	//Hand myhand( "2S QC QS 2C QC 3H", "[3H]" );
-	//myhand.PrintHand();
+	////Hand myhand( "2S QC QS 2C QC 3H", "[3H]" );
+	////myhand.PrintHand();
 
-	//Hand myhand2( myhand );
-	//myhand2.PrintHand();
+	////Hand myhand2( myhand );
+	////myhand2.PrintHand();
 
-	//Hand myhand3;
-	//myhand3 = myhand;
+	////Hand myhand3;
+	////myhand3 = myhand;
+	////myhand3.PrintHand();
+
+	////myhand3.AddCardToHand( Card( "QH" ) );
+	////myhand3.PrintHand();
+
+	////myhand3.AddRed3CardToMeld( 5  );
+	////myhand3.MakeMeld( { 0, 1, 2, 3 } );
+
+	////myhand3.PrintHand();
+
+	////myhand3.AddCardToHand( Card( "J1" ) );
+
+	////myhand3.AddWildCardToMeld( myhand3.GetTotalHandCardNum() - 1, myhand3.GetTotalMeldNum());
+	////myhand3.PrintHand();
+	////std::cout << myhand3.TallyPoints() << std::endl;
+
+	////myhand3.SwapHandCardPos( 0,1 );
+	////myhand3.PrintHand();
+	////myhand3.TakeOutWildCard( 3, myhand3.GetTotalMeldNum());
+	////myhand3.PrintHand();
+	////myhand3.TakeOutWildCard( 3, myhand3.GetTotalMeldNum() );
+	////myhand3.PrintHand();
+	////myhand3.TakeOutWildCard( 2, myhand3.GetTotalMeldNum() );
+	////myhand3.PrintHand();
+
+	////std::cout << myhand3.TallyPoints() << std::endl;
+	////myhand3.Discard(0);
+
+
+	////std::cout << myhand3.TallyPoints() << std::endl;
+
+
+	////Hand myHand4("J1 AS KS QS JS XS 9S 8S 7S 6S 5S 4S 3S 2S", "");
+	////
+	////myHand4.PrintHand();
+
+	//Player myPlayer( "2S QC QS 2C QC 3H", "[3H]" );
+	////myPlayer.PrintPlayer();
+
+	//Player myPlayer1( myPlayer );
+	//myPlayer1.PrintPlayer();
+
+	//std::cout << std::setw( 20 ) << std::setfill( '-' ) << "" << std::setfill( ' ' ) << std::endl;
+
+	//Player myPlayer2;
+	////myPlayer2.PrintPlayer();
+
+	//myPlayer2 = myPlayer1;
+	//myPlayer2.SetTotalPoint( 200 );
+	//myPlayer2.PrintPlayer();
+	//std::cout << std::setw( 20 ) << std::setfill( '-' ) << "" << std::setfill( ' ' ) << std::endl;
+
+	//myPlayer2.AddCardToHand( Card( "QH" ) );
+	//myPlayer2.PrintPlayer();
+	//std::cout << std::setw( 20 ) << std::setfill( '-' ) << "" << std::setfill( ' ' ) << std::endl;
+
+	//myPlayer2.AddToMeld( 5, 0 );
+	//myPlayer2.MakeNewMeld( { 0, 1, 2, 3 } );
+	//myPlayer2.PrintPlayer();
+	//std::cout << std::setw( 20 ) << std::setfill( '-' ) << "" << std::setfill( ' ' ) << std::endl;
+
+	//myPlayer2.AddToMeld( 0, 3 );
+	//myPlayer2.PickUpDiscardPile( std::stack<Card>( { Card( "QC" ),Card( "QS" ) } ) );
+	//myPlayer2.PrintPlayer();
+	//std::cout << std::setw( 20 ) << std::setfill( '-' ) << "" << std::setfill( ' ' ) << std::endl;
+
+	//myPlayer2.SwapHandCardPos( 0, 1 );
+	//myPlayer2.PrintPlayer();
+	//std::cout << std::setw( 20 ) << std::setfill( '-' ) << "" << std::setfill( ' ' ) << std::endl;
+
+	//myPlayer2.Discard( 0 );
+	//myPlayer2.PrintPlayer();
+	//std::cout << std::setw( 20 ) << std::setfill( '-' ) << "" << std::setfill( ' ' ) << std::endl;
+
+	//myPlayer2.TakeOutWildCard( 3, 3 );
+	//myPlayer2.PrintPlayer();
+	//std::cout << std::setw( 20 ) << std::setfill( '-' ) << "" << std::setfill( ' ' ) << std::endl;
+	//myPlayer2.AddToMeld( 0, 3 );
+	//myPlayer2.AddToMeld( 0, 3 );
+	//myPlayer2.AddToMeld( 0, 3 );
+	//myPlayer2.PrintPlayer();
+
+
+	//std::cout << std::setw( 20 ) << std::setfill( '-' ) << "" << std::setfill( ' ' ) << std::endl;
+
+	//std::cout << std::boolalpha << myPlayer2.CanAddToMeld( Card( "QS" ) ).first << std::endl;
+	//std::cout << std::boolalpha << myPlayer2.CanAddToMeld( Card( "KS" ) ).first << std::endl;
+
+
+	//std::cout << std::setw( 20 ) << std::setfill( '-' ) << "" << std::setfill( ' ' ) << std::endl;
+	////std::cout << std::boolalpha << myCards[ 0 ]->GetRankSuit() << " != " << myCards[ 1 ]->GetRankSuit() << " " << ( *( myCards[ 0 ] ) != *( myCards[ 1 ] ) ) << std::endl << std::endl;
+	//std::cout << std::boolalpha << myPlayer2.CanGoOut() << std::endl;
+	//std::cout << std::setw( 20 ) << std::setfill( '-' ) << "" << std::setfill( ' ' ) << std::endl;
+	///*
 	//myhand3.PrintHand();
 
-	//myhand3.AddCardToHand( Card( "QH" ) );
-	//myhand3.PrintHand();
-
-	//myhand3.AddRed3CardToMeld( 5  );
-	//myhand3.MakeMeld( { 0, 1, 2, 3 } );
+	//myhand3.AddRed3CardToMeld( 5 );
 
 	//myhand3.PrintHand();
 
 	//myhand3.AddCardToHand( Card( "J1" ) );
 
-	//myhand3.AddWildCardToMeld( myhand3.GetTotalHandCardNum() - 1, myhand3.GetTotalMeldNum());
+	//myhand3.AddWildCardToMeld( myhand3.GetTotalHandCardNum() - 1, myhand3.GetTotalMeldNum() );
 	//myhand3.PrintHand();
 	//std::cout << myhand3.TallyPoints() << std::endl;
 
-	//myhand3.SwapHandCardPos( 0,1 );
+	//myhand3.SwapHandCardPos( 0, 1 );
 	//myhand3.PrintHand();
-	//myhand3.TakeOutWildCard( 3, myhand3.GetTotalMeldNum());
+	//myhand3.TakeOutWildCard( 3, myhand3.GetTotalMeldNum() );
 	//myhand3.PrintHand();
 	//myhand3.TakeOutWildCard( 3, myhand3.GetTotalMeldNum() );
 	//myhand3.PrintHand();
@@ -108,101 +198,17 @@ int main()
 	//myhand3.PrintHand();
 
 	//std::cout << myhand3.TallyPoints() << std::endl;
-	//myhand3.Discard(0);
+	//myhand3.Discard( 0 );
 
 
-	//std::cout << myhand3.TallyPoints() << std::endl;
+	//std::cout << myhand3.TallyPoints() << std::endl;*/
 
+	//Round r;
+	//r.StartNewRound();
+	//r.PrintRound();
 
-	//Hand myHand4("J1 AS KS QS JS XS 9S 8S 7S 6S 5S 4S 3S 2S", "");
-	//
-	//myHand4.PrintHand();
-
-	Player myPlayer( "2S QC QS 2C QC 3H", "[3H]" );
-	//myPlayer.PrintPlayer();
-
-	Player myPlayer1( myPlayer );
-	myPlayer1.PrintPlayer();
-
-	std::cout << std::setw( 20 ) << std::setfill( '-' ) << "" << std::setfill( ' ' ) << std::endl;
-
-	Player myPlayer2;
-	//myPlayer2.PrintPlayer();
-
-	myPlayer2 = myPlayer1;
-	myPlayer2.SetTotalPoint( 200 );
-	myPlayer2.PrintPlayer();
-	std::cout << std::setw( 20 ) << std::setfill( '-' ) << "" << std::setfill( ' ' ) << std::endl;
-
-	myPlayer2.AddCardToHand( Card( "QH" ) );
-	myPlayer2.PrintPlayer();
-	std::cout << std::setw( 20 ) << std::setfill( '-' ) << "" << std::setfill( ' ' ) << std::endl;
-
-	myPlayer2.AddToMeld( 5, 0 );
-	myPlayer2.MakeNewMeld( { 0, 1, 2, 3 } );
-	myPlayer2.PrintPlayer();
-	std::cout << std::setw( 20 ) << std::setfill( '-' ) << "" << std::setfill( ' ' ) << std::endl;
-
-	myPlayer2.AddToMeld( 0, 3 );
-	myPlayer2.PickUpDiscardPile( std::stack<Card>( { Card( "QC" ),Card( "QS" ) } ) );
-	myPlayer2.PrintPlayer();
-	std::cout << std::setw( 20 ) << std::setfill( '-' ) << "" << std::setfill( ' ' ) << std::endl;
-
-	myPlayer2.SwapHandCardPos( 0, 1 );
-	myPlayer2.PrintPlayer();
-	std::cout << std::setw( 20 ) << std::setfill( '-' ) << "" << std::setfill( ' ' ) << std::endl;
-
-	myPlayer2.Discard( 0 );
-	myPlayer2.PrintPlayer();
-	std::cout << std::setw( 20 ) << std::setfill( '-' ) << "" << std::setfill( ' ' ) << std::endl;
-
-	myPlayer2.TakeOutWildCard( 3, 3 );
-	myPlayer2.PrintPlayer();
-	std::cout << std::setw( 20 ) << std::setfill( '-' ) << "" << std::setfill( ' ' ) << std::endl;
-	myPlayer2.AddToMeld( 0, 3 );
-	myPlayer2.AddToMeld( 0, 3 );
-	myPlayer2.AddToMeld( 0, 3 );
-	myPlayer2.PrintPlayer();
-
-
-	std::cout << std::setw( 20 ) << std::setfill( '-' ) << "" << std::setfill( ' ' ) << std::endl;
-
-	std::cout << std::boolalpha << myPlayer2.CanAddToMeld( Card( "QS" ) ).first << std::endl;
-	std::cout << std::boolalpha << myPlayer2.CanAddToMeld( Card( "KS" ) ).first << std::endl;
-
-
-	std::cout << std::setw( 20 ) << std::setfill( '-' ) << "" << std::setfill( ' ' ) << std::endl;
-	//std::cout << std::boolalpha << myCards[ 0 ]->GetRankSuit() << " != " << myCards[ 1 ]->GetRankSuit() << " " << ( *( myCards[ 0 ] ) != *( myCards[ 1 ] ) ) << std::endl << std::endl;
-	std::cout << std::boolalpha << myPlayer2.CanGoOut() << std::endl;
-	std::cout << std::setw( 20 ) << std::setfill( '-' ) << "" << std::setfill( ' ' ) << std::endl;
-	/*
-	myhand3.PrintHand();
-
-	myhand3.AddRed3CardToMeld( 5 );
-
-	myhand3.PrintHand();
-
-	myhand3.AddCardToHand( Card( "J1" ) );
-
-	myhand3.AddWildCardToMeld( myhand3.GetTotalHandCardNum() - 1, myhand3.GetTotalMeldNum() );
-	myhand3.PrintHand();
-	std::cout << myhand3.TallyPoints() << std::endl;
-
-	myhand3.SwapHandCardPos( 0, 1 );
-	myhand3.PrintHand();
-	myhand3.TakeOutWildCard( 3, myhand3.GetTotalMeldNum() );
-	myhand3.PrintHand();
-	myhand3.TakeOutWildCard( 3, myhand3.GetTotalMeldNum() );
-	myhand3.PrintHand();
-	myhand3.TakeOutWildCard( 2, myhand3.GetTotalMeldNum() );
-	myhand3.PrintHand();
-
-	std::cout << myhand3.TallyPoints() << std::endl;
-	myhand3.Discard( 0 );
-
-
-	std::cout << myhand3.TallyPoints() << std::endl;*/
-
+	CanastaGame game;
+	game.RunGame();
 
 	return 0;
 }

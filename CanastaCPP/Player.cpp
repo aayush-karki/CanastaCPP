@@ -56,12 +56,10 @@ Algorithm:
 			2) copy the m_totalPoint
 Assistance Received: none
 ********************************************************************* */
-Player::Player( const Player& a_other )
-{
-	// copying the data
-	this->m_playerHand = a_other.m_playerHand;
-	this->m_totalPoints = a_other.m_totalPoints;
-}
+Player::Player( const Player& a_other ) :
+	m_playerHand( a_other.m_playerHand ),
+	m_totalPoints( a_other.m_totalPoints )
+{}
 
 /* *********************************************************************
 Function Name: operator=
@@ -202,7 +200,6 @@ Assistance Received: none
 void Player::PrintPlayer()
 {
 	m_playerHand.PrintHand();
-	std::cout << std::setw( 18 ) << "This Round Score: " << std::setw(5) << TallyHandPoint() << std::endl;
-	std::cout << std::setw( 18 ) << "Total Score: " << std::setw( 5 ) << m_totalPoints << std::endl << std::endl;
+	std::cout << "\t" << "Player's Round Score: " << std::setw( 5 ) << TallyHandPoint() << std::endl;
+	std::cout << "\t" << "Player's Total Score: " << std::setw( 5 ) << m_totalPoints << std::endl << std::endl;
 }
-

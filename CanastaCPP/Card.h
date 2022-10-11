@@ -67,7 +67,7 @@ public:
 	Card( char a_rank = 'A', char a_suit = 'C' );
 
 	// constructor
-	Card( std::string a_rankSuit );
+	Card( const std::string a_rankSuit );
 
 	// default destructor
 	~Card() {};
