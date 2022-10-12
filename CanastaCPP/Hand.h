@@ -44,6 +44,9 @@ public:
 	// pass 0 for meldIdx for actual hand
 	const Card GetCardAtIdx( unsigned a_meldIdx, unsigned a_meldCardIdx ) const { return *( m_handCard.at( a_meldIdx ).at( a_meldCardIdx ) ); }
 
+	// getter function to get the melds of in the hand
+	const std::vector<std::vector<Card>> GetMelds() const;
+
 	// checks if the actual hand is empty 
 	bool IsActualHandEmpty() const { return m_handCard.begin()->empty(); }
 

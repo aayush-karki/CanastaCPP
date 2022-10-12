@@ -218,7 +218,10 @@ void Round::PrintRound()
 		<< std::setfill( ' ' ) << std::endl;
 
 	// printing any messages
-	PrintMessages();
+	Message::PrintMessages();
+
+	// clearing the printed messages
+	Message::ClearMessages();
 
 }
 
@@ -314,7 +317,7 @@ bool Round::StartNewRound()
 			}
 			else
 			{
-				m_messages.push_back( "Invalid Input!! Try Again!!" );
+				Message::AddMessage( "Invalid Input!! Try Again!!" );
 			}
 		} while( invalidInput );
 
@@ -323,12 +326,12 @@ bool Round::StartNewRound()
 		if( std::tolower( userInput.at( 0 ) ) == TossACoin() )
 		{
 			m_playerTurn = ENUM_PlayerTurn::TURN_player2;
-			m_messages.push_back( "You guess correctly! You start first" );
+			Message::AddMessage( "You guess correctly! You start first" );
 		}
 		else
 		{
 			m_playerTurn = ENUM_PlayerTurn::TURN_player1;
-			m_messages.push_back( "You guess incorrectly! Computer starts first" );
+			Message::AddMessage( "You guess incorrectly! Computer starts first" );
 		}
 	}
 
@@ -557,12 +560,11 @@ bool Round::TurnStartLogic()
 		std::cout << "\t2) Take a turn" << std::endl;
 		std::cout << "\t3) Ask for Help" << std::endl;
 		std::cout << "\t4) Quit the game and go to main menu" << std::endl;
-		std::cout << "\t5) Exit the program" << std::endl;
 		std::cout << std::endl;
 
 		if( !validInput )
 		{
-			std::cout << "Invalid Input!!" << std::endl;
+			std::cout << "Invalid Input!!" << std::endl << std::endl;
 		}
 		std::cout << "Enter a corresponding number: ";
 
@@ -604,7 +606,16 @@ bool Round::TurnStartLogic()
 		case 2:
 		{
 			// 2) Take a turn
-			std::cout << "take a turn selected" << std::endl;
+			//  when taking a turn player
+			// if it is the start of the turn player have 2 choices
+			//		a) draw a card from deck
+			//		b) pick up the discard pile
+			// else it is not the start of the round so they have 5 choices
+			//		a) add a card in hand to meld 
+			//		b) discard a card from hand
+			//		b) make a new meld
+			// 
+			//m_playerList.at( (unsigned)m_playerTurn )
 			break;
 		}
 		case 3:
@@ -630,33 +641,4 @@ bool Round::TurnStartLogic()
 
 	// if take a turn was pressed then returns true
 	return userInputInt != 4;
-}
-
-
-/* *********************************************************************
-Function Name: PrintMessages
-Purpose: To print out all the message in the
-		message vector. This prints the message and clears
-		the mesage list
-Parameters: none
-Return Value: none
-Algorithm:
-			1) for all the messages in the message vector print them
-			2) clear the message list
-Assistance Received: none
-********************************************************************* */
-void Round::PrintMessages()
-{
-	if( !m_messages.empty() )
-	{
-		std::cout << std::endl;
-
-		for( std::string message : m_messages )
-		{
-			std::cout << message << std::endl;
-		}
-	}
-	std::cout << std::endl;
-
-	m_messages.clear();
 }

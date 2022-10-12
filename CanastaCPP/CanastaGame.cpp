@@ -144,6 +144,8 @@ void CanastaGame::RunGame()
 	}
 
 	ClearScreen();
+	PrintGameTitle();
+
 	std::cout << "Thank you for Playing Canasta!!" << std::endl;
 }
 
@@ -173,22 +175,6 @@ Assistance Received: cplusplus forum
 void CanastaGame::ClearScreen()
 {
 	m_round->ClearScreen();
-}
-
-/* *********************************************************************
-Function Name: PrintRound
-Purpose: To print out the game with round information
-Parameters: none
-Return Value: none
-Algorithm:
-			1) Call PrintGameTitle()
-			2) Call m_round's PrintHand function
-Assistance Received: none
-********************************************************************* */
-void CanastaGame::PrintGame()
-{
-	// printing the round
-	m_round->PrintRound();
 }
 
 /* *********************************************************************

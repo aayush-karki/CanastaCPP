@@ -6,15 +6,15 @@
 ************************************************************/
 
 #pragma once
-#include <vector>
 #include "Player.h"
 #include "Deck.h"
+#include "Message.h"
 
 // list whose turn it could be 
 enum class ENUM_PlayerTurn
 {
 	// computer turn
-	TURN_player1,
+	TURN_player1 = 0,
 
 	// human's turn
 	TURN_player2,
@@ -57,6 +57,12 @@ public:
 	// adds a card to discardPile
 	bool AddToDiscardPile( Card a_cardToAdd ) { m_discardPile.push( a_cardToAdd ); }
 
+	// starts a new round
+	bool StartNewRound();
+
+	// Continues the round
+	bool ContinueRound();
+
 	// simulates a coin toss
 	char TossACoin() { return ( rand() / 2 ) == 0 ? 'h' : 't'; }
 
@@ -68,13 +74,6 @@ public:
 
 	// print the Game info
 	void PrintRound();
-
-	// starts a new round
-	bool StartNewRound();
-
-	// Continues the round
-	bool ContinueRound();
-
 private:
 	unsigned m_currRoundNum;
 
@@ -98,10 +97,10 @@ private:
 	// the last added to the pile help them in making a meld.
 	std::stack<Card> m_discardPile;
 
-	// m_messages holds the messages that player might need 
-	// as a result of their action
-	// TODO turn this in to a static message class
-	std::vector<std::string> m_messages;
+	// holds the state of current  turn
+	// is true if this is the start of the turn
+	bool m_isStartOfTurn;
+
 
 	// draws discard and stock pile
 	void PrintDiscardAndStock();
@@ -134,9 +133,6 @@ private:
 	// holds logic for the turn
 	bool TurnStartLogic();
 
-	// helper print function to print all the message in the 
-	// message vector. This prints the message and clears
-	// the mesage list 
-	void PrintMessages();
+
 };
 

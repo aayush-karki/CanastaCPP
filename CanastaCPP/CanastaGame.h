@@ -45,9 +45,6 @@ private:
 	// prtins the title of the game
 	void PrintGameTitle();
 
-	// prints the game
-	void PrintGame();
-
 	// holds logic for main menu
 	bool MainMenu();
 

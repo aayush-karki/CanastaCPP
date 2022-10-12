@@ -304,6 +304,46 @@ Hand& Hand::operator=( const Hand& a_other )
 	return *this;
 }
 
+
+/* *********************************************************************
+Function Name: GetMelds
+Purpose: Getter function to get the melds of in the hand
+Parameters: none
+Return Value:
+			const vector of vector of card containing all the
+				melds of the player hand
+Algorithm:
+			1) create vector of vector of card.
+			2) for each of the meld in player hand
+			3)		create a vector of card
+			4)		for each card in the meld create a temp card and
+						add that to the back of vector created in step 3
+			5)		add the vector created in step 3 to the vector created
+						in 1
+Assistance Received: none
+********************************************************************* */
+const std::vector<std::vector<Card>> Hand::GetMelds() const
+{
+	std::vector<std::vector<Card>> meldList;
+
+	// looping over hand's meld
+	for( unsigned meldIdx = 1; meldIdx < m_handCard.size(); ++meldIdx )
+	{
+		// creating current meld
+		std::vector<Card> meld;
+		for( unsigned cardIdx = 0; cardIdx < m_handCard.at( meldIdx ).size(); ++cardIdx )
+		{
+			// adding cards to the meld
+			meld.push_back( *( m_handCard.at( meldIdx ).at( cardIdx ) ) );
+		}
+
+		// adding meld to meld list
+		meldList.push_back( meld );
+	}
+
+	return meldList;
+}
+
 /* *********************************************************************
 Function Name: MeldHasWildCard
 Purpose: To check if the meld at given position has atleast one wildcard
@@ -383,7 +423,7 @@ bool Hand::AddCardToHand( const Card a_cardToAdd )
 	// checking if the card was red three
 	if( a_cardToAdd.GetCardType() == ENUM_CardType::CARDTYPE_redThree )
 	{
-		AddRed3CardToMeld( m_handCard.at(0).size() - 1 );
+		AddRed3CardToMeld( m_handCard.at( 0 ).size() - 1 );
 		return false;
 	}
 

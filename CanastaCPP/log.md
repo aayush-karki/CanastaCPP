@@ -149,10 +149,10 @@
 
 - Changed the Cards class to now use the capitalized rank and suit ( 30 minutes ).
 
-- Reworked the card's '<' relation operator. Tried to tweek the previously designed
-	algorithm to work with the new capitalized rank and suit, but found a massive
-	bug instead, so, decided to Redesign the algorith from scrap. Implemented, and
-	tested the new algorithm ( 2 hour ).
+- Reworked the card's '<' relation operator. Tried to tweek the previously 
+	designed algorithm to work with the new capitalized rank and suit, but 
+	found a massive bug instead, so, decided to Redesign the algorith from 
+	scrap. Implemented, and tested the new algorithm ( 2 hour ).
 
 - Added input validation for hand class member function then removed the again as 
 	I decided to valid the meldIdx and cardIdx as soon as users enters it
@@ -182,8 +182,8 @@
 
 ## Sep 26, 2022:
 
--  Populated the header file of Round Class with inline member function declaration
-	( 1 hour ).
+-  Populated the header file of Round Class with inline member function 
+	declaration ( 1 hour ).
 
 - Populated the source file of Round Class with Constructor, destructor,
 	copy constructor, assignment operator ( 1 hour ).
@@ -205,8 +205,8 @@
 
 ## Sep 28, 2022:
 
-- started the main game class. Populated the header file of CanastaGame Class with 
-	inline member function declaration ( 1 hour ).
+- started the main game class. Populated the header file of CanastaGame Class 
+	with inline member function declaration ( 1 hour ).
 
 - Populated the source file of Round Class with Constructor, destructor,
 	copy constructor, assignment operator ( 45 minutes ).
@@ -225,9 +225,9 @@
 	( 1 hour and 30 minutes ).
 
 - Trying to fix another bug where two lines were printed to the screen. Narrowed 
-	it down to something after the coin toss function is calling a card constructor
-	by sttepped through the card shows. But still have not figured out what is calling 
-	it ( 1 hour )
+	it down to something after the coin toss function is calling a card 
+	constructor by sttepped through the card shows. But still have not figured 
+	out what is calling it ( 1 hour )
 
 ###### Total: 2 hours 30 minutes
 
@@ -237,7 +237,11 @@
 - Continued to fix where coin toss function is calling a card constructor
 	by sttepped through the card shows. Managed to figure it out, it turns out
 	was comaparing string with a char and my best guess for why would be that 
-	the compiler was trying to be a good piece of software and was trying to convert string
-	into a card as the card has a compare function ( 1 hour ).
+	the compiler was trying to be a good piece of software and was trying to 
+	convert string into a card as the card has a compare function ( 1 hour ).
 
-###### Total: 2 hours 30 minutes
+- trying to see what the best mehtod to let player choose what to do. In the 
+	process created nessage class so that it is easy to send message form 
+	one class to another( 2 hour ).
+
+###### Total: 4 hours 00 minutes

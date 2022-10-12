@@ -78,10 +78,16 @@ public:
 	// assignment operator
 	Card& operator = ( const Card& a_other );
 
-	// Getter functions
+	// Getter functions to get rank
 	const char GetRank() const { return m_rank; }
+	
+	// Getter functions to get suit
 	const char GetSuit() const { return m_suit; }
+	
+	// Getter functions to get point
 	const unsigned GetPoint() const { return m_point; }
+	
+	// Getter functions to get card type
 	const ENUM_CardType GetCardType() const { return m_cardType; }
 
 	// returns the rank and suit as string 

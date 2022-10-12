@@ -32,7 +32,8 @@ public:
 	// gets the saved current point
 	const int GetTotalPoint() const { return m_totalPoints; }
 
-	// get player melds
+	// Get players melds
+	const std::vector<std::vector<Card>> GetMelds() const { m_playerHand.GetMelds(); };
 
 	// tallys the hand Point
 	const int TallyHandPoint() const { return m_playerHand.TallyPoints(); }
