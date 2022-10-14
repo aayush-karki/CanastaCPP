@@ -9,6 +9,7 @@
 #include <stack>
 #include <iomanip>
 #include "Hand.h"
+#include "Message.h"
 
 class Player
 {
@@ -80,6 +81,13 @@ public:
 	// prints the playern
 	void PrintPlayer();
 
+	// executes the before the turn start controller
+	virtual unsigned BeforeTurnStartControl();
+
+	// executes the player start of the turn logic
+	virtual std::pair<unsigned, std::vector<unsigned>> PlayerTurnController( const Player* a_otherPlayer,
+																			const std::stack<Card> a_discardPile );
+
 private:
 
 	// cards of the player
@@ -87,5 +95,13 @@ private:
 
 	// holds the point of the player
 	int m_totalPoints;
+
+	// holds the state of current  turn
+	// is true if this is the start of the turn
+	bool m_isStartOfTurn;
+
+	// holds the state of to whether to show menu that
+	// before the turn actually starts
+	bool m_showBeforeTurnMenu;
 };
 

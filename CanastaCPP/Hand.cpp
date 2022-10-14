@@ -427,6 +427,10 @@ bool Hand::AddCardToHand( const Card a_cardToAdd )
 		return false;
 	}
 
+
+	// sorting the hand card
+	SortMeld( 0 );
+
 	return true;
 }
 

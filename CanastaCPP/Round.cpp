@@ -68,10 +68,8 @@ Round::Round( const Round& a_other ) :
 	m_deck( a_other.m_deck )
 {
 	// copying the player list
-	for( unsigned idx = 0; idx < m_playerList.size(); ++idx )
-	{
-		this->m_playerList.push_back( new Player( *( a_other.m_playerList.at( idx ) ) ) );
-	}
+	m_playerList.push_back( new Player( *a_other.m_playerList.at( 0 ) ) );
+	m_playerList.push_back( new Player( *a_other.m_playerList.at( 1 ) ) );
 }
 
 /* *********************************************************************
@@ -220,9 +218,8 @@ void Round::PrintRound()
 	// printing any messages
 	Message::PrintMessages();
 
-	// clearing the printed messages
+	// clearing the messages
 	Message::ClearMessages();
-
 }
 
 /* *********************************************************************
@@ -338,15 +335,33 @@ bool Round::StartNewRound()
 	return false;
 }
 
+/* *********************************************************************
+Function Name: ContinueRound
+Purpose: Continues the round
+Parameters: none
+Return Value: false if player chose to go back to main menu
+Algorithm:
+			1) Call TurnStartLogic function
+Assistance Received: none
+********************************************************************* */
 bool Round::ContinueRound()
 {
+	PrintRound();
+
 	// starting the turn
-	if( !TurnStartLogic() )
-	{
-		// go back to main menu was pressed so
-		// returning
-		return false;
-	}
+	std::pair<unsigned, std::vector<unsigned>> playerChoice;
+	playerChoice = m_playerList.at( ( unsigned )m_playerTurn )->PlayerTurnController( m_playerList.at( ( unsigned )m_playerTurn ), m_discardPile );
+	
+	// logic for what to execute depending on what the choice was 
+	// 
+	//if( !playerChoice.first )
+	//{
+	//	// go back to main menu was pressed so
+	//	// returning
+	//	return false;
+	//}
+
+	return true;
 }
 
 /* *********************************************************************
@@ -528,117 +543,4 @@ void Round::Print2DiscardAnd2Stock( const std::string a_discardCard,
 	std::cout << "\t" << "|    | |" << std::setw( 8 ) << "" << "|    | |" << std::endl;
 	std::cout << "\t" << " ----  |" << std::setw( 8 ) << "" << " ----  |" << std::endl;
 	std::cout << "\t" << "  -----" << std::setw( 10 ) << "" << " -----" << std::endl;
-}
-
-
-/* *********************************************************************
-Function Name: TurnStartLogic
-Purpose: Contains the logic for start of the turn asks user for what to
-	do
-Parameters: none
-Return Value:
-			boolean value. If the return is false than quit the game
-				and go back to main menu wasselected;
-				else other option was selected
-Algorithm: none
-Assistance Received: cplusplus forum
-********************************************************************* */
-bool Round::TurnStartLogic()
-{
-	int userInputInt;
-	bool validInput = true;
-	do
-	{
-		// now Player have the following choices:
-		// 1) Save the game
-		// 2) Take a turn
-		// 3) Ask for Help
-		// 4) Quit the game and go to main menu
-		PrintRound();
-		std::cout << "Main Menu:" << std::endl;
-		std::cout << "\t1) Save the game" << std::endl;
-		std::cout << "\t2) Take a turn" << std::endl;
-		std::cout << "\t3) Ask for Help" << std::endl;
-		std::cout << "\t4) Quit the game and go to main menu" << std::endl;
-		std::cout << std::endl;
-
-		if( !validInput )
-		{
-			std::cout << "Invalid Input!!" << std::endl << std::endl;
-		}
-		std::cout << "Enter a corresponding number: ";
-
-		// used to get the userInput
-		std::string userInputStr;
-		std::getline( std::cin, userInputStr );
-
-		// validaing the userInput
-		// a valid user input is 1, or 2, or 3
-
-		if( userInputStr.size() == 1 && std::isdigit( userInputStr.at( 0 ) ) )
-		{
-
-			// chcecking if the user input is 1 or 2 or 3
-			userInputInt = std::stoi( userInputStr );
-
-			if( userInputInt >= 1 && userInputInt <= 5 )
-			{
-				validInput = true;
-				continue;
-			}
-		}
-
-		validInput = false;
-
-	} while( !validInput );
-
-	// doing what user chose
-	switch( userInputInt )
-	{
-		case 1:
-		{
-			// 1) Save the game
-			// TODO Call the save function
-			std::cout << "Save the game selected" << std::endl;
-
-			break;
-		}
-		case 2:
-		{
-			// 2) Take a turn
-			//  when taking a turn player
-			// if it is the start of the turn player have 2 choices
-			//		a) draw a card from deck
-			//		b) pick up the discard pile
-			// else it is not the start of the round so they have 5 choices
-			//		a) add a card in hand to meld 
-			//		b) discard a card from hand
-			//		b) make a new meld
-			// 
-			//m_playerList.at( (unsigned)m_playerTurn )
-			break;
-		}
-		case 3:
-		{
-			// 3) Ask for Help
-			std::cout << "ask for help selected" << std::endl;
-
-			break;
-		}
-		case 4:
-		{
-			// 4) Quit the game and go to main menu
-			std::cout << "quit game and go to main menu selected" << std::endl;
-			break;
-		}
-		default:
-		{
-			std::cerr << "This should never be printed." << std::endl;
-			std::cerr << "\tplayer choice menu default" << std::endl;
-			break;
-		}
-	}
-
-	// if take a turn was pressed then returns true
-	return userInputInt != 4;
 }

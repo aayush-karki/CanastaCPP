@@ -18,7 +18,8 @@ Algorithm:
 Assistance Received: none
 ********************************************************************* */
 Player::Player()
-	: m_playerHand(), m_totalPoints( 0 )
+	: m_playerHand(), m_totalPoints( 0 ),
+	m_isStartOfTurn( true ), m_showBeforeTurnMenu( true )
 {}
 
 /* *********************************************************************
@@ -39,7 +40,8 @@ Algorithm:
 Assistance Received: cplusplus
 ********************************************************************* */
 Player::Player( std::string a_handCards, std::string a_meldCards ) :
-	m_playerHand( a_handCards, a_meldCards ), m_totalPoints( 0 )
+	m_playerHand( a_handCards, a_meldCards ), m_totalPoints( 0 ),
+	m_isStartOfTurn( true ), m_showBeforeTurnMenu( true )
 {}
 
 /* *********************************************************************
@@ -58,7 +60,9 @@ Assistance Received: none
 ********************************************************************* */
 Player::Player( const Player& a_other ) :
 	m_playerHand( a_other.m_playerHand ),
-	m_totalPoints( a_other.m_totalPoints )
+	m_totalPoints( a_other.m_totalPoints ),
+	m_isStartOfTurn( a_other.m_isStartOfTurn ),
+	m_showBeforeTurnMenu( a_other.m_showBeforeTurnMenu )
 {}
 
 /* *********************************************************************
@@ -88,6 +92,8 @@ Player& Player::operator=( const Player& a_other )
 
 	// coypying of the passed player's hand
 	this->m_playerHand = a_other.m_playerHand;
+	this->m_isStartOfTurn = a_other.m_isStartOfTurn;
+	this->m_showBeforeTurnMenu = a_other.m_showBeforeTurnMenu;
 	this->m_totalPoints = a_other.GetTotalPoint();
 
 	return *this;
@@ -202,4 +208,157 @@ void Player::PrintPlayer()
 	m_playerHand.PrintHand();
 	std::cout << "\t" << "Player's Round Score: " << std::setw( 5 ) << TallyHandPoint() << std::endl;
 	std::cout << "\t" << "Player's Total Score: " << std::setw( 5 ) << m_totalPoints << std::endl << std::endl;
+}
+
+/* *********************************************************************
+Function Name: BeforeTurnStartControl
+Purpose: Contains the controller for before a turn starts 
+	and asks the user to chose from "Save the game", "Take a turn" , 
+	"Ask for Help", or "Quit the game and go to main menu"
+Parameters: none
+Return Value:
+			unsigned value. If the return is the selected menu item index
+Algorithm: none
+Assistance Received: none
+********************************************************************* */
+unsigned Player::BeforeTurnStartControl()
+{
+	unsigned userInputInt;
+	bool validInput = true;
+	do
+	{
+		// now Player have the following choices:
+		// 1) Save the game
+		// 2) Take a turn
+		// 3) Ask for Help
+		// 4) Quit the game and go to main menu
+		std::cout << "Menu:" << std::endl;
+		std::cout << "\t1) Save the game" << std::endl;
+		std::cout << "\t2) Take a turn" << std::endl;
+		std::cout << "\t3) Ask for Help" << std::endl;
+		std::cout << "\t4) Quit the game and go to main menu" << std::endl;
+		std::cout << std::endl;
+
+		if( !validInput )
+		{
+			Message::AddMessage( "Invalid Input!!" );
+		}
+		std::cout << "Enter a corresponding number: ";
+
+		// used to get the userInput
+		std::string userInputStr;
+		std::getline( std::cin, userInputStr );
+
+		// validaing the userInput
+		// a valid user input is 1, or 2, or 3
+
+		if( userInputStr.size() == 1 && std::isdigit( userInputStr.at( 0 ) ) )
+		{
+
+			// chcecking if the user input is 1 or 2 or 3
+			userInputInt = std::stoi( userInputStr );
+
+			if( userInputInt >= 1 && userInputInt <= 4 )
+			{
+				return  userInputInt;
+			}
+		}
+
+		validInput = false;
+
+	} while( !validInput );
+
+
+	//// doing what user chose
+	//switch( userInputInt )
+	//{
+	//	case 1:
+	//	{
+	//		// 1) Save the game
+	//		// TODO Call the save function
+	//		std::cout << "Save the game selected" << std::endl;
+
+	//		break;
+	//	}
+	//	case 2:
+	//	{
+	//		// 2) Take a turn
+	//		//  when taking a turn player
+	//		// if it is the start of the turn player have 2 choices
+	//		//		a) draw a card from deck
+	//		//		b) pick up the discard pile
+	//		// else it is not the start of the round so they have 5 choices
+	//		//		a) add a card in hand to meld 
+	//		//		b) discard a card from hand
+	//		//		b) make a new meld
+	//				c) ask for help
+	//		//		d) sort // maybe auto sort ?
+	//				e) swap the hand
+	//		// 
+	//		//m_playerList.at( (unsigned)m_playerTurn )
+	//		if( m_isStartOfTurn )
+	//		{
+	//			//bool Player
+	//		}
+	//		break;
+	//	}
+	//	case 3:
+	//	{
+	//		// 3) Ask for Help
+	//		std::cout << "ask for help selected" << std::endl;
+
+	//		break;
+	//	}
+	//	case 4:
+	//	{
+	//		// 4) Quit the game and go to main menu
+	//		std::cout << "quit game and go to main menu selected" << std::endl;
+	//		return { true, 4 };
+	//		break;
+	//	}
+	//	default:
+	//	{
+	//		std::cerr << "This should never be printed." << std::endl;
+	//		std::cerr << "\tplayer choice menu default" << std::endl;
+	//		return { false, -1 };
+	//		break;
+	//	}
+	//}
+
+	//// if take a turn was pressed then returns true
+	//return { userInputInt != 4, -1 };
+}
+
+/* *********************************************************************
+Function Name: PlayerTurnController
+Purpose: Contains the logic for start of the turn asks user for what to
+	do
+Parameters: none
+Return Value:
+			pair of <integer ,  std::vector<unsigned>>. The first interger 
+			indicates where this was--that is beforeTurnStartLogic, 
+			turnStartLlogic, or afterTurnStartLogic. the second is vector
+			of unsinged integer whose first elemetn is always the sub menu
+			index and every thing after that is what the m
+Algorithm: none
+Assistance Received: none
+********************************************************************* */
+std::pair<unsigned, std::vector<unsigned>> Player::PlayerTurnController( const Player* a_otherPlayer,
+																		const std::stack<Card> a_discardPile )
+{
+	
+	std::pair<unsigned, std::vector<unsigned>> playerResponse = {10,  std::vector<unsigned>()};
+
+	if( m_isStartOfTurn )
+	{
+		playerResponse.first = BeforeTurnStartControl();
+
+		// checking if the player responded with 2 then take a turn was selected
+		// then in the next loop before turn start control should not be displayed
+		m_isStartOfTurn = ( playerResponse.first != 2 );
+	}
+
+
+
+	return playerResponse;
 }

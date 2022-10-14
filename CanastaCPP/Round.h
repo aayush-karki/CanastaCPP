@@ -6,7 +6,8 @@
 ************************************************************/
 
 #pragma once
-#include "Player.h"
+#include "Computer.h"
+#include "Human.h"
 #include "Deck.h"
 #include "Message.h"
 
@@ -45,6 +46,10 @@ public:
 	// Gets the rankSuit of the top card in the discard pile
 	const std::string GetDiscardPileTopRankSuit() const { return m_discardPile.top().GetRankSuit(); }
 
+	// gets the not the current player
+	const Player* GetOtherPlayer() { return m_playerTurn == ENUM_PlayerTurn::TURN_player1 ? m_playerList.back():m_playerList.front();}
+
+
 	// Checks if the round is over
 	bool IsRoundOver() const { return m_playerList.front()->CanGoOut() && m_playerList.back()->CanGoOut(); }
 
@@ -60,7 +65,6 @@ public:
 	// starts a new round
 	bool StartNewRound();
 
-	// Continues the round
 	bool ContinueRound();
 
 	// simulates a coin toss
@@ -97,11 +101,6 @@ private:
 	// the last added to the pile help them in making a meld.
 	std::stack<Card> m_discardPile;
 
-	// holds the state of current  turn
-	// is true if this is the start of the turn
-	bool m_isStartOfTurn;
-
-
 	// draws discard and stock pile
 	void PrintDiscardAndStock();
 
@@ -129,10 +128,5 @@ private:
 	// in case there are no card discard pile show NA
 	void Print2DiscardAnd2Stock( const std::string a_discardCard,
 								 const std::string a_handCard );
-
-	// holds logic for the turn
-	bool TurnStartLogic();
-
-
 };
 

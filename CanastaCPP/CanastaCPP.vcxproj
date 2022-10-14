@@ -141,8 +141,10 @@
   <ItemGroup>
     <ClCompile Include="CanastaGame.cpp" />
     <ClCompile Include="Card.cpp" />
+    <ClCompile Include="Computer.cpp" />
     <ClCompile Include="Deck.cpp" />
     <ClCompile Include="Hand.cpp" />
+    <ClCompile Include="Human.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Message.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -151,8 +153,10 @@
   <ItemGroup>
     <ClInclude Include="CanastaGame.h" />
     <ClInclude Include="Card.h" />
+    <ClInclude Include="Computer.h" />
     <ClInclude Include="Deck.h" />
     <ClInclude Include="Hand.h" />
+    <ClInclude Include="Human.h" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Round.h" />
