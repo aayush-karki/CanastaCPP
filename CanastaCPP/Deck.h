@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <string>
 #include <sstream>
+#include <random>
 #include "Card.h"
 
 class Deck

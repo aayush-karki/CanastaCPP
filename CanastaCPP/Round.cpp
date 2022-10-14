@@ -21,7 +21,7 @@ Algorithm:
 Assistance Received: none
 ********************************************************************* */
 Round::Round() :
-	m_currRoundNum( 1 ), m_roundOver( false ),
+	m_currRoundNum( 1 ), m_roundOver( false ), m_roundStart(true),
 	m_playerTurn( ENUM_PlayerTurn::TURN_uninitialized ),
 	m_deck()
 {
@@ -64,6 +64,7 @@ Assistance Received: none
 Round::Round( const Round& a_other ) :
 	m_currRoundNum( a_other.m_currRoundNum ),
 	m_roundOver( a_other.m_roundOver ),
+	m_roundStart( a_other.m_roundStart ),
 	m_playerTurn( a_other.m_playerTurn ),
 	m_deck( a_other.m_deck )
 {
@@ -99,6 +100,7 @@ Round& Round::operator=( const Round& a_other )
 	// copying the data
 	this->m_currRoundNum = a_other.m_currRoundNum;
 	this->m_roundOver = a_other.m_roundOver;
+	this->m_roundStart = a_other.m_roundStart;
 	this->m_playerTurn = a_other.m_playerTurn;
 	this->m_deck = a_other.m_deck;
 
@@ -213,7 +215,7 @@ void Round::PrintRound()
 	std::cout << "Player:" << std::endl;
 	m_playerList.back()->PrintPlayer();
 	std::cout << std::setw( 50 ) << std::setfill( '-' ) << ""
-		<< std::setfill( ' ' ) << std::endl;
+		<< std::setfill( ' ' ) << std::endl << std::endl;
 
 	// printing any messages
 	Message::PrintMessages();
@@ -284,13 +286,13 @@ bool Round::StartNewRound()
 	// seeing who goes first
 	if( m_playerList.front()->GetTotalPoint() > m_playerList.back()->GetTotalPoint() )
 	{
-		// player 1 has more points so it goes first
-		m_playerTurn = ENUM_PlayerTurn::TURN_player1;
+		// computer has more points so it goes first
+		m_playerTurn = ENUM_PlayerTurn::TURN_computer;
 	}
 	else if( m_playerList.back()->GetTotalPoint() > m_playerList.front()->GetTotalPoint() )
 	{
-		// player 2 has more points so it goes first
-		m_playerTurn = ENUM_PlayerTurn::TURN_player2;
+		// human has more points so it goes first
+		m_playerTurn = ENUM_PlayerTurn::TURN_human;
 	}
 	else
 	{
@@ -319,15 +321,14 @@ bool Round::StartNewRound()
 		} while( invalidInput );
 
 		// tossing a coin
-		// TODO figure out why is calling a card ctor ?????????? so confused
 		if( std::tolower( userInput.at( 0 ) ) == TossACoin() )
 		{
-			m_playerTurn = ENUM_PlayerTurn::TURN_player2;
+			m_playerTurn = ENUM_PlayerTurn::TURN_human;
 			Message::AddMessage( "You guess correctly! You start first" );
 		}
 		else
 		{
-			m_playerTurn = ENUM_PlayerTurn::TURN_player1;
+			m_playerTurn = ENUM_PlayerTurn::TURN_computer;
 			Message::AddMessage( "You guess incorrectly! Computer starts first" );
 		}
 	}

@@ -15,10 +15,10 @@
 enum class ENUM_PlayerTurn
 {
 	// computer turn
-	TURN_player1 = 0,
+	TURN_computer = 0,
 
 	// human's turn
-	TURN_player2,
+	TURN_human,
 
 	// default value
 	TURN_uninitialized
@@ -40,15 +40,17 @@ public:
 	// assignment operator
 	Round& operator = ( const Round& a_other );
 
-	// getter function to ge tteh discard pile
+	// getter function to get the current round number
+	const unsigned GetCurrRoundNum() { return m_currRoundNum; }
+
+	// getter function to get the discard pile
 	const std::stack<Card> GetDiscardPile() const { return m_discardPile; }
 
 	// Gets the rankSuit of the top card in the discard pile
 	const std::string GetDiscardPileTopRankSuit() const { return m_discardPile.top().GetRankSuit(); }
 
 	// gets the not the current player
-	const Player* GetOtherPlayer() { return m_playerTurn == ENUM_PlayerTurn::TURN_player1 ? m_playerList.back():m_playerList.front();}
-
+	const Player* GetOtherPlayer() { return m_playerTurn == ENUM_PlayerTurn::TURN_computer ? m_playerList.back() : m_playerList.front(); }
 
 	// Checks if the round is over
 	bool IsRoundOver() const { return m_playerList.front()->CanGoOut() && m_playerList.back()->CanGoOut(); }
@@ -79,9 +81,15 @@ public:
 	// print the Game info
 	void PrintRound();
 private:
+
+	// holds the current round number
 	unsigned m_currRoundNum;
 
+	// indicates if the round is over or not
 	bool m_roundOver;
+
+	// indicates if it is currently start of the round or not
+	bool m_roundStart;
 
 	// m_playerTurn holds whose turn it could be
 	ENUM_PlayerTurn m_playerTurn;

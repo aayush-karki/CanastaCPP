@@ -378,7 +378,9 @@ bool Deck::Shuffel()
 {
 	// moving all the card in m_dealt to m_stock
 	ConsodilateDeck();
-	std::random_shuffle( m_stock.begin(), m_stock.end() );
+
+	// TODO use a std::chrono::system_clock::now().time_since_epoch().count(); insted of 1 for seed
+	std::shuffle( m_stock.begin(), m_stock.end(), std::default_random_engine( 1 ) );
 
 	return true;
 }

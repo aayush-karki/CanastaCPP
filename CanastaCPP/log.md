@@ -241,7 +241,55 @@
 	convert string into a card as the card has a compare function ( 1 hour ).
 
 - trying to see what the best mehtod to let player choose what to do. In the 
-	process created nessage class so that it is easy to send message form 
-	one class to another( 2 hour ).
+	process added message vector in the round class ( 2 hour ).
 
 ###### Total: 4 hours 00 minutes
+
+## Oct 12, 2022:
+
+- Till now, the game was designed using the Model view controller principle, 
+	but as this was the first time using that principle for a console app, 
+	got confused and tried to replan how the logic of the game should be out 
+	laid out. So looked into passed project and tried to anyaniz them 
+	( 2 hours )
+
+- moved the message to its own static class ( 15 minutes ).
+
+- Designed and implemented the main menu logic ( 45 minutes ).
+
+- Started working on the sub menu--menu which contains the save option that 
+	is shown before the turn start. In the process started working on the player
+	logic (  1 hour 30 minutes ). 
+
+- Spend a lot of time to designing how the polymorphim  for the player class
+	will work and how the computer will do its action ( 2 hours)
+
+- Set up the computer and human class ( 30 minutes ) 
+
+###### Total: 7 hours 00 minutes
+
+## Oct 13, 2022:
+
+- Refactor the canastagame code. Moved the save menu funciton to round class
+	( 1 hour ).
+
+- Decided to remove most of the while funciton to make the game more liner and 
+	less confusing. Broke main menu function to controller and logic funciton
+	and removed the while loop in it ( 1 hour 15 minutes ).
+
+- Set up the FileAccess class for serialization and started populating it 
+	( 2 hours )
+
+- Designed and impelented the open file and create new file. 
+	Iterated the open file and create new file couple of times to cover as 
+	almost all of the edge cases ( 1 hour 15 minutes ).
+
+- Researched the copy constructor and assignment operator for the FileAccess
+	class, as the same file can only be opened once at a time. Ended up 
+	using '= delete' on the copy constructor and assignment operator for 
+	the FileAccess class ( 1 hour and 30 minutes ).
+
+- Started filling the main menu class and started on the saveToFile and 
+	loadFromFile funcition ( 1 hour and 30 minutes ).
+
+###### Total: 8 hours 30 minutes

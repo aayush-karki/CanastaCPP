@@ -88,6 +88,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -102,6 +103,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -143,6 +145,7 @@
     <ClCompile Include="Card.cpp" />
     <ClCompile Include="Computer.cpp" />
     <ClCompile Include="Deck.cpp" />
+    <ClCompile Include="FileAccess.cpp" />
     <ClCompile Include="Hand.cpp" />
     <ClCompile Include="Human.cpp" />
     <ClCompile Include="main.cpp" />
@@ -155,6 +158,7 @@
     <ClInclude Include="Card.h" />
     <ClInclude Include="Computer.h" />
     <ClInclude Include="Deck.h" />
+    <ClInclude Include="FileAccess.h" />
     <ClInclude Include="Hand.h" />
     <ClInclude Include="Human.h" />
     <ClInclude Include="Message.h" />

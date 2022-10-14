@@ -7,6 +7,7 @@
 
 #pragma once
 #include "Round.h"
+#include "FileAccess.h"
 
 class CanastaGame
 {
@@ -17,8 +18,8 @@ public:
 	// default destructor
 	~CanastaGame();
 
-	// copy constructor
-	CanastaGame( const CanastaGame& a_other );
+	// copy constructor 
+	CanastaGame( const CanastaGame& a_other ) ;
 
 	// assignment operator
 	CanastaGame& operator=( const CanastaGame& a_other );
@@ -37,7 +38,10 @@ private:
 	// holds boolean value show main menu or not
 	bool m_showMainMenu;
 
-	std::string m_saveFile;
+	// holds the file acess object that allows to open from file
+	FileAccess m_fileObj;
+
+	//std::string m_saveFileName;
 
 	// clears the round
 	void ClearScreen();
@@ -45,16 +49,15 @@ private:
 	// prtins the title of the game
 	void PrintGameTitle();
 
-	// holds logic for main menu
-	bool MainMenu();
+	// asks for player's input given the main menu prompt
+	std::pair<bool, unsigned> MainMenuController();
 
+	// executes the selected main menu
+	bool MainMenuLogic( unsigned a_userChoice );
+
+	// saves the game to file
+	bool SaveToFile();
+
+	// loads the game from file
+	bool LoadFormFile();
 };
-
-// TODO more the turn start logic in to round class as it is the logic for the 
-//		the round. and every thing we need is in the round
-// TODO move the print Game Title in to the round class and move the clear screen
-//		into the round class
-// TODO when inside the round class player should not be able to quit the game.
-//		instead they should be able to come back to main menu
-// 
-//
