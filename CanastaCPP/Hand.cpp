@@ -304,6 +304,32 @@ Hand& Hand::operator=( const Hand& a_other )
 	return *this;
 }
 
+/* *********************************************************************
+Function Name: GetActualHand
+Purpose: Getter function to get the actual hand--that is card that
+	are not in melds
+Parameters: none
+Return Value:
+			const vector of card containing all the
+				cards that are not in melds of the player hand
+Algorithm:
+			1) create a vector of card
+			2)	for each card in the meld create a temp card and
+					add that to the back of vector created in step 1
+Assistance Received: none
+********************************************************************* */
+const std::vector<Card> Hand::GetActualHand() const
+{
+	// creating actual hand
+	std::vector<Card> actualHand;
+	for( unsigned cardIdx = 0; cardIdx < m_handCard.front().size(); ++cardIdx )
+	{
+		// adding cards to the actual hand
+		actualHand.push_back( *( m_handCard.front().at( cardIdx ) ) );
+	}
+
+	return actualHand;
+}
 
 /* *********************************************************************
 Function Name: GetMelds
@@ -342,6 +368,111 @@ const std::vector<std::vector<Card>> Hand::GetMelds() const
 	}
 
 	return meldList;
+}
+
+/* *********************************************************************
+Function Name: GetActualHandString
+Purpose: Getter function to get the actual hand--that is card that
+	are not in melds in string format
+Parameters: none
+Return Value:
+			const string, containing the rank and suit of
+				cards which represents player's actual hand. Each card
+				is seperated by blank space. And the first rankSuit pair
+				represent the card that is going to be dealt next.
+Algorithm:
+			1) create a string
+			2)	for each card in the actual hand add that to the back of 
+				string created in step 1
+Assistance Received: none
+********************************************************************* */
+const std::string Hand::GetActualHandString() const
+{
+	// if the are no card in the hand return ""
+	if( m_handCard.front().empty() )
+	{
+		return "";
+	}
+
+	// creating actual hand
+	std::string actualHandStr = "";
+	for( unsigned cardIdx = 0; cardIdx < m_handCard.front().size(); ++cardIdx )
+	{
+		// adding cards to the string
+		actualHandStr += m_handCard.front().at( cardIdx )->GetRankSuit() + " ";
+	}
+
+	// removing the last " "
+	std::string actualHandStrNoLastSpace = "";
+
+	for( unsigned strIdx = 0; strIdx < actualHandStr.size() - 1; ++strIdx )
+	{
+		actualHandStrNoLastSpace += actualHandStr.at( strIdx );
+	}
+
+	return actualHandStrNoLastSpace;
+}
+
+/* *********************************************************************
+Function Name: GetMelds
+Purpose: Getter function to get the melds of in the hand
+Parameters: none
+Return Value:
+			const string, containing all the cards that are in melds
+				of the player hand in string format. it is stored as 
+				[rs] [rs] []
+Algorithm:
+			1) create vector of vector of card.
+			2) for each of the meld in player hand
+			3)		create a vector of card
+			4)		for each card in the meld create a temp card and
+						add that to the back of vector created in step 3
+			5)		add the vector created in step 3 to the vector created
+						in 1
+Assistance Received: none
+********************************************************************* */
+const std::string Hand::GetMeldsString() const
+{
+	// if the are no melds return ""
+	if( m_handCard.size() == 1 )
+	{
+		return "";
+	}
+
+	std::string meldListStr ="";
+	// looping over hand's meld
+	for( unsigned meldIdx = 1; meldIdx < m_handCard.size(); ++meldIdx )
+	{
+		meldListStr += "[";
+
+		std::string currMeldStr = "";
+		for( unsigned cardIdx = 0; cardIdx < m_handCard.at( meldIdx ).size(); ++cardIdx )
+		{
+			// adding cards to the string
+			currMeldStr += m_handCard.at( meldIdx ).at( cardIdx )->GetRankSuit() + " ";
+		}
+
+		// removing the last " "
+		std::string currMeldStrNoLastSpace = "";
+
+		for( unsigned strIdx = 0; strIdx < currMeldStr.size() - 1; ++strIdx )
+		{
+			currMeldStrNoLastSpace += currMeldStr.at( strIdx );
+		}
+
+		// adding meld to meld list
+		meldListStr += currMeldStrNoLastSpace + "] ";
+	}
+
+	// removing the last " "
+	std::string currMeldListNoLastSpace = "";
+
+	for( unsigned strIdx = 0; strIdx < meldListStr.size() - 1; ++strIdx )
+	{
+		currMeldListNoLastSpace += meldListStr.at( strIdx );
+	}
+
+	return currMeldListNoLastSpace;
 }
 
 /* *********************************************************************
@@ -915,11 +1046,11 @@ Algorithm:
 				each vectors of cards by calling GetRankSuit()
 Assistance Received: none
 ********************************************************************* */
-void Hand::PrintHand()
+void Hand::PrintHand() const
 {
 	// iterating over hand cards and calling GetRankSuit funciton
 	std::cout << "\t" << "Hand: " << std::endl;
-	std::vector<Card*>::iterator currPtr = m_handCard.front().begin();
+	std::vector<Card*>::const_iterator currPtr = m_handCard.front().begin();
 	while( currPtr != m_handCard.front().end() )
 	{
 
@@ -945,11 +1076,11 @@ void Hand::PrintHand()
 
 	// iterating over rest of the m_handCards and print the meld
 	std::cout << "\t" << "Melds: " << std::endl;
-	std::vector<std::vector<Card*>>::iterator currMeldPtr = m_handCard.begin() + 1;
+	std::vector<std::vector<Card*>>::const_iterator currMeldPtr = m_handCard.begin() + 1;
 	while( currMeldPtr != m_handCard.end() )
 	{
 		std::cout << "\t" << std::setw( 5 ) << "";
-		std::vector<Card*>::iterator currPtr = currMeldPtr->begin();
+		std::vector<Card*>::const_iterator currPtr = currMeldPtr->begin();
 		while( currPtr != currMeldPtr->end() )
 		{
 			std::cout << ( *currPtr )->GetRankSuit() << " ";

@@ -93,17 +93,17 @@ Algorithm:
 				14) deal tempDeck
 			15) swap the m_stock of tempDeck with the m_dealt of this deck
 			16) swap the m_dealt of tempDeck with the m_stock of this deck
-Assistance Received: cppreference
+Assistance Received: none
 ********************************************************************* */
 Deck::Deck( std::string a_stock )
 {
 	// initailizing the temp deck
 	Deck tempDeck;
 
-	// extracting the rank and suit
-	// this extracted rankSuit is in the same order of as the deck
+	// extracting the card of the temp deck
+	// this extracted card is in the same order of as the deck
 	// so to find at what pos our stock card is in the deck we 
-	// can use this extracted ranksuit
+	// use this extracted ranksuit.
 	std::vector<std::string> RankSuitList;
 	std::vector<Card*>::iterator currStockCardPtr = tempDeck.m_stock.begin();
 
@@ -138,7 +138,7 @@ Deck::Deck( std::string a_stock )
 		{
 			std::cerr << "Extracted Rank and Suit not in the unswapped list!!!!!"
 				<< std::endl;
-			exit( -1 );
+			continue;
 		}
 
 		// gettng the index of the rank and suit in the vector
@@ -261,7 +261,7 @@ Algorithm:
 				this object
 			4) swap the m_dealt of the temp deck object with m_dealt of
 				this object
-Assistance Received: cppreference, stackoverflow forum
+Assistance Received: none
 ********************************************************************* */
 Deck& Deck::operator=( const Deck& a_other )
 {
@@ -280,6 +280,49 @@ Deck& Deck::operator=( const Deck& a_other )
 }
 
 /* *********************************************************************
+Function Name: GetStockString
+Purpose: Getter function to get the stock in the string format
+Parameters: none
+Return Value:
+			const string, containing the rank and suit of
+				cards which represents stock in the deck. Each card
+				is seperated by blank space. And the first rankSuit pair
+				represent the card that is going to be dealt next.
+Algorithm:
+			1) create a string
+			2)	for each card in the stock add that to the back of s
+				tring created in step 1
+Assistance Received: none
+********************************************************************* */
+const std::string Deck::GetStockString() const
+{
+	// if the are no card in the stock return ""
+	if( m_stock.empty() )
+	{
+		return "";
+	}
+
+	// creating actual hand
+	std::string stockStr = "";
+	for( unsigned cardIdx = 0; cardIdx < m_stock.size(); ++cardIdx )
+	{
+		// adding cards to the string
+		stockStr += m_stock.at( cardIdx )->GetRankSuit() + " ";
+	}
+
+	// removing the last " "
+	std::string actualHandStrNoLastSpace = "";
+
+	for( unsigned strIdx = 0; strIdx < stockStr.size() - 1; ++strIdx )
+	{
+		actualHandStrNoLastSpace += stockStr.at( strIdx );
+	}
+
+	std::cout << actualHandStrNoLastSpace << ":::::" <<std::endl;
+	return actualHandStrNoLastSpace;
+}
+
+/* *********************************************************************
 Function Name: DealCard
 Purpose: to return a card from m_stock and move it from m_stock
 	to m_dealt
@@ -288,10 +331,12 @@ Return Value: a Card that was in the end of m_stock, returns by value
 Algorithm:
 			1) moves the card at the end of m_stock to m_dealt
 			2) return the card
-Assistance Received: cppreference, stackoverflow forum
+Assistance Received: none
 ********************************************************************* */
 const Card Deck::DealCard()
 {
+	// we do not need to deallocate the card from stock as we are 
+	// pushing it to dealt
 	m_dealt.push_back( m_stock.at( 0 ) );
 	m_stock.at( 0 ) = nullptr;
 	m_stock.erase( m_stock.begin() );
@@ -307,7 +352,7 @@ Return Value: none
 Algorithm:
 			1) print m_stock 10 at a time
 			2) print m_dealt 10 at a time
-Assistance Received: cppreference
+Assistance Received: none
 ********************************************************************* */
 void Deck::PrintDeck()
 {
@@ -407,6 +452,8 @@ bool Deck::ConsodilateDeck()
 		*currPtr = nullptr;
 		++currPtr;
 	}
+
+	m_dealt.clear();
 
 	return true;
 }

@@ -19,7 +19,7 @@ Algorithm:
 Assistance Received: none
 ********************************************************************* */
 CanastaGame::CanastaGame() :
-	m_exit( false ), m_showMainMenu( true ), m_fileObj(), 
+	m_exit( false ), m_showMainMenu( true ), m_fileObj(),
 	m_round( nullptr )
 {
 	m_round = new Round();
@@ -44,7 +44,7 @@ CanastaGame::~CanastaGame()
 Function Name: CanastaGame
 Purpose: To create a new CanastaGame object and copy the passed
 			CanastaGame object's member variables data into the newly
-			created CanastaGame object. It does not copy the FileAceess 
+			created CanastaGame object. It does not copy the FileAceess
 			member variable of the passed object, but calls its default
 			constructor.
 Parameters:
@@ -61,7 +61,7 @@ Assistance Received: none
 ********************************************************************* */
 CanastaGame::CanastaGame( const CanastaGame& a_other ) :
 	m_exit( false ), m_showMainMenu( true ), m_fileObj(),
-	 m_round(nullptr)
+	m_round( nullptr )
 {
 	this->m_round = new Round( *( a_other.m_round ) );
 }
@@ -73,7 +73,7 @@ Purpose: To copy the passed CanastaGame object's member variables
 Parameters:
 			a_other, a constant object of CanastaGame class passed by
 				reference. It holds a CanastaGame object that is used
-				to assign this CanastaGame object. It does not copy the 
+				to assign this CanastaGame object. It does not copy the
 				FileAceess member variable of the passed object.
 Return Value: its own memory address
 Algorithm:
@@ -102,6 +102,7 @@ CanastaGame& CanastaGame::operator=( const CanastaGame& a_other )
 	// close the file if it is open 
 	m_fileObj.CloseFile();
 
+
 	return *this;
 }
 
@@ -117,7 +118,7 @@ void CanastaGame::RunGame()
 {
 	// starting the game
 	// this is going to run till player eixts
-	std::pair<bool,unsigned> playerMainMenuChoice;
+	std::pair<bool, unsigned> playerMainMenuChoice;
 
 	while( !m_exit )
 	{
@@ -129,16 +130,27 @@ void CanastaGame::RunGame()
 			// print messages if any
 			Message::PrintMessages();
 			Message::ClearMessages();
-			
+
 			// executing the logic for main menu and checking 
 			// if quit was pressed
 			playerMainMenuChoice = MainMenuController();
-			
+
 			// do not execute the rest of the loop if the player input is 
-			if( !playerMainMenuChoice.first  )
+			if( !playerMainMenuChoice.first )
 			{
 				continue;
 			}
+
+			// executing the menu logic
+			// if it is false then either player pressed quit or
+			// player input was invalid either way we turn on the 
+			// main menu
+			if( !MainMenuLogic( playerMainMenuChoice.second ) )
+			{
+				m_showMainMenu = true;
+				continue;
+			}
+
 		}
 
 		// at this point game is seted up whether by loading a saved 
@@ -212,7 +224,7 @@ Return Value:
 Algorithm:
 		1) print the option, and the prompt
 		2) get the input from user and validate it
-		3) if the user input is valid then set the state of 
+		3) if the user input is valid then set the state of
 			showMainMenu choice to false and return true and user input
 			else return false and 5
 Assistance Received: none
@@ -225,7 +237,7 @@ std::pair<bool, unsigned> CanastaGame::MainMenuController()
 	// 1) start a new game,
 	// 2) load a game
 	// 3) quit
-	
+
 	std::cout << "Main Menu:" << std::endl;
 	std::cout << "\t1) Start a new game" << std::endl;
 	std::cout << "\t2) Load a game" << std::endl;
@@ -264,10 +276,10 @@ std::pair<bool, unsigned> CanastaGame::MainMenuController()
 Function Name: MainMenuLogic
 Purpose: Contains the logic for main menu
 Parameters:
-		a_userChoice, unsinged interger. Holds the user choice for 
+		a_userChoice, unsinged interger. Holds the user choice for
 			the menu
 Return Value:
-			boolean value. false if the user quit the game or user input an invalid 
+			boolean value. false if the user quit the game or user input an invalid
 				filename; else ture.
 Algorithm:
 		Todo fix me
@@ -318,33 +330,34 @@ bool CanastaGame::MainMenuLogic( unsigned a_userChoice )
 		m_round = new Round();
 		m_round->StartNewRound();
 
-		// save the current round to the file
-		SaveToFile();
+		// opening of the a file
+		if( !SaveToFile() )
+		{
+			// file failed to save failed
+			m_showMainMenu = true;
+			return false;
+		}
 		return true;
 	}
 	// 2) load a game
 	else
 	{
 		// opening of the a file
-		if( !m_fileObj.CreateFile( userFileName ) )
+		if( !m_fileObj.OpenFile( userFileName ) || !LoadFormFile() )
 		{
-			// opening of the file failed
+			// opening or loading of the file failed
 			m_showMainMenu = true;
 			return false;
 		}
 
-		// TODO call the load function
-		LoadFormFile();
-		// TODO deleme me and replace me by creating a round by using the data from the file
-		delete m_round;
-		m_round = new Round();
 		return true;
 	}
 
 	// if quit was pressed then returns false
 	return false;
-	
+
 }
+
 
 /* *********************************************************************
 Function Name: SaveToFile
@@ -353,35 +366,177 @@ Parameters: none
 Return Value:
 			boolean value. false if the save was unsuccessfull; else true
 Algorithm:
-		1) print the option, and the prompt
-		2) get the input from user and validate it
-		3) if the user input is valid then set the state of
-			showMainMenu choice to false and return true and user input
-			else return false and 5
+		1) create a string
+		2) add all the data to save to the string
+		3) write the data to the file
 Assistance Received: none
 ********************************************************************* */
 bool CanastaGame::SaveToFile()
 {
+	std::string gameData = "";
+	// saving the current round
+	gameData += "Round: " + std::to_string( m_round->GetCurrRoundNum() ) + "\n\n";
+
+	// saving the computer information
+	const Player* playerPtr = m_round->GetComputerPlayerPtr();
+	gameData += "Computer:\n";
+	gameData += "\tScore: " + std::to_string( playerPtr->GetTotalPoint() ) + "\n";
+	gameData += "\tHand: " + playerPtr->GetActualHandString() + "\n";
+	gameData += "\tMelds: " + playerPtr->GetMeldsString() + "\n\n";
+
+	// saving the human information
+	playerPtr = m_round->GetHumanPlayerPtr();
+	gameData += "Human:\n";
+	gameData += "\tScore: " + std::to_string( playerPtr->GetTotalPoint() ) + "\n";
+	gameData += "\tHand: " + playerPtr->GetActualHandString() + "\n";
+	gameData += "\tMelds: " + playerPtr->GetMeldsString() + "\n\n";
+
+	// saving the stock information
+	gameData += "Stock: " + m_round->GetStockString() + "\n";
+	gameData += "Discard: " + m_round->GetDiscardedPile() + "\n\n";
+
+	gameData += "Next Player: ";
+
+	switch( m_round->GetPlayerTurn() )
+	{
+		case ENUM_PlayerTurn::TURN_computer:
+			gameData += "Computer";
+			break;
+		case ENUM_PlayerTurn::TURN_human:
+			gameData += "Human";
+			break;
+		default:
+			// this should never happen 
+			gameData += "Uninitialized";
+			break;
+	}
+
 	// remove all the content from the file
 	m_fileObj.RemoveAllContent();
 
-	// saving the current round
-	if( !m_fileObj.WriteOneLineToFile( "Round: " + std::to_string( m_round->GetCurrRoundNum()) + "\n") )
-	{
-		return false;
-	}
-	
-	// saving the computer information
-	//if( !m_fileObj.WriteOneLineToFile( "Computer:\n\tScore: " + std::to_string( m_round->Get() ) + "\n" ) )
+	if( !m_fileObj.WriteOneLineToFile( gameData ) )
 	{
 		return false;
 	}
 
-
+	Message::AddMessage( "Game successfully saved!" );
 	return true;;
 }
 
+/* *********************************************************************
+Function Name: LoadFormFile
+Purpose: loads the game from the file
+Parameters: none
+Return Value:
+			boolean value. false if the load was unsuccessfull; else true
+Algorithm:
+		1) create a string
+		2) add all the data to save to the string
+		3) write the data to the file
+Assistance Received: none
+********************************************************************* */
 bool CanastaGame::LoadFormFile()
 {
-	return false;
+	std::vector<std::string> dataLineList;
+	dataLineList.resize( 10, "" );
+
+	// the 10 data tha we want to get in order are:
+	// 1) round number
+	// 2) computer score
+	// 3) computer hand
+	// 4) computer meld
+	// 5) human score
+	// 6) human hand
+	// 7) human meld
+	// 8) stock
+	// 9) discard pile
+	// 10) next player
+
+	// getting the data
+	for( unsigned dataIdx = 0; dataIdx < dataLineList.size(); ++dataIdx )
+	{
+		// get the next line untill it get non empty line
+		std::string nextLine = "";
+		while( nextLine == "" )
+		{
+			if( !m_fileObj.GetNextLine( nextLine ) )
+			{
+				return false;
+			}
+
+			// ignoring "Computer:" and "Human:" line
+			if( nextLine == "Computer:" || nextLine == "Human:" )
+			{
+				nextLine = "";
+				continue;
+			}
+		}
+
+		// adding the non empty line to the dataList
+		dataLineList.at( dataIdx ) = nextLine;
+	}
+
+	// for all the lines remove the text before ':'
+	for( unsigned dataIdx = 0; dataIdx < dataLineList.size(); ++dataIdx )
+	{
+		// finding the positoin of ':'
+		std::size_t colonPos = dataLineList.at( dataIdx ).find_first_of( ':' );
+
+		// if ':' not found it can only be corrupted file
+		if( colonPos == std::string::npos )
+		{
+			Message::AddMessage( "Corrupted file!" );
+			return false;
+		}
+		// copying everything after the : + 1 as imediatly after it is a space
+		dataLineList.at( dataIdx ) = dataLineList.at( dataIdx ).substr( colonPos + 2 );
+	}
+
+	// extracting all numerical data into their respective data type
+	// the first data is the round 
+	unsigned roundNum = 0;
+	std::stringstream stringBuffer( dataLineList.front() );
+	stringBuffer >> roundNum;
+
+	// computer score is the second data
+	unsigned computerScore = 0;
+	stringBuffer << dataLineList.at( 1 );
+	stringBuffer >> computerScore;
+
+	// human score is the fifth data
+	unsigned humanScore = 0;
+	stringBuffer << dataLineList.at( 4 );
+	stringBuffer >> humanScore;
+
+	// next player turn is the last data
+	ENUM_PlayerTurn playerTurn;
+
+	if( dataLineList.back() == "Human" )
+	{
+		playerTurn = ENUM_PlayerTurn::TURN_human;
+	}
+	else if( dataLineList.back() == "Computer" )
+	{
+		playerTurn = ENUM_PlayerTurn::TURN_computer;
+	}
+	else
+	{
+		// this should never run 
+		playerTurn = ENUM_PlayerTurn::TURN_uninitialized;
+	}
+
+	// initializing the game
+	delete m_round;
+	m_round = new Round( roundNum,
+						 playerTurn,
+						 computerScore,
+						 dataLineList.at( 2 ),
+						 dataLineList.at( 3 ),
+						 humanScore,
+						 dataLineList.at( 5 ),
+						 dataLineList.at( 6 ),
+						 dataLineList.at( 7 ),
+						 dataLineList.at( 8 ) );
+
+	return true;
 }

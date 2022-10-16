@@ -10,7 +10,35 @@
 /* *********************************************************************
 Function Name: Round
 Purpose: To construct a Round object and to populate its member variables.
-Parameters: none
+Parameters:
+			a_currRoundNum, unsigned integer representing the current
+				round number.
+			a_playerTurn, ENUM_PlayerTurn represting whose turn it is right
+				now.
+			a_compTotalScore, a unsinged integer containing the comp's
+				total score.
+			a_compActualHand, a string containing the rank and suit of
+				cards which represents comp's actual hand card. Each card
+				is seperated by blank space.
+			a_compMelds, a string containing the rank and suit of cards
+				which represents comp's meld. Each card is seperated by
+				blank space and each meld is inside '[' and ']'
+			a_humanTotalScore, a unsinged integer containing the human's
+				total score.
+			a_humanActualHand, a string containing the rank and suit of
+				cards which represents human's actual hand card. Each card
+				is seperated by blank space.
+			a_humanMelds, a string containing the rank and suit of cards
+				which represents human's meld. Each card is seperated by
+				blank space and each meld is inside '[' and ']'
+			a_stockCards, a string containing the rank and suit of
+				cards which represents stock in the deck. Each card
+				is seperated by blank space. And the first rankSuit pair
+				represent the card that is going to be dealt next.
+			a_discardPile, a string containing the rank and suit of
+				cards which represents discarded pile. Each card
+				is seperated by blank space. And the first rankSuit pair
+				represent the most recently discarded card
 Return Value: none
 Algorithm:
 		1) set m_currRoundNum to 1
@@ -18,16 +46,54 @@ Algorithm:
 		3) set m_playerTurn to ENUM_PlayerTurn::TURN_uninitialized
 		4) set initialize m_deck
 		5) dynamically create 2 new player and add it to m_playerList
+		6) populate the discard pile
 Assistance Received: none
 ********************************************************************* */
-Round::Round() :
-	m_currRoundNum( 1 ), m_roundOver( false ), m_roundStart(true),
-	m_playerTurn( ENUM_PlayerTurn::TURN_uninitialized ),
-	m_deck()
+Round::Round( unsigned a_currRoundNum,
+			  ENUM_PlayerTurn a_playerTurn,
+			  unsigned a_compTotalScore,
+			  std::string a_compActualHand,
+			  std::string a_compMelds,
+			  unsigned a_humanTotalScore,
+			  std::string a_humanActualHand,
+			  std::string a_humanMelds,
+			  std::string a_stockCards,
+			  std::string a_discardPile ) :
+	m_currRoundNum( a_currRoundNum ),
+	m_roundOver( false ),
+	m_roundStart( true ),
+	m_playerTurn( a_playerTurn ),
+	m_deck( a_stockCards )
 {
 	// initializing 2 players
-	m_playerList.push_back( new Player() );
-	m_playerList.push_back( new Player() );
+	m_playerList.push_back( new Player( a_compTotalScore,
+										a_compActualHand,
+										a_compMelds ) );
+	m_playerList.push_back( new Player( a_humanTotalScore,
+										a_humanActualHand,
+										a_humanMelds ) );
+
+	// initialize the discard Pile
+	std::stringstream passedStringStream( a_discardPile );
+	std::string extractdRankSuit = "";
+
+	// populaitng the vector at 0th index of m_handCard
+	// as the 0th vector is the place where the hand card are placed
+
+	// populating the a tempDiscardPile
+	m_discardPile.reserve( a_discardPile.size() / 3 + 5 );
+	while( passedStringStream >> extractdRankSuit )
+	{
+		// validaitng the size of the extracted string
+		if( extractdRankSuit.size() != 2 )
+		{
+			std::cerr << "Extracted Rank and Suit in the m_handCards is not length 2" << std::endl;
+			continue;
+		}
+
+		m_discardPile.insert( m_discardPile.begin(), Card( extractdRankSuit ) );
+	}
+
 }
 
 /* *********************************************************************
@@ -125,10 +191,7 @@ Assistance Received: none
 bool Round::EmptyDiscardPile()
 {
 	// poping out the whole stack
-	while( !m_discardPile.empty() )
-	{
-		m_discardPile.pop();
-	}
+	m_discardPile.empty();
 
 	return m_discardPile.empty();
 }
@@ -280,6 +343,9 @@ bool Round::StartNewRound()
 			wildOrRedThree = false;
 		}
 
+		// adding to discard pile
+		m_discardPile.push_back( dealtCard );
+
 	} while( wildOrRedThree );
 
 	// round setup is complete 
@@ -352,7 +418,7 @@ bool Round::ContinueRound()
 	// starting the turn
 	std::pair<unsigned, std::vector<unsigned>> playerChoice;
 	playerChoice = m_playerList.at( ( unsigned )m_playerTurn )->PlayerTurnController( m_playerList.at( ( unsigned )m_playerTurn ), m_discardPile );
-	
+
 	// logic for what to execute depending on what the choice was 
 	// 
 	//if( !playerChoice.first )
@@ -397,33 +463,33 @@ void Round::PrintDiscardAndStock()
 	// when discard pile has 1 card and stock is empty
 	else if( m_discardPile.size() == 1 && m_deck.IsStockEmpty() == true )
 	{
-		Print1DiscardAnd1Stock( m_discardPile.top().GetRankSuit(), "NA" );
+		Print1DiscardAnd1Stock( m_discardPile.back().GetRankSuit(), "NA" );
 	}
 	//when discard pile has 1 card and stock has 1 card
 	else if( m_discardPile.size() == 1 && m_deck.GetStock().size() == 1 )
 	{
-		Print1DiscardAnd1Stock( m_discardPile.top().GetRankSuit(), "**" );
+		Print1DiscardAnd1Stock( m_discardPile.back().GetRankSuit(), "**" );
 	}
 	// when discard pile has 1 card and stock more than 1 card
 	else if( m_discardPile.size() == 1 && m_deck.GetStock().size() > 1 )
 	{
-		Print1DiscardAnd2Stock( m_discardPile.top().GetRankSuit(), "**" );
+		Print1DiscardAnd2Stock( m_discardPile.back().GetRankSuit(), "**" );
 
 	}
 	// when discard pile has mroe than 1 card and stock is empty
 	else if( m_discardPile.size() > 1 && m_deck.IsStockEmpty() == true )
 	{
-		Print2DiscardAnd1Stock( m_discardPile.top().GetRankSuit(), "NA" );
+		Print2DiscardAnd1Stock( m_discardPile.back().GetRankSuit(), "NA" );
 	}
 	//when discard pile has more than 1 card and stock has 1 card
 	else if( m_discardPile.size() > 1 && m_deck.GetStock().size() == 1 )
 	{
-		Print2DiscardAnd1Stock( m_discardPile.top().GetRankSuit(), "**" );
+		Print2DiscardAnd1Stock( m_discardPile.back().GetRankSuit(), "**" );
 	}
 	// when discard pile has more than 1 card and stock more than 1 card
 	else if( m_discardPile.size() > 1 && m_deck.GetStock().size() > 1 )
 	{
-		Print2DiscardAnd2Stock( m_discardPile.top().GetRankSuit(), "**" );
+		Print2DiscardAnd2Stock( m_discardPile.back().GetRankSuit(), "**" );
 	}
 	std::cout << "\t" << "Discard Pile" << std::setw( 5 ) << "" << "Stock Pile" << std::endl;
 }

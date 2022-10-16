@@ -9,24 +9,11 @@
 
 /* *********************************************************************
 Function Name: Player
-Purpose: To construct a Player object and to populate its member variables.
-Parameters: none
-Return Value: none
-Algorithm:
-		1) call default constructor for m_playerHand
-		2) set the m_totalPoints to 0
-Assistance Received: none
-********************************************************************* */
-Player::Player()
-	: m_playerHand(), m_totalPoints( 0 ),
-	m_isStartOfTurn( true ), m_showBeforeTurnMenu( true )
-{}
-
-/* *********************************************************************
-Function Name: Player
-Purpose: To construct a Player object and to populate its member variables
-		m_playerHand is populated using the passed parameter.
+Purpose: default construct a Player object and to populate its member
+		variables m_playerHand is populated using the passed parameter.
 Parameters:
+			a_totalScore, a unsinged integer containing the player's
+				total score.
 			a_handCards, a string containing the rank and suit of cards.
 				Each card is seperated by blank space.
 			a_meldCards, a string containing the rank and suit of cards
@@ -39,9 +26,13 @@ Algorithm:
 			2) set the m_totalPoints to 0
 Assistance Received: cplusplus
 ********************************************************************* */
-Player::Player( std::string a_handCards, std::string a_meldCards ) :
-	m_playerHand( a_handCards, a_meldCards ), m_totalPoints( 0 ),
-	m_isStartOfTurn( true ), m_showBeforeTurnMenu( true )
+Player::Player( unsigned a_totalScore,
+				std::string a_handCards,
+				std::string a_meldCards ) :
+	m_playerHand( a_handCards, a_meldCards ),
+	m_totalPoints( a_totalScore ),
+	m_isStartOfTurn( true ),
+	m_showBeforeTurnMenu( true )
 {}
 
 /* *********************************************************************
@@ -203,7 +194,7 @@ Algorithm:
 			2) Print this round score and total score
 Assistance Received: none
 ********************************************************************* */
-void Player::PrintPlayer()
+void Player::PrintPlayer() const
 {
 	m_playerHand.PrintHand();
 	std::cout << "\t" << "Player's Round Score: " << std::setw( 5 ) << TallyHandPoint() << std::endl;
@@ -212,8 +203,8 @@ void Player::PrintPlayer()
 
 /* *********************************************************************
 Function Name: BeforeTurnStartControl
-Purpose: Contains the controller for before a turn starts 
-	and asks the user to chose from "Save the game", "Take a turn" , 
+Purpose: Contains the controller for before a turn starts
+	and asks the user to chose from "Save the game", "Take a turn" ,
 	"Ask for Help", or "Quit the game and go to main menu"
 Parameters: none
 Return Value:
@@ -287,6 +278,8 @@ unsigned Player::BeforeTurnStartControl()
 	//		// if it is the start of the turn player have 2 choices
 	//		//		a) draw a card from deck
 	//		//		b) pick up the discard pile
+	//		//		c) show discard pile
+	//		//		d) show stock card (for debugging)
 	//		// else it is not the start of the round so they have 5 choices
 	//		//		a) add a card in hand to meld 
 	//		//		b) discard a card from hand
@@ -335,8 +328,8 @@ Purpose: Contains the logic for start of the turn asks user for what to
 	do
 Parameters: none
 Return Value:
-			pair of <integer ,  std::vector<unsigned>>. The first interger 
-			indicates where this was--that is beforeTurnStartLogic, 
+			pair of <integer ,  std::vector<unsigned>>. The first interger
+			indicates where this was--that is beforeTurnStartLogic,
 			turnStartLlogic, or afterTurnStartLogic. the second is vector
 			of unsinged integer whose first elemetn is always the sub menu
 			index and every thing after that is what the m
@@ -344,10 +337,10 @@ Algorithm: none
 Assistance Received: none
 ********************************************************************* */
 std::pair<unsigned, std::vector<unsigned>> Player::PlayerTurnController( const Player* a_otherPlayer,
-																		const std::stack<Card> a_discardPile )
+																		 const std::vector<Card> a_discardPile )
 {
-	
-	std::pair<unsigned, std::vector<unsigned>> playerResponse = {10,  std::vector<unsigned>()};
+
+	std::pair<unsigned, std::vector<unsigned>> playerResponse = { 10,  std::vector<unsigned>() };
 
 	if( m_isStartOfTurn )
 	{

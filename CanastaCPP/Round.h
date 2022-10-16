@@ -29,7 +29,16 @@ class Round
 public:
 
 	// default constructor
-	Round();
+	Round( unsigned a_currRoundNum = 1,
+		   ENUM_PlayerTurn a_playerTurn = ENUM_PlayerTurn::TURN_uninitialized,
+		   unsigned a_compTotalScore = 0,
+		   std::string a_compActualHand = "",
+		   std::string a_compMelds = "",
+		   unsigned a_humanTotalScore = 0,
+		   std::string a_humanActualHand = "",
+		   std::string a_humanMelds = "",
+		   std::string a_stockCards = "",
+		   std::string a_discardPile = "" );
 
 	// default destructor
 	~Round();
@@ -44,13 +53,34 @@ public:
 	const unsigned GetCurrRoundNum() { return m_currRoundNum; }
 
 	// getter function to get the discard pile
-	const std::stack<Card> GetDiscardPile() const { return m_discardPile; }
+	const std::vector<Card> GetDiscardPile() const { return m_discardPile; }
+
+	//// getter function to get the discard pile
+	//const std::stack<Card> GetDiscardPileString() const { return m_discardPile; }
 
 	// Gets the rankSuit of the top card in the discard pile
-	const std::string GetDiscardPileTopRankSuit() const { return m_discardPile.top().GetRankSuit(); }
+	const std::string GetDiscardPileTopRankSuit() const { return m_discardPile.back().GetRankSuit(); }
+
+	// gets the current player
+	const Player* GetCurrPlayerPtr() const { return m_playerList.at( ( unsigned )m_playerTurn ); }
 
 	// gets the not the current player
-	const Player* GetOtherPlayer() { return m_playerTurn == ENUM_PlayerTurn::TURN_computer ? m_playerList.back() : m_playerList.front(); }
+	const Player* GetOtherPlayerPtr() const { return m_playerTurn == ENUM_PlayerTurn::TURN_computer ? m_playerList.front() : m_playerList.back(); }
+
+	// gets the computer player
+	const Player* GetComputerPlayerPtr() const { return m_playerList.front(); }
+
+	// gets the human player
+	const Player* GetHumanPlayerPtr() const { return m_playerList.back(); }
+
+	// Get stock in string format
+	const std::string GetStockString() const { return m_deck.GetStockString(); };
+
+	// Get discard pile in string format
+	const std::string GetDiscardedPile() const { return Card::ConvertVecToString( m_discardPile ); }
+
+	// get the player turn 
+	const ENUM_PlayerTurn GetPlayerTurn() const { return m_playerTurn; }
 
 	// Checks if the round is over
 	bool IsRoundOver() const { return m_playerList.front()->CanGoOut() && m_playerList.back()->CanGoOut(); }
@@ -62,7 +92,7 @@ public:
 	bool EmptyDiscardPile();
 
 	// adds a card to discardPile
-	bool AddToDiscardPile( Card a_cardToAdd ) { m_discardPile.push( a_cardToAdd ); }
+	bool AddToDiscardPile( Card a_cardToAdd ) { m_discardPile.push_back( a_cardToAdd ); }
 
 	// starts a new round
 	bool StartNewRound();
@@ -80,6 +110,7 @@ public:
 
 	// print the Game info
 	void PrintRound();
+
 private:
 
 	// holds the current round number
@@ -107,7 +138,7 @@ private:
 	// m_discardPile holds cards that are discarded by players,
 	// additional player can pick up the whole discarded pile if
 	// the last added to the pile help them in making a meld.
-	std::stack<Card> m_discardPile;
+	std::vector<Card> m_discardPile;
 
 	// draws discard and stock pile
 	void PrintDiscardAndStock();

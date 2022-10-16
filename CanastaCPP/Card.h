@@ -8,6 +8,7 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include <vector>
 
 // 
 // describes the type of a card in a deck
@@ -91,7 +92,13 @@ public:
 	const ENUM_CardType GetCardType() const { return m_cardType; }
 
 	// returns the rank and suit as string 
-	std::string GetRankSuit() const { return std::string( { m_rank, m_suit } ); }
+	const std::string GetRankSuit() const { return std::string( { m_rank, m_suit } ); }
+
+	// converts the passed vector of cards in to string format seperated by space
+	static const std::string ConvertVecToString( const std::vector<Card>& a_cardVec );
+
+	// converts the passed vector of cards pointer in to string format seperated by space
+	static const std::string ConvertVecToString( const std::vector<Card*>& a_cardVec );
 
 	// prints all the information of the card
 	void Debug();

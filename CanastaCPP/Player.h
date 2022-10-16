@@ -16,10 +16,9 @@ class Player
 public:
 
 	// default constructor
-	Player();
-
-	// constructor when hand cards are passed
-	Player( std::string a_handCards, std::string a_meldCards );
+	Player( unsigned a_totalScore = 0,
+			std::string a_handCards = "",
+			std::string a_meldCards = "" );
 
 	// default destructor
 	~Player() {};
@@ -31,10 +30,19 @@ public:
 	Player& operator = ( const Player& a_other );
 
 	// gets the saved current point
-	const int GetTotalPoint() const { return m_totalPoints; }
+	int GetTotalPoint() const { return m_totalPoints; }
+
+	// Get players actual hand
+	const std::vector<Card> GetActualHand() const { return m_playerHand.GetActualHand(); };
 
 	// Get players melds
-	const std::vector<std::vector<Card>> GetMelds() const { m_playerHand.GetMelds(); };
+	const std::vector<std::vector<Card>> GetMelds() const { return m_playerHand.GetMelds(); };
+
+	// Get players actual hand in string format
+	const std::string GetActualHandString() const { return m_playerHand.GetActualHandString(); };
+
+	// Get players melds in string format
+	const std::string GetMeldsString() const { return m_playerHand.GetMeldsString(); };
 
 	// tallys the hand Point
 	const int TallyHandPoint() const { return m_playerHand.TallyPoints(); }
@@ -79,14 +87,14 @@ public:
 	bool CanGoOut() const { return m_playerHand.IsActualHandEmpty() && m_playerHand.GetHasCanasta(); }
 
 	// prints the playern
-	void PrintPlayer();
+	void PrintPlayer() const;
 
 	// executes the before the turn start controller
 	virtual unsigned BeforeTurnStartControl();
 
 	// executes the player start of the turn logic
 	virtual std::pair<unsigned, std::vector<unsigned>> PlayerTurnController( const Player* a_otherPlayer,
-																			const std::stack<Card> a_discardPile );
+																			 const std::vector<Card> a_discardPile );
 
 private:
 

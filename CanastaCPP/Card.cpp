@@ -497,3 +497,91 @@ bool ST_ValidRankSuit::IsRankSuitValid( const std::string a_rankSuit )
 	return ( IsRankValid( a_rankSuit.at( 0 ) ) &&
 			 IsSuitValid( a_rankSuit.at( 1 ) ) );
 }
+
+/* *********************************************************************
+Function Name: ConvertVecToString
+Purpose: converts the passed vector of card into string format
+Parameters: 
+			a_cardVec, vector of cards passed by reference holds the 
+				cards that are to be converted into string.
+Return Value:
+			const string, containing the rank and suit of
+				cards passed to the funciton. Each card
+				is seperated by blank space. 
+Algorithm:
+			1) create a string
+			2) for each card in the actual hand add that to the back of
+					string created in step 1
+			3) remove the last extra space
+Assistance Received: none
+********************************************************************* */
+ const std::string Card::ConvertVecToString( const std::vector<Card>& a_cardVec )
+{
+	// if the are no cards in the passed vector return ""
+	if( a_cardVec.empty() )
+	{
+		return "";
+	}
+
+	// converting the card into string
+	std::string cardStr = "";
+	for( unsigned cardIdx = 0; cardIdx < a_cardVec.size(); ++cardIdx )
+	{
+		// adding cards to the string
+		cardStr += a_cardVec.at( cardIdx ).GetRankSuit() + " ";
+	}
+
+	// removing the last " "
+	std::string cardStrNoLastSpace = "";
+
+	for( unsigned strIdx = 0; strIdx < cardStr.size() - 1; ++strIdx )
+	{
+		cardStrNoLastSpace += cardStr.at( strIdx );
+	}
+
+	return cardStrNoLastSpace;
+}
+
+
+/* *********************************************************************
+Function Name: ConvertVecToString
+Purpose: converts the passed vector of card pointer into string format
+Parameters:
+			a_cardVec, vector of cards pointer passed by reference holds the
+				cards that are to be converted into string.
+Return Value:
+			const string, containing the rank and suit of
+				cards passed to the funciton. Each card
+				is seperated by blank space.
+Algorithm:
+			1) create a string
+			2)	for each card in the actual hand add that to the back of
+				string created in step 1
+Assistance Received: none
+********************************************************************* */
+const std::string Card::ConvertVecToString( const std::vector<Card*>& a_cardVec )
+{
+	// if the are no cards in the passed vector return ""
+	if( a_cardVec.empty() )
+	{
+		return "";
+	}
+
+	// converting the card into string
+	std::string cardStr = "";
+	for( unsigned cardIdx = 0; cardIdx < a_cardVec.size(); ++cardIdx )
+	{
+		// adding cards to the string
+		cardStr += a_cardVec.at( cardIdx )->GetRankSuit() + " ";
+	}
+
+	// removing the last " "
+	std::string cardStrNoLastSpace = "";
+
+	for( unsigned strIdx = 0; strIdx < cardStr.size() - 1; ++strIdx )
+	{
+		cardStrNoLastSpace += cardStr.at( strIdx );
+	}
+
+	return cardStrNoLastSpace;
+}

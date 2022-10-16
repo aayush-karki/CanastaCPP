@@ -284,6 +284,10 @@
 	Iterated the open file and create new file couple of times to cover as 
 	almost all of the edge cases ( 1 hour 15 minutes ).
 
+###### Total: 5 hours 30 minutes
+
+## Oct 14, 2022:
+
 - Researched the copy constructor and assignment operator for the FileAccess
 	class, as the same file can only be opened once at a time. Ended up 
 	using '= delete' on the copy constructor and assignment operator for 
@@ -292,4 +296,32 @@
 - Started filling the main menu class and started on the saveToFile and 
 	loadFromFile funcition ( 1 hour and 30 minutes ).
 
-###### Total: 8 hours 30 minutes
+- constructed all the function required to save to the file and completed the 
+	saveToFile funciton ( 2 hour ).
+
+- moved the saveToFile funciton to round class and fixed all the issues caused
+	by the move ( 30 minute ).
+
+###### Total: 5 hours 30 minutes
+
+## Oct 15, 2022:
+
+- constructed most of the the function required to load from file ( 2 hour ).
+
+- constructed a static convertCardVectTofunciton in the card class. But have not
+	converted other function which converts the card list to string mannually except
+	for few function. This is something to do when the game works and while polishing
+	the game ( 30 minutes ).
+
+- changed the discard pile's data structure form stack to vector to so that the previous
+	constructed convert funciton can be used on it. Changed all the logic for discard pile
+	to work with the stack to vector change ( 1 hour ).
+
+- moved the saveToFile funciton and loadFromFile back  to canasta game class 
+	and fixed all the issues caused by the move ( 45 minutes ).
+
+- finished the loadFromFile function ( 45 minutes ).
+
+- debugged the discard pile not populating ( 15 minutes ).
+
+###### Total: 5 hours 15 minutes

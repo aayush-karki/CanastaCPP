@@ -31,9 +31,14 @@ public:
 	// assignment constructor
 	Deck& operator = ( const Deck& a_other );
 
-	// getter functions
+	// getter functions to get the stock
 	const std::vector<Card*> GetStock() const { return this->m_stock; }
+	
+	// getter functions to get the dealt card
 	const std::vector<Card*> GetDealt() const { return this->m_dealt;}
+
+	// getter functions to get the stock in string form
+	const std::string GetStockString() const;
 
 	// returns true if m_stock is empty
 	bool IsStockEmpty() { return m_stock.empty(); }

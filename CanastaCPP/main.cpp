@@ -207,6 +207,11 @@ int main()
 	//r.StartNewRound();
 	//r.PrintRound();
 
+	//Hand myhand( "2S QC QS 2C QC 3H", "[QC QS QC] [3H]" );
+	//myhand.PrintHand();
+	//std::cout << myhand.GetActualHandString() << std::endl;
+	//std::cout << myhand.GetMeldsString() << std::endl;
+
 	CanastaGame game;
 	game.RunGame();
 

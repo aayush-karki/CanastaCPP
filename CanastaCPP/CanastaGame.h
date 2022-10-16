@@ -19,7 +19,7 @@ public:
 	~CanastaGame();
 
 	// copy constructor 
-	CanastaGame( const CanastaGame& a_other ) ;
+	CanastaGame( const CanastaGame& a_other );
 
 	// assignment operator
 	CanastaGame& operator=( const CanastaGame& a_other );

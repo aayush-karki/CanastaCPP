@@ -67,7 +67,7 @@ bool FileAccess::OpenFile( std::string a_fileName )
 	// if the passed file does not exist return false
 	if( !std::filesystem::exists( passedPath ) )
 	{
-		Message::AddMessage( passedPath.stem().string() + " does not exist!" );
+		Message::AddMessage( "File named " +  passedPath.stem().string() + " does not exist!");
 		return false;
 	}
 
@@ -149,7 +149,7 @@ Assistance Received: none
 bool FileAccess::GetNextLine( std::string& a_line )
 {
 	// if the file is not open then return false
-	if( m_fileHandler.is_open() )
+	if( !m_fileHandler.is_open() )
 	{
 		Message::AddMessage( "File is not open" );
 		return false;
@@ -181,7 +181,7 @@ Assistance Received: none
 bool FileAccess::WriteOneLineToFile( const std::string a_line )
 {
 	// if the file is not open then return false
-	if( m_fileHandler.is_open() )
+	if( !m_fileHandler.is_open() )
 	{
 		Message::AddMessage( "File is not open" );
 
@@ -208,7 +208,7 @@ bool  FileAccess::RemoveAllContent()
 {
 
 	// if the file is not open then return false
-	if( m_fileHandler.is_open() )
+	if( !m_fileHandler.is_open() )
 	{
 		Message::AddMessage( "File is not open" );
 

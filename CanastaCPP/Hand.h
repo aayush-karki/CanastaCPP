@@ -44,8 +44,17 @@ public:
 	// pass 0 for meldIdx for actual hand
 	const Card GetCardAtIdx( unsigned a_meldIdx, unsigned a_meldCardIdx ) const { return *( m_handCard.at( a_meldIdx ).at( a_meldCardIdx ) ); }
 
+	// getter function to get the actual hand of in the hand
+	const std::vector<Card> GetActualHand() const;
+
 	// getter function to get the melds of in the hand
 	const std::vector<std::vector<Card>> GetMelds() const;
+
+	// getter function to get the actual hand of in the hand
+	const std::string GetActualHandString() const;
+
+	// getter function to get the melds of in the hand
+	const std::string GetMeldsString() const;
 
 	// checks if the actual hand is empty 
 	bool IsActualHandEmpty() const { return m_handCard.begin()->empty(); }
@@ -87,7 +96,7 @@ public:
 	Card Discard( unsigned a_handCardIdx );
 
 	// prints out the hand
-	void PrintHand();
+	void PrintHand() const;
 
 	// tallies up all the point
 	const int TallyPoints() const;
