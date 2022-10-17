@@ -6,7 +6,6 @@
 ************************************************************/
 
 #pragma once
-#include <stack>
 #include <iomanip>
 #include <algorithm>
 #include "Hand.h"
@@ -22,7 +21,7 @@ public:
 			std::string a_meldCards = "" );
 
 	// default destructor
-	~Player() {};
+	virtual ~Player() {};
 
 	// copy constructor
 	Player( const Player& a_other );
@@ -48,6 +47,9 @@ public:
 	// Get players went out status
 	bool GetPlayerWentOutStatus() const { return m_wentOut; }
 
+	// set players before turn flag status
+	bool GetTurnStartFlag() const { return m_isStartOfTurn; }
+
 	// set players went out status
 	bool SetPlayerWentOutStatus( bool a_playerWentOut ) { m_wentOut = a_playerWentOut; return true; }
 
@@ -59,18 +61,18 @@ public:
 
 
 	// executes the player start of the turn logic
-	virtual std::pair<unsigned, std::vector<unsigned>> PlayerTurnController( const std::vector<std::vector<Card>> a_otherPlayerMeld,
-																			 const std::vector<Card> a_discardPile );
+	std::pair<unsigned, std::vector<unsigned>> PlayerTurnController( const std::vector<std::vector<Card>>& a_otherPlayerMeld,
+																	 const std::vector<Card>& a_discardPile );
 
 	// executes the before the turn start controller
 	virtual std::pair<unsigned, std::vector<unsigned>> BeforeTurnStartControl();
 
 	// executes the player start of the turn controller
-	virtual std::pair<unsigned, std::vector<unsigned>> TurnStartControl( const std::vector<Card> a_discardPile );
+	virtual std::pair<unsigned, std::vector<unsigned>> TurnStartControl( const std::vector<Card>& a_discardPile );
 
 	// executes the player turn continue controller
-	virtual std::pair<unsigned, std::vector<unsigned>> TurnContinueControl( const std::vector<std::vector<Card>> a_otherPlayerMeld,
-																			const std::vector<Card> a_discardPile );
+	virtual std::pair<unsigned, std::vector<unsigned>> TurnContinueControl( const std::vector<std::vector<Card>>& a_otherPlayerMeld,
+																			const std::vector<Card>& a_discardPile );
 
 	// set to the saved current point
 	bool AddToTotalPoints( int a_pointsToAdd ) { m_totalPoints += a_pointsToAdd; return true; }
@@ -103,7 +105,7 @@ public:
 	Card Discard( unsigned a_handCardIdx ) { return m_playerHand.Discard( a_handCardIdx ); }
 
 	// picks up the discarded pile and adds it to hand
-	bool PickUpDiscardPile( std::stack<Card> a_discardPile );
+	bool PickUpDiscardPile( const std::vector<Card>& a_discardPile );
 
 	// returns true if the passed meld idx is a valid index
 	bool ValidateMeldIdx( unsigned a_meldIdx ) const { return m_playerHand.ValidateMeldIdx( a_meldIdx ); }
@@ -119,7 +121,7 @@ public:
 
 	// resets player's hand, and flags
 	virtual bool ResetPlayerForNewRound();
-private:
+protected:
 
 	// cards of the player
 	Hand m_playerHand;

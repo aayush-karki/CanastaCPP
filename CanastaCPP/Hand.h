@@ -51,6 +51,9 @@ public:
 	// getter function to get the melds of in the hand
 	const std::vector<std::vector<Card>> GetMelds() const;
 
+	// getter function to get the melds of in the hand
+	const std::vector<std::vector<Card*>>& GetHand() const {return m_handCard;}
+
 	// getter function to get the actual hand of in the hand
 	const std::string GetActualHandString() const;
 

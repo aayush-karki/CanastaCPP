@@ -109,8 +109,8 @@ Return Value:
 Algorithm: none
 Assistance Received: none
 ********************************************************************* */
-std::pair<unsigned, std::vector<unsigned>> Player::PlayerTurnController( const std::vector<std::vector<Card>> a_otherPlayerMeld,
-																		 const std::vector<Card> a_discardPile )
+std::pair<unsigned, std::vector<unsigned>> Player::PlayerTurnController( const std::vector<std::vector<Card>>& a_otherPlayerMeld,
+																		 const std::vector<Card>& a_discardPile )
 {
 	std::pair<unsigned, std::vector<unsigned>> playerResponse = { 10,  std::vector<unsigned>() };
 
@@ -185,8 +185,8 @@ Purpose: Contains the controller for turn starts. this is executed when
 		"Ask for Help",	"show discard pile", or
 		"show stock card (for debugging)"
 Parameters:
-			a_discardPile, a const vector of cards that contains the
-				discard pile
+			a_discardPile, a const reference to vector of cards that 
+				contains the discard pile
 Return Value:
 			pair of <integer ,  std::vector<unsigned>>. The first interger
 			indicates this was--that is TurnStartconstrol so it is
@@ -198,7 +198,7 @@ Algorithm:
 		3) if invalid return {10,{10}} else return {2, {userInput}}
 Assistance Received: none
 ********************************************************************* */
-std::pair<unsigned, std::vector<unsigned>> Player::TurnStartControl( const std::vector<Card> a_discardPile )
+std::pair<unsigned, std::vector<unsigned>> Player::TurnStartControl( const std::vector<Card>& a_discardPile )
 {
 	// (2) Take a turn was pressed
 
@@ -241,54 +241,54 @@ std::pair<unsigned, std::vector<unsigned>> Player::TurnStartControl( const std::
 Function Name: TurnContinueControl
 Purpose: Contains the controller for turn to continue.aftere the player
 		has either drawn a card or picked up the discard pile.
-		It asks  user to chose from "draw a card from deck", 
-		"pick up the discard pile", "Ask for Help",	
+		It asks  user to chose from "draw a card from deck",
+		"pick up the discard pile", "Ask for Help",
 		"show discard pile", "show stock card (for debugging)",
 		or "take out card from meld"
 Parameters:
-			a_discardPile, a const vector of cards that contains the
-				discard pile
+			a_discardPile, a const reference to vector of cards that 
+				contains the discard pile
 Return Value:
 			pair of <integer ,  std::vector<unsigned>>. The first
-			interger indicates this was--that is TurnStartconstrol 
-			so it is always 3. the second is vector of unsinged 
-			integer the the vector's first element is the sub menu 
+			interger indicates this was--that is TurnStartconstrol
+			so it is always 3. the second is vector of unsinged
+			integer the the vector's first element is the sub menu
 			index. rest of the element depends on the submenu chosen
 Algorithm:
 		1) prompt the user
 		2) get user input
 		3) parse the userinput and store it as a vector of string
 		4) declare a vectore of insigned named validVec
-		4) if the first parsed userInput is >=1 and <= 8 then it 
+		4) if the first parsed userInput is >=1 and <= 8 then it
 			is valid store it validVec ; else return code
-		5) if the first parsed userInput is 1, or 4, 
+		5) if the first parsed userInput is 1, or 4,
 			or 6, or 7 then check if there are no other user input
 			in the parsed vector then return {3, validVec}; else
 			return error code
-		6) if the first parsed userInput is 3 then check if the 
+		6) if the first parsed userInput is 3 then check if the
 			parsed vec has one more input and validate it as card
-			index in actual hand and return {3,validvec}; else 
+			index in actual hand and return {3,validvec}; else
 			return error code
 		7) if the first parsed userInput is 2 then check if the
-			parsed vec has two more input and validate them with 
+			parsed vec has two more input and validate them with
 			first being card in actual hand and second being meld
 			index and return {3,validvec}; else return error code
 		8) if the first parsed userInput is 5 then check if the
-			parsed vec size is more than 4 inputs and validate 
-			them with all of them being card idx in actual hand 
+			parsed vec size is more than 4 inputs and validate
+			them with all of them being card idx in actual hand
 			and return {3,validvec}; else return error code
 		9)  if the first parsed userInput is 8 then check if the
-			parsed vec size has 2 more inputs and validate 
-			them with first being card idx in meld and second 
+			parsed vec size has 2 more inputs and validate
+			them with first being card idx in meld and second
 			being meld idx and return {3,validvec}; else return error code
 Assistance Received: none
 ********************************************************************* */
-std::pair<unsigned, std::vector<unsigned>> Player::TurnContinueControl( const std::vector<std::vector<Card>> a_otherPlayerMeld,
-																		const std::vector<Card> a_discardPile )
+std::pair<unsigned, std::vector<unsigned>> Player::TurnContinueControl( const std::vector<std::vector<Card>>& a_otherPlayerMeld,
+																		const std::vector<Card>& a_discardPile )
 {
 	// player has drawns a card or picked up the discard pile
 
-	// now player have 6 choices until they discard or go out:
+	// now player have 8 choices until they discard or go out:
 	// else it is not the start of the round so they have 5 choices
 	//	1) Ask for help -> enter 1
 	//	2) Add a card in hand to meld -> enter 2 <actualHandCardIdx> <meldIdx>
@@ -504,7 +504,7 @@ std::pair<unsigned, std::vector<unsigned>> Player::TurnContinueControl( const st
 
 			// validating the actualCardIdx  which is the second number
 			// the max idx that it can be is the actual hand size - 1
-			vadiatedNum = ValidateNumber( extractedUserInputStrVec.at( 1 ), 0, m_playerHand.GetMelds().at( validatedMeldIdx - 1).size() - 1 );
+			vadiatedNum = ValidateNumber( extractedUserInputStrVec.at( 1 ), 0, m_playerHand.GetMelds().at( validatedMeldIdx - 1 ).size() - 1 );
 
 			if( vadiatedNum < 0 )
 			{
@@ -580,32 +580,27 @@ std::pair<bool, std::string> Player::AddToMeld( unsigned a_handCardIdx,
 Function Name: PickUpDiscardPile
 Purpose: Adds all the card in to the actual hand of the player
 Parameters:
-			a_discardPile, a stack of card passed by value. It hold all
+			a_discardPile, a vector of card passed by value. It hold all
 				the cards discarded by both player that needs to be
 				added to this player's actual hand
 Return Value:
 			true to indicate that discard pile was successfully added to
 				player's actual hand
 Algorithm:
-			1) loop over the stack and add each card to hand
+			1) loop over the vector and add each card to hand
 				2) if error break;
 Assistance Received: none
 ********************************************************************* */
-bool Player::PickUpDiscardPile( std::stack<Card> a_discardPile )
+bool Player::PickUpDiscardPile( const std::vector<Card>& a_discardPile )
 {
 	std::pair< bool, std::string > result;
 
-	while( !a_discardPile.empty() )
+	for( unsigned pileIdx = 0; pileIdx < a_discardPile.size(); ++pileIdx )
 	{
-		if( !m_playerHand.AddCardToHand( a_discardPile.top() ) )
-		{
-			break;
-		}
-
-		a_discardPile.pop();
+		m_playerHand.AddCardToHand( a_discardPile.at( pileIdx ) );
 	}
 
-	return a_discardPile.empty();
+	return true;
 }
 
 /* *********************************************************************

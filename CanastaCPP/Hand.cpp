@@ -95,7 +95,7 @@ Hand::Hand( std::string a_handCards, std::string a_meldCards ) :
 			continue;
 		}
 
-		m_handCard.at( 0 ).push_back( new Card( extractdRankSuit ) );
+		AddCardToHand( Card( extractdRankSuit ) );
 	}
 
 	// chekcing it the meld is empty then do nothing
@@ -189,9 +189,16 @@ Hand::Hand( std::string a_handCards, std::string a_meldCards ) :
 		}
 
 		// chekcing if both no error occured
-		if( !startOfMeldFound || !endOfMeldFound )
+		if( ( !startOfMeldFound || !endOfMeldFound ) )
 		{
-			std::cerr << "Error while process a_meld" << std::endl;
+			if( !m_handCard.back().empty() )
+			{
+				std::cerr << "Error while process a_meld" << std::endl;
+			}
+			else
+			{
+				m_handCard.erase( m_handCard.begin() + m_handCard.size() - 1 );
+			}
 			break;
 		}
 	}
@@ -590,7 +597,7 @@ std::pair<unsigned, std::string> Hand::CanAddToMeld( const Card a_cardToAdd ) co
 {
 	if( a_cardToAdd.GetCardType() != ENUM_CardType::CARDTYPE_natural )
 	{
-		return { false, "Card is  not a natural card" };
+		return { -1, "Card is  not a natural card" };
 	}
 
 	// looping over the meld to check if the card can be added to it
@@ -1010,7 +1017,7 @@ std::pair<bool, std::string> Hand::TakeOutWildCard( unsigned a_meldcardIdx,
 		// removing the empty meld
 		m_handCard.erase( m_handCard.begin() + a_meldIdx );
 
-		message = "Disolving The Meld of " + m_handCard.front().back()->GetRankSuit() ;
+		message = "Disolving The Meld of " + m_handCard.front().back()->GetRankSuit();
 	}
 
 	SortMeld( 0 );

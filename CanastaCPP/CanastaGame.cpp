@@ -437,7 +437,7 @@ Assistance Received: none
 bool CanastaGame::LoadFormFile()
 {
 	std::vector<std::string> dataLineList;
-	dataLineList.resize( 10, "" );
+	dataLineList.reserve( 18 );
 
 	// the 10 data tha we want to get in order are:
 	// 1) round number
@@ -451,30 +451,57 @@ bool CanastaGame::LoadFormFile()
 	// 9) discard pile
 	// 10) next player
 
-	// getting the data
-	for( unsigned dataIdx = 0; dataIdx < dataLineList.size(); ++dataIdx )
+	//// getting the data
+	//for( unsigned dataidx = 0; dataidx < datalinelist.size(); ++dataidx )
+	//{
+	//	// get the next line untill it get non empty line
+	//	std::string nextline = "";
+	//	while( nextline == "" )
+	//	{
+	//		if( !m_fileobj.getnextline( nextline ) )
+	//		{
+	//			message::addmessage( "corrupted file!" );
+	//			return false;
+	//		}
+
+	//		// ignoring "computer:" and "human:" line
+	//		if( nextline == "computer:" || nextline == "human:" )
+	//		{
+	//			nextline = "";
+	//			continue;
+	//		}
+	//	}
+
+	//	// adding the non empty line to the datalist
+	//	datalinelist.at( dataidx ) = nextline;
+	//}
+
+	// get the next line untill it get non empty line
+	std::string nextLine = "";
+	while( !m_fileObj.CheckEOF() )
 	{
-		// get the next line untill it get non empty line
-		std::string nextLine = "";
-		while( nextLine == "" )
+		if( !m_fileObj.GetNextLine( nextLine ) )
 		{
-			if( !m_fileObj.GetNextLine( nextLine ) )
-			{
-				Message::AddMessage( "Corrupted File!" );
-				return false;
-			}
-
-			// ignoring "Computer:" and "Human:" line
-			if( nextLine == "Computer:" || nextLine == "Human:" )
-			{
-				nextLine = "";
-				continue;
-			}
+			Message::AddMessage( "Corrupted File!" );
+			return false;
 		}
-
-		// adding the non empty line to the dataList
-		dataLineList.at( dataIdx ) = nextLine;
+		dataLineList.push_back( nextLine );
 	}
+
+	// removinging all lines with only space
+	for( int idx = dataLineList.size() - 1; idx >= 0; --idx )
+	{
+		std::stringstream streamBuffer( dataLineList.at( idx ) );
+
+		std::string extractedStr = "";
+
+		streamBuffer >> extractedStr;
+		if( extractedStr.empty() || extractedStr == "Computer:" || extractedStr=="Human:" )
+		{
+			dataLineList.erase( dataLineList.begin() + idx );
+		}
+	}
+
 
 	// for all the lines remove the text before ':'
 	for( unsigned dataIdx = 0; dataIdx < dataLineList.size(); ++dataIdx )

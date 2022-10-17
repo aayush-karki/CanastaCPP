@@ -122,13 +122,13 @@ Deck::Deck( std::string a_stock )
 	while( passedStringStream >> extractdRankSuit )
 	{
 		// finding the index of first unswapped element from the back
-		unsigned firstUnswappedIdx = RankSuitList.size() - 1 - totalSwappedNum;
+		unsigned firstUnswappedIdx = 0 + totalSwappedNum;
 
 		// finding the position fo the extractdRankSuit
 		// in the extractedRankSuitList
 		std::vector<std::string>::iterator returedIte =
-			std::find( RankSuitList.begin(),
-					   RankSuitList.end() - totalSwappedNum,
+			std::find( RankSuitList.begin() + firstUnswappedIdx,
+					   RankSuitList.end(),
 					   extractdRankSuit );
 
 		// chekcing if the returedIte is not an error

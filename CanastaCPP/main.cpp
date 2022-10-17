@@ -21,7 +21,7 @@ Assistance Received: none
 ********************************************************************* */
 int main()
 {
-	CanastaGame gameApp();
+	CanastaGame gameApp;
 
 	////std::vector<Card*> myCards;
 
