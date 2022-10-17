@@ -8,6 +8,7 @@
 #pragma once
 #include <stack>
 #include <iomanip>
+#include <algorithm>
 #include "Hand.h"
 #include "Message.h"
 
@@ -33,22 +34,49 @@ public:
 	int GetTotalPoint() const { return m_totalPoints; }
 
 	// Get players actual hand
-	const std::vector<Card> GetActualHand() const { return m_playerHand.GetActualHand(); };
+	const std::vector<Card> GetActualHand() const { return m_playerHand.GetActualHand(); }
 
 	// Get players melds
-	const std::vector<std::vector<Card>> GetMelds() const { return m_playerHand.GetMelds(); };
+	const std::vector<std::vector<Card>> GetMelds() const { return m_playerHand.GetMelds(); }
 
 	// Get players actual hand in string format
-	const std::string GetActualHandString() const { return m_playerHand.GetActualHandString(); };
+	const std::string GetActualHandString() const { return m_playerHand.GetActualHandString(); }
 
 	// Get players melds in string format
-	const std::string GetMeldsString() const { return m_playerHand.GetMeldsString(); };
+	const std::string GetMeldsString() const { return m_playerHand.GetMeldsString(); }
 
-	// tallys the hand Point
-	const int TallyHandPoint() const { return m_playerHand.TallyPoints(); }
+	// Get players went out status
+	bool GetPlayerWentOutStatus() const { return m_wentOut; }
+
+	// set players went out status
+	bool SetPlayerWentOutStatus( bool a_playerWentOut ) { m_wentOut = a_playerWentOut; return true; }
+
+	// set players before turn flag status
+	bool SetPlayerBeforeTurnMenuFlag( bool a_showBeforeTurnMenu ) { m_showBeforeTurnMenu = a_showBeforeTurnMenu; return true; }
+
+	// set players before turn flag status
+	bool SetTurnStartFlag( bool a_showTurnStartMenu ) { m_isStartOfTurn = a_showTurnStartMenu; return true; }
+
+
+	// executes the player start of the turn logic
+	virtual std::pair<unsigned, std::vector<unsigned>> PlayerTurnController( const std::vector<std::vector<Card>> a_otherPlayerMeld,
+																			 const std::vector<Card> a_discardPile );
+
+	// executes the before the turn start controller
+	virtual std::pair<unsigned, std::vector<unsigned>> BeforeTurnStartControl();
+
+	// executes the player start of the turn controller
+	virtual std::pair<unsigned, std::vector<unsigned>> TurnStartControl( const std::vector<Card> a_discardPile );
+
+	// executes the player turn continue controller
+	virtual std::pair<unsigned, std::vector<unsigned>> TurnContinueControl( const std::vector<std::vector<Card>> a_otherPlayerMeld,
+																			const std::vector<Card> a_discardPile );
 
 	// set to the saved current point
-	bool SetTotalPoint( int a_totalPoint );
+	bool AddToTotalPoints( int a_pointsToAdd ) { m_totalPoints += a_pointsToAdd; return true; }
+
+	// tallys the hand Point
+	const int TallyHandPoint() const { return m_playerHand.TallyPoints( m_wentOut ); }
 
 	// adds the drawn card to the deck
 	bool AddCardToHand( const Card a_drawnCard ) { return m_playerHand.AddCardToHand( a_drawnCard ); }
@@ -59,17 +87,17 @@ public:
 	// swaps the cards at the passed index 
 	bool SwapHandCardPos( unsigned a_handCardIdx1, unsigned a_handCardIdx2 ) { return m_playerHand.SwapHandCardPos( a_handCardIdx1, a_handCardIdx2 ); }
 
+	// tries to add to a existing meld using the card at the passed hand index
+	std::pair<bool, std::string> AddToMeld( unsigned a_handCardIdx, unsigned a_meldIdx );
+
 	// see if a card can be added to atleast one of the meld or not
-	std::pair<bool, std::string> CanAddToMeld( const Card a_cardToAdd ) const { return m_playerHand.CanAddToMeld( a_cardToAdd ); }
+	std::pair<unsigned, std::string> CanAddToMeld( const Card a_cardToAdd ) const { return m_playerHand.CanAddToMeld( a_cardToAdd ); }
 
 	// tries to create a new meld using the cards at the passed hand indexs
 	std::pair<bool, std::string> MakeNewMeld( std::vector<unsigned> a_handCardIdxList ) { return m_playerHand.MakeMeld( a_handCardIdxList ); }
 
 	// takes out wild card
 	std::pair<bool, std::string> TakeOutWildCard( unsigned a_meldcardIdx, unsigned a_meldIdx ) { return m_playerHand.TakeOutWildCard( a_meldcardIdx, a_meldIdx ); }
-
-	// tries to add to a existing meld using the card at the passed hand index
-	std::pair<bool, std::string> AddToMeld( unsigned a_handCardIdx, unsigned a_meldIdx );
 
 	// discards a card at passed hand index
 	Card Discard( unsigned a_handCardIdx ) { return m_playerHand.Discard( a_handCardIdx ); }
@@ -89,13 +117,8 @@ public:
 	// prints the playern
 	void PrintPlayer() const;
 
-	// executes the before the turn start controller
-	virtual unsigned BeforeTurnStartControl();
-
-	// executes the player start of the turn logic
-	virtual std::pair<unsigned, std::vector<unsigned>> PlayerTurnController( const Player* a_otherPlayer,
-																			 const std::vector<Card> a_discardPile );
-
+	// resets player's hand, and flags
+	virtual bool ResetPlayerForNewRound();
 private:
 
 	// cards of the player
@@ -104,12 +127,22 @@ private:
 	// holds the point of the player
 	int m_totalPoints;
 
+	// holds the state of to whether to show menu that
+	// before the turn actually starts
+	bool m_showBeforeTurnMenu;
+
 	// holds the state of current  turn
 	// is true if this is the start of the turn
 	bool m_isStartOfTurn;
 
-	// holds the state of to whether to show menu that
-	// before the turn actually starts
-	bool m_showBeforeTurnMenu;
+	// holds the value of it the player went out
+	bool m_wentOut;
+
+	// validate that rhe passed string is a number that is 
+	// between lowerLimit and upperLimit inclusively
+	int ValidateNumber( std::string a_numToValidate,
+						unsigned a_inclusiveLowerBound,
+						unsigned a_inclusiveUpperBound );
+
 };
 

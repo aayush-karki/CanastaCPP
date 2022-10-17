@@ -325,3 +325,21 @@
 - debugged the discard pile not populating ( 15 minutes ).
 
 ###### Total: 5 hours 15 minutes
+
+## Oct 16, 2022:
+
+- Designed and implemented the before turn player controllers and logic ( 1 hour ).
+
+- Designed and implemented the turn player controllers and logic ( 2 hour ).
+
+- tested and debugged the created functions ( 30 minutes )
+
+- Designed and implemented the continue turn player controller ( 2 hour ).
+
+- Designed and implemented the continue turn player logic ( 2 hour ).
+
+- Tested the continue turn player logic ( 1 hour ).
+
+- Tested and debugged the player vs player code ( 1 hour ).
+
+###### Total: 9 hours 30 minutes

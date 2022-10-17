@@ -318,7 +318,6 @@ const std::string Deck::GetStockString() const
 		actualHandStrNoLastSpace += stockStr.at( strIdx );
 	}
 
-	std::cout << actualHandStrNoLastSpace << ":::::" <<std::endl;
 	return actualHandStrNoLastSpace;
 }
 

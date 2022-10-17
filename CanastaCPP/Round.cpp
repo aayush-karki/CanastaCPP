@@ -42,7 +42,7 @@ Parameters:
 Return Value: none
 Algorithm:
 		1) set m_currRoundNum to 1
-		2) set the m_roundOver to false
+		2) set the m_playerWentOut to false
 		3) set m_playerTurn to ENUM_PlayerTurn::TURN_uninitialized
 		4) set initialize m_deck
 		5) dynamically create 2 new player and add it to m_playerList
@@ -60,10 +60,12 @@ Round::Round( unsigned a_currRoundNum,
 			  std::string a_stockCards,
 			  std::string a_discardPile ) :
 	m_currRoundNum( a_currRoundNum ),
-	m_roundOver( false ),
-	m_roundStart( true ),
+	m_playerWentOut( false ),
+	m_roundStart( false ),
 	m_playerTurn( a_playerTurn ),
-	m_deck( a_stockCards )
+	m_deck( a_stockCards ),
+	m_lastCardR3Drwan( false ),
+	m_endCausedCusDiscardPile( false )
 {
 	// initializing 2 players
 	m_playerList.push_back( new Player( a_compTotalScore,
@@ -91,7 +93,7 @@ Round::Round( unsigned a_currRoundNum,
 			continue;
 		}
 
-		m_discardPile.insert( m_discardPile.begin(), Card( extractdRankSuit ) );
+		m_discardPile.push_back( Card( extractdRankSuit ) );
 	}
 
 }
@@ -129,10 +131,12 @@ Assistance Received: none
 ********************************************************************* */
 Round::Round( const Round& a_other ) :
 	m_currRoundNum( a_other.m_currRoundNum ),
-	m_roundOver( a_other.m_roundOver ),
+	m_playerWentOut( a_other.m_playerWentOut ),
 	m_roundStart( a_other.m_roundStart ),
 	m_playerTurn( a_other.m_playerTurn ),
-	m_deck( a_other.m_deck )
+	m_deck( a_other.m_deck ),
+	m_lastCardR3Drwan( a_other.m_lastCardR3Drwan ),
+	m_endCausedCusDiscardPile( a_other.m_endCausedCusDiscardPile )
 {
 	// copying the player list
 	m_playerList.push_back( new Player( *a_other.m_playerList.at( 0 ) ) );
@@ -165,8 +169,10 @@ Round& Round::operator=( const Round& a_other )
 
 	// copying the data
 	this->m_currRoundNum = a_other.m_currRoundNum;
-	this->m_roundOver = a_other.m_roundOver;
+	this->m_playerWentOut = a_other.m_playerWentOut;
 	this->m_roundStart = a_other.m_roundStart;
+	this->m_lastCardR3Drwan = a_other.m_lastCardR3Drwan;
+	this->m_endCausedCusDiscardPile = a_other.m_endCausedCusDiscardPile;
 	this->m_playerTurn = a_other.m_playerTurn;
 	this->m_deck = a_other.m_deck;
 
@@ -177,23 +183,6 @@ Round& Round::operator=( const Round& a_other )
 	}
 
 	return *this;
-}
-
-/* *********************************************************************
-Function Name: EmptyDiscardPile
-Purpose: empties the discard stack
-Parameters: none
-Return Value: returns true to indicate that the stack was empited
-Algorithm:
-			1) for all the card in the discard pile pop it out
-Assistance Received: none
-********************************************************************* */
-bool Round::EmptyDiscardPile()
-{
-	// poping out the whole stack
-	m_discardPile.empty();
-
-	return m_discardPile.empty();
 }
 
 /* *********************************************************************
@@ -248,12 +237,6 @@ Assistance Received: none
 ********************************************************************* */
 void Round::PrintRound()
 {
-	// clearing the window
-	ClearScreen();
-
-	// printing the game tile
-	PrintGameTitle();
-
 	// printing round number
 	std::cout << std::setw( 50 ) << std::setfill( '-' ) << ""
 		<< std::setfill( ' ' ) << std::endl;
@@ -278,7 +261,12 @@ void Round::PrintRound()
 	std::cout << "Player:" << std::endl;
 	m_playerList.back()->PrintPlayer();
 	std::cout << std::setw( 50 ) << std::setfill( '-' ) << ""
-		<< std::setfill( ' ' ) << std::endl << std::endl;
+		<< std::setfill( ' ' ) << std::endl;
+
+	// printing current player 
+	std::cout << "Current Player: " <<
+		( ( m_playerTurn == ENUM_PlayerTurn::TURN_computer ) ? "Comuputer" : "Human" )
+		<< std::endl << std::endl;
 
 	// printing any messages
 	Message::PrintMessages();
@@ -306,10 +294,10 @@ bool Round::StartNewRound()
 	// empty discarded pile 
 	EmptyDiscardPile();
 
-	// clearing both player's hand
+	// resetting player's hand
 	for( unsigned currPlayerIdx = 0; currPlayerIdx < m_playerList.size(); ++currPlayerIdx )
 	{
-		m_playerList.at( currPlayerIdx )->EmptyHand();
+		m_playerList.at( currPlayerIdx )->ResetPlayerForNewRound();
 	}
 
 	// consolodating deck
@@ -348,17 +336,24 @@ bool Round::StartNewRound()
 
 	} while( wildOrRedThree );
 
+	//m_playerTurn = ENUM_PlayerTurn::TURN_uninitialized;
+
+	// TODO take the below out into its own function wherer it will be 
+	// executed when the player turn is uninialized
+
 	// round setup is complete 
 	// seeing who goes first
 	if( m_playerList.front()->GetTotalPoint() > m_playerList.back()->GetTotalPoint() )
 	{
 		// computer has more points so it goes first
 		m_playerTurn = ENUM_PlayerTurn::TURN_computer;
+		Message::AddMessage( "Computer has more points! So computer starts first" );
 	}
 	else if( m_playerList.back()->GetTotalPoint() > m_playerList.front()->GetTotalPoint() )
 	{
 		// human has more points so it goes first
 		m_playerTurn = ENUM_PlayerTurn::TURN_human;
+		Message::AddMessage( "Human has more points! So human starts first" );
 	}
 	else
 	{
@@ -367,6 +362,13 @@ bool Round::StartNewRound()
 		bool invalidInput = true;
 		do
 		{
+			// clearing the window
+			ClearScreen();
+
+			// printing the game tile
+			PrintGameTitle();
+
+			// printing the round
 			PrintRound();
 
 			std::cout << "Tossing a coin to decide who starts the Round." << std::endl;
@@ -399,36 +401,556 @@ bool Round::StartNewRound()
 		}
 	}
 
-	return false;
+	// new round created to round start should be false;
+	m_roundStart = false;
+
+	return true;
 }
 
 /* *********************************************************************
 Function Name: ContinueRound
 Purpose: Continues the round
 Parameters: none
-Return Value: false if player chose to go back to main menu
+Return Value:
+			pair of boolean value, boolean value. if first of the pair is
+				true exit to main menu was pressed else it was not.
+				if second of the pair is true save the game was pressed
+				else it was not
 Algorithm:
 			1) Call TurnStartLogic function
 Assistance Received: none
 ********************************************************************* */
-bool Round::ContinueRound()
+std::pair<bool, bool> Round::ContinueRound()
 {
 	PrintRound();
 
-	// starting the turn
-	std::pair<unsigned, std::vector<unsigned>> playerChoice;
-	playerChoice = m_playerList.at( ( unsigned )m_playerTurn )->PlayerTurnController( m_playerList.at( ( unsigned )m_playerTurn ), m_discardPile );
-
-	// logic for what to execute depending on what the choice was 
+	// check if the round is over 
 	// 
-	//if( !playerChoice.first )
-	//{
-	//	// go back to main menu was pressed so
-	//	// returning
-	//	return false;
-	//}
+	// round can end in three way
+	// if one of the payers goes out -> indicated by m_playerWentOut
+	// if last card drawn form the stock pile is read 3
+	// if stock is empty and neight Player can use the top card of 
+	//		discard pile in a meld
+	if( ( m_playerWentOut || m_lastCardR3Drwan || m_endCausedCusDiscardPile ) && !m_roundStart )
+	{
+		std::vector<std::string> playerNameList = { "Computer","Human" };
 
+		// calculating the player's earned points for this round and total points
+		std::vector<int> playersEarnedPoints = { 0,0 };
+		for( unsigned playerIdx = 0; playerIdx < m_playerList.size(); ++playerIdx )
+		{
+			// chekcing if the player wentout or not
+			if( m_playerList.at( playerIdx )->GetPlayerWentOutStatus() )
+			{
+				Message::AddMessage( playerNameList.at( playerIdx ) + " has gone out, and finished the round!" );
+			}
+
+			// calculating the round and total points
+			playersEarnedPoints.at( playerIdx ) = m_playerList.at( playerIdx )->TallyHandPoint();
+			m_playerList.at( playerIdx )->AddToTotalPoints( playersEarnedPoints.at( playerIdx ) );
+
+			// printing the round points and total point that players earned in this round
+			Message::AddMessage( playerNameList.at( playerIdx ) + "'s earned "
+								 + std::to_string( playersEarnedPoints.at( playerIdx ) )
+								 + "this round." );
+			Message::AddMessage( playerNameList.at( playerIdx ) + "'s total earned points is "
+								 + std::to_string( m_playerList.at( playerIdx )->GetTotalPoint() ) );
+		}
+
+		m_roundStart = true;
+
+		// returning back that exit menu was not pressed and save was not pressed
+		return { false, false };
+	}
+
+	// this block of code is executed only when the the round is over 
+	// and prompting the player if they would like to continue or not
+	// 
+	if( m_roundStart )
+	{
+		// asking the player if they would like to play another round or not
+		std::cout << "Would you like to play another round? (y/n) : ";
+
+		// used to get the userInput
+		std::string userInputStr;
+		std::getline( std::cin, userInputStr );
+
+		// validaing the userInput
+		// a valid user input is 'y' or 'n'
+
+		if( userInputStr.size() != 1 || ( std::tolower( userInputStr.at( 0 ) ) != 'y'
+										  && std::tolower( userInputStr.at( 0 ) ) != 'n' ) )
+		{
+			// invalid input
+			Message::AddMessage( "Invalid Input!!" );
+
+			return { false, false };
+		}
+
+		// input was valid
+
+		if( std::tolower( userInputStr.at( 0 ) ) == 'n' )
+		{
+			// no was pressed
+			// quiting and printing winner
+			Message::AddMessage( "Player chose not to continue playing!" );
+			Message::AddMessage( "Winner of the game is " +
+								 ( m_playerList.front()->GetTotalPoint() > m_playerList.back()->GetTotalPoint() ) ? "Comuputer" : "Human" );
+			Message::AddMessage( "Player chose not to continue playing" );
+
+			return { true, false };
+		}
+
+		// yes was pressed
+
+		// starting new round
+		StartNewRound();
+
+		Message::AddMessage( "New Round Started" );
+
+		// resetting the flags
+		m_playerWentOut = false;
+		m_roundStart = false;
+		m_lastCardR3Drwan = false;
+		m_endCausedCusDiscardPile = false;
+	}
+
+	// starting the turn
+	std::pair<unsigned, std::vector<unsigned>> currPlayerChoice;
+	Player* currPlayerptr = m_playerList.at( ( unsigned )m_playerTurn );
+	currPlayerChoice = currPlayerptr->PlayerTurnController( currPlayerptr->GetMelds(), m_discardPile );
+
+	// logic for what to execute depending on which menu currently is 
+	// displayed and what the choice was made
+
+	switch( currPlayerChoice.first )
+	{
+		// playerChice.first == 1, beforeTurnStartcontrol was executed
+		case 1:
+		{
+			// logic for sub menus of before turn start control
+			return BeforeTurnLogic( currPlayerChoice.second.front() );
+		}
+		case 2:
+		{
+			// logic for sub menus of before turn start control
+			TurnStartLogic( currPlayerChoice.second.front() );
+			break;
+		}
+		case 3:
+		{
+			// logic for sub menus of before turn start control
+			TurnContinueLogic( currPlayerChoice.second );
+			break;
+		}
+		// error code
+		case 10:
+		{
+			// do nothing as the game will loop over
+			break;
+		}
+
+		default:
+		{
+			break;
+		}
+
+	}
+
+	// main menu was not pressed so first is false
+	// save was not pressed so second is false
+	return { false, false };
+}
+
+
+/* *********************************************************************
+Function Name: EmptyDiscardPile
+Purpose: empties the discard stack
+Parameters: none
+Return Value: returns true to indicate that the stack was empited
+Algorithm:
+			1) for all the card in the discard pile pop it out
+Assistance Received: none
+********************************************************************* */
+bool Round::EmptyDiscardPile()
+{
+	// poping out the whole stack
+	m_discardPile.clear();
+
+	return m_discardPile.empty();
+}
+
+/* *********************************************************************
+Function Name: BeforeTurnLogic
+Purpose: Contains the logic for Before Turn menu
+Parameters:
+		a_userChoice, unsinged interger. Holds the user choice for
+			the menu
+Return Value:
+			pair of boolean value, boolean value. if first of the pair is
+				true exit to main menu was pressed else it was not.
+				if second of the pair is true save the game was pressed
+				else it was not
+Algorithm:
+		1) if the userChoice is 1 return {false,true}
+		2) if the userChoice is 2 then set the beforTurnMenuFlage to false
+			and return {false,false}
+		3) if the userChoice is 3 return {true,false}
+Assistance Received: none
+********************************************************************* */
+std::pair<bool, bool> Round::BeforeTurnLogic( unsigned a_userChoice )
+{
+	// at the strat of the turn, player have 5 choices:
+	// 1) Save the game -> enter 1
+	// 2) Take a turn -> enter 2
+	// 3) Quit the game and go to main menu -> enter 3
+
+	// sub menus of before turn start menu
+	switch( a_userChoice )
+	{
+		// save the game
+		case 1:
+		{
+			return { false, true };
+		}
+		// take a turn was pressed
+		case 2:
+		{
+			m_playerList.at( ( unsigned )m_playerTurn )->SetPlayerBeforeTurnMenuFlag( false );
+			break;
+		}
+		// quit the game and go to main menu was pressed
+		case 3:
+		{
+			return { true, false };
+		}
+		default:
+		{
+			// this should never run
+			break;
+		}
+	}
+	return { false, false };
+}
+
+/* *********************************************************************
+Function Name: TurnStartLogic
+Purpose: Contains the logic for Turn start menu
+Parameters:
+		a_userChoice, unsinged interger. Holds the user choice for
+			the menu
+Return Value:
+			boolean value. it indicates whether a change was made to the
+				the player or not
+Algorithm:
+		1) if the userChoice is 1  return false
+		2) if the userChoice is 2 then deal a card untill the user gets
+			non red three card
+			and return {false,false}
+		3) if the userChoice is 3 then check if the playercan pick up
+			make a meld using the top of the discard pile and set
+			turnStart flag to false and return true
+		4)		if no then return false
+		5)		if yes then add all the card in discard pile to the
+				player hand, clear the discard pile and set turnStart
+				flag to false and return true
+		6) if the userChoice is 4 the print the discard pule and return
+			false
+		7) if the userChoice is 5 the print the stock and return false
+Assistance Received: none
+********************************************************************* */
+bool Round::TurnStartLogic( unsigned a_userChoice )
+{
+	// at the strat of the turn, player have 5 choices:
+	//	1) ask for help -> enter 1
+	//	2) draw a card from deck -> enter 2
+	//	3) pick up the discard pile -> enter 3
+	//	4) show discard pile -> enter 4
+	//	5) show stock card (for debugging) -> enter 5
+
+	Player* currPlayerptr = m_playerList.at( ( unsigned )m_playerTurn );
+	// sub menus of turn start menu
+	switch( a_userChoice )
+	{
+		// draw a card from deck
+		// ask for help
+		case 1:
+		{
+			// TODO add code to ask for help
+			Message::AddMessage( "Asking computer for help!" );
+			return false;
+		}
+		case 2:
+		{
+			// deal a card untill player gets a non red three card
+			bool dealtCardResult = false;
+			while( !dealtCardResult )
+			{
+				Card dealtCard = m_deck.DealCard();
+				dealtCardResult = currPlayerptr->AddCardToHand( dealtCard );
+
+				// concoting message to display
+				std::string dealtMessage = ( ( m_playerTurn == ENUM_PlayerTurn::TURN_computer ) ? "Comuputer" : "Human" );
+				dealtMessage += " drew ";
+				dealtMessage += dealtCard.GetRankSuit();
+				Message::AddMessage( dealtMessage );
+			}
+
+			// setting the turn start flag to false
+			currPlayerptr->SetTurnStartFlag( false );
+			break;
+		}
+		// pick up the discard pile
+		case 3:
+		{
+			// player can not pick up the discard pile if the 
+			// the top card can not be used to be melded
+			std::pair<bool, std::string> canMeld = currPlayerptr->CanAddToMeld( GetDiscardPileTopCard() );
+			std::string pickedupMessage = ( ( m_playerTurn == ENUM_PlayerTurn::TURN_computer ) ? "Comuputer" : "Human" );
+
+			if( !canMeld.first )
+			{
+				// can not be melded giving out the reason
+				Message::AddMessage( pickedupMessage + " can not pick up discard pile" );
+				Message::AddMessage( "\t" + canMeld.second );
+				return false;
+			}
+
+			std::string discardCard = Card::ConvertVecToString10PerLine( m_discardPile );
+
+			// adding all the card of the discard pile to the player
+			for( unsigned discardIdx = 0; discardIdx < m_discardPile.size(); ++discardIdx )
+			{
+				currPlayerptr->AddCardToHand( m_discardPile.at( discardIdx ) );
+			}
+
+			// clearing the discard pile
+			EmptyDiscardPile();
+
+			// concoting message to display
+			pickedupMessage += " picked up following cards from the discard pile\n";
+			pickedupMessage += discardCard;
+			Message::AddMessage( pickedupMessage );
+
+			// setting the turn start flag to false
+			currPlayerptr->SetTurnStartFlag( false );
+			break;
+		}
+		// show discard pile
+		case 4:
+		{
+			Message::AddMessage( "Discard Pile:" );
+			Message::AddMessage( Card::ConvertVecToString10PerLine( m_discardPile ) );
+			return false;
+		}
+		// show stock card (for debugging)
+		case 5:
+		{
+			Message::AddMessage( "Stock:" );
+			Message::AddMessage( Card::ConvertVecToString10PerLine( m_deck.GetStock() ) );
+			return false;
+		}
+		default:
+		{
+			// this should never run
+			break;
+		}
+	}
 	return true;
+}
+
+/* *********************************************************************
+Function Name: TurnStartLogic
+Purpose: Contains the logic for Turn start menu
+Parameters:
+		a_userChoice, unsinged interger. Holds the user choice for
+			the menu
+Return Value:
+			boolean value. it indicates whether a change was made to the
+				the player or not
+Algorithm:
+		1) if the userChoice is 1 return {false,true}
+		2) if the userChoice is 2 then set the beforTurnMenuFlage to false
+			and return {false,false}
+		3) if the userChoice is 3 return {true,false}
+Assistance Received: none
+********************************************************************* */
+bool Round::TurnContinueLogic( std::vector<unsigned> a_userChoiceVec )
+{
+	// else it is not the start of the round so they have 5 choices
+	//	1) Ask for help -> enter 1
+	//	2) Add a card in hand to meld -> enter 2 <actualHandCardIdx> <meldIdx>
+	//	3) Discard a card from hand -> enter 3 <actualHandCardIdx>
+	//	4) Go out -> enter 4
+	//	5) Make a new meld -> enter 5 <actualHandCardIdx> <actualHandCardIdx> <actualHandCardIdx> ...
+	//	6) Show discard pile -> enter 6
+	//	7) Show stock card (for debugging) -> enter 7
+	//	8) Take out wild card From meld -> enter 8 <meldCardIdx> <meldIdx>
+
+	Player* currPlayerptr = m_playerList.at( ( unsigned )m_playerTurn );
+	// sub menus of turn continue menu
+	switch( a_userChoiceVec.front() )
+	{
+		// Ask for help
+		case 1:
+		{
+			// TODO call ask for help function ??
+			Message::AddMessage( "Asking computer for help!" );
+			return false;
+		}
+		// Add a card in hand to meld
+		case 2:
+		{
+			// trying to adding the card to a meld
+			Card cardToMeld = currPlayerptr->GetActualHand().at( a_userChoiceVec.at( 1 ) );
+			std::pair<bool, std::string> result = currPlayerptr->AddToMeld( a_userChoiceVec.at( 1 ), a_userChoiceVec.at( 2 ) );
+
+			// if the first is false then error
+			if( !result.first )
+			{
+				Message::AddMessage( result.second );
+
+				return false;
+			}
+
+			// concoting message to display
+			std::string displayMessage = ( ( m_playerTurn == ENUM_PlayerTurn::TURN_computer ) ? "Comuputer" : "Human" );
+			displayMessage += " added " + cardToMeld.GetRankSuit() + " to a meld";
+			Message::AddMessage( displayMessage );
+			return true;
+		}
+		// Discard a card from hand
+		case 3:
+		{
+			// discarding and adding the discarded card to discard pile
+			AddToDiscardPile( currPlayerptr->Discard( a_userChoiceVec.at( 1 ) ) );
+
+			// concoting message to display
+			std::string displayMessage = ( ( m_playerTurn == ENUM_PlayerTurn::TURN_computer ) ? "Comuputer" : "Human" );
+			displayMessage += " Disacrded " + GetDiscardPileTopRankSuit();
+			Message::AddMessage( displayMessage );
+
+			// checking if the curr playercan go out
+			if( currPlayerptr->CanGoOut() )
+			{
+				currPlayerptr->SetPlayerWentOutStatus( true );
+				m_playerWentOut = true;
+
+				// concoting message to display
+				displayMessage = ( ( m_playerTurn == ENUM_PlayerTurn::TURN_computer ) ? "Comuputer" : "Human" );
+
+				displayMessage += " Goes out";
+				Message::AddMessage( displayMessage );
+			}
+
+			// curr player discarded so its next players turn
+			m_playerTurn = ( m_playerTurn == ENUM_PlayerTurn::TURN_computer ? ENUM_PlayerTurn::TURN_human : ENUM_PlayerTurn::TURN_computer );
+
+
+			// clearing the menu flag
+			currPlayerptr->SetPlayerBeforeTurnMenuFlag( true );
+			currPlayerptr->SetTurnStartFlag(true);
+
+			return true;
+
+		}
+		// Go out
+		case 4:
+		{
+			// checking if the curr player can go out
+			// concoting message to display
+			std::string displayMessage = ( ( m_playerTurn == ENUM_PlayerTurn::TURN_computer ) ? "Comuputer" : "Human" );
+
+			if(! currPlayerptr->CanGoOut() )
+			{
+				displayMessage += " Can not Go out";
+				Message::AddMessage( displayMessage );
+				return false;
+			}
+
+			currPlayerptr->SetPlayerWentOutStatus( true );
+			m_playerWentOut = true;
+
+			displayMessage += " Goes out";
+			Message::AddMessage( displayMessage );
+
+			return true;
+		}
+		// Make a new meld
+		case 5:
+		{
+			Card cardToMeld = currPlayerptr->GetActualHand().at( a_userChoiceVec.at( 1 ) );
+
+			// removing the menu idx form the user input
+			std::vector<unsigned> cardIdx = a_userChoiceVec;
+			cardIdx.erase(cardIdx.begin());
+
+			// trying to create a new meld
+			std::pair<bool, std::string> result = currPlayerptr->MakeNewMeld( cardIdx );
+
+			// if the first is false then error
+			if( !result.first )
+			{
+				Message::AddMessage( result.second );
+				return false;
+			}
+
+			// concoting message to display
+			std::string displayMessage = ( ( m_playerTurn == ENUM_PlayerTurn::TURN_computer ) ? "Comuputer" : "Human" );
+			displayMessage += " made a new meld of " + cardToMeld.GetRankSuit();
+			Message::AddMessage( displayMessage );
+			return true;
+		}
+		// show discard pile
+		case 6:
+		{
+			Message::AddMessage( "Discard Pile:" );
+			Message::AddMessage( Card::ConvertVecToString10PerLine( m_discardPile ) );
+			return false;
+		}
+		// show stock card (for debugging)
+		case 7:
+		{
+			Message::AddMessage( "Stock:" );
+			Message::AddMessage( Card::ConvertVecToString10PerLine( m_deck.GetStock() ) );
+			return false;
+		}
+		// Take out wild card From meld
+		case 8:
+		{
+			// trying to take out a wild card
+			Card wildCard = currPlayerptr->GetActualHand().at( a_userChoiceVec.at( 1 ) );
+			std::pair<bool, std::string> result = currPlayerptr->TakeOutWildCard( a_userChoiceVec.at( 1 ), a_userChoiceVec.at( 2 ) );
+
+			// if the first is false then error
+			if( !result.first )
+			{
+				Message::AddMessage( result.second );
+
+				return false;
+			}
+
+			// concoting message to display
+			std::string displayMessage = ( ( m_playerTurn == ENUM_PlayerTurn::TURN_computer ) ? "Comuputer" : "Human" );
+			displayMessage += " took out " + wildCard.GetRankSuit() + " from the meld";
+			Message::AddMessage( displayMessage );
+
+			// checking if the meld was desolved or not 
+			if( !result.second.empty() )
+			{
+				Message::AddMessage( result.second );
+			}
+
+			return true;
+		}
+		default:
+		{
+			// this should never run
+			break;
+		}
+	}
+
+	return false;
 }
 
 /* *********************************************************************
@@ -463,33 +985,33 @@ void Round::PrintDiscardAndStock()
 	// when discard pile has 1 card and stock is empty
 	else if( m_discardPile.size() == 1 && m_deck.IsStockEmpty() == true )
 	{
-		Print1DiscardAnd1Stock( m_discardPile.back().GetRankSuit(), "NA" );
+		Print1DiscardAnd1Stock( GetDiscardPileTopCard().GetRankSuit(), "NA" );
 	}
 	//when discard pile has 1 card and stock has 1 card
 	else if( m_discardPile.size() == 1 && m_deck.GetStock().size() == 1 )
 	{
-		Print1DiscardAnd1Stock( m_discardPile.back().GetRankSuit(), "**" );
+		Print1DiscardAnd1Stock( GetDiscardPileTopCard().GetRankSuit(), "**" );
 	}
 	// when discard pile has 1 card and stock more than 1 card
 	else if( m_discardPile.size() == 1 && m_deck.GetStock().size() > 1 )
 	{
-		Print1DiscardAnd2Stock( m_discardPile.back().GetRankSuit(), "**" );
+		Print1DiscardAnd2Stock( GetDiscardPileTopCard().GetRankSuit(), "**" );
 
 	}
 	// when discard pile has mroe than 1 card and stock is empty
 	else if( m_discardPile.size() > 1 && m_deck.IsStockEmpty() == true )
 	{
-		Print2DiscardAnd1Stock( m_discardPile.back().GetRankSuit(), "NA" );
+		Print2DiscardAnd1Stock( GetDiscardPileTopCard().GetRankSuit(), "NA" );
 	}
 	//when discard pile has more than 1 card and stock has 1 card
 	else if( m_discardPile.size() > 1 && m_deck.GetStock().size() == 1 )
 	{
-		Print2DiscardAnd1Stock( m_discardPile.back().GetRankSuit(), "**" );
+		Print2DiscardAnd1Stock( GetDiscardPileTopCard().GetRankSuit(), "**" );
 	}
 	// when discard pile has more than 1 card and stock more than 1 card
 	else if( m_discardPile.size() > 1 && m_deck.GetStock().size() > 1 )
 	{
-		Print2DiscardAnd2Stock( m_discardPile.back().GetRankSuit(), "**" );
+		Print2DiscardAnd2Stock( GetDiscardPileTopCard().GetRankSuit(), "**" );
 	}
 	std::cout << "\t" << "Discard Pile" << std::setw( 5 ) << "" << "Stock Pile" << std::endl;
 }

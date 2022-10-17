@@ -382,7 +382,7 @@ Return Value:
 				represent the card that is going to be dealt next.
 Algorithm:
 			1) create a string
-			2)	for each card in the actual hand add that to the back of 
+			2)	for each card in the actual hand add that to the back of
 				string created in step 1
 Assistance Received: none
 ********************************************************************* */
@@ -419,7 +419,7 @@ Purpose: Getter function to get the melds of in the hand
 Parameters: none
 Return Value:
 			const string, containing all the cards that are in melds
-				of the player hand in string format. it is stored as 
+				of the player hand in string format. it is stored as
 				[rs] [rs] []
 Algorithm:
 			1) create vector of vector of card.
@@ -439,7 +439,7 @@ const std::string Hand::GetMeldsString() const
 		return "";
 	}
 
-	std::string meldListStr ="";
+	std::string meldListStr = "";
 	// looping over hand's meld
 	for( unsigned meldIdx = 1; meldIdx < m_handCard.size(); ++meldIdx )
 	{
@@ -558,7 +558,6 @@ bool Hand::AddCardToHand( const Card a_cardToAdd )
 		return false;
 	}
 
-
 	// sorting the hand card
 	SortMeld( 0 );
 
@@ -572,8 +571,11 @@ Parameters:
 			 a_cardToAdd, a constant object of hand class passed by value.
 				It holds a hand object that is used to assign this
 				hand object.
-Return Value: a pair of < bool, string >, < true, empty string > if the
-		card can be added to a meld . else  < false, message string >
+Return Value:
+		a pair of < unsigned, string >, < meldIdx, empty string > if
+			the card can be added to a meld then the first of the pair is
+			the index of meld where it can be added. else
+			< -1, message string >
 Algorithm:
 			1) if card is not a natural card return false
 			2) else the card is a natural card
@@ -584,7 +586,7 @@ Algorithm:
 				UpdateCanasta()
 Assistance Received: none
 ********************************************************************* */
-std::pair<bool, std::string> Hand::CanAddToMeld( const Card a_cardToAdd ) const
+std::pair<unsigned, std::string> Hand::CanAddToMeld( const Card a_cardToAdd ) const
 {
 	if( a_cardToAdd.GetCardType() != ENUM_CardType::CARDTYPE_natural )
 	{
@@ -599,11 +601,11 @@ std::pair<bool, std::string> Hand::CanAddToMeld( const Card a_cardToAdd ) const
 		if( m_handCard.at( currMeldIdx ).front()->GetRank() ==
 			a_cardToAdd.GetRank() )
 		{
-			return { true, "" };
+			return { currMeldIdx, "" };
 		}
 	}
 
-	return { false, "Card can not be melded" };
+	return { -1, "Card can not be melded" };
 }
 
 /* *********************************************************************
@@ -785,6 +787,18 @@ std::pair<bool, std::string> Hand::MakeMeld( std::vector<unsigned> a_handCardIdx
 	if( a_handCardIdxList.size() < 3 )
 	{
 		return { false, "Meld must have atleast three cards in it." };
+	}
+
+	// making sure that all the elements are unique
+	std::set<unsigned> passedHandCard;
+	std::vector<unsigned>::const_iterator currVecIte = a_handCardIdxList.begin();
+	for( ; currVecIte != a_handCardIdxList.end(); ++currVecIte )
+	{
+		if( !passedHandCard.insert( *currVecIte ).second )
+		{
+			return { false, "All the index of the passed card must be unique" };
+
+		}
 	}
 
 	// holds all of the wild cards's idx into another vectorlist that were passed
@@ -982,7 +996,7 @@ std::pair<bool, std::string> Hand::TakeOutWildCard( unsigned a_meldcardIdx,
 	// we only have to make sure that it has 3 cards in it as 
 	// when we created the meld we know that it has atleast
 	// 2 natural cards in it.
-
+	std::string message = "";
 	if( m_handCard.at( a_meldIdx ).size() < 3 )
 	{
 		// moving all the card to actual hand
@@ -996,11 +1010,11 @@ std::pair<bool, std::string> Hand::TakeOutWildCard( unsigned a_meldcardIdx,
 		// removing the empty meld
 		m_handCard.erase( m_handCard.begin() + a_meldIdx );
 
-		return { true,"disolvingTheMeld" };
+		message = "Disolving The Meld of " + m_handCard.front().back()->GetRankSuit() ;
 	}
 
-
-	return { true,"" };
+	SortMeld( 0 );
+	return { true,message };
 }
 
 /* *********************************************************************
@@ -1048,14 +1062,52 @@ Assistance Received: none
 ********************************************************************* */
 void Hand::PrintHand() const
 {
-	// iterating over hand cards and calling GetRankSuit funciton
+	/** 	std::string handCardIdx = "";
+		// populating the idx vector
+		for( unsigned idx = 0; idx < m_handCard.front().size(); ++idx )
+		{
+			handCardIdx += std::to_string(idx) + " ";
+		}
+
+		std::string actualHandStr = Card::ConvertVecToString10PerLine( m_handCard.front() );
+
+		std::stringstream extractor( actualHandStr );
+
+		std::string toPrint = "";
+		toPrint = strcpy() */
+
+		// iterating over hand cards and calling GetRankSuit funciton
 	std::cout << "\t" << "Hand: " << std::endl;
+
+	unsigned currHandIdx = 0;
+	unsigned maxHandIdx = m_handCard.front().size();
 	std::vector<Card*>::const_iterator currPtr = m_handCard.front().begin();
 	while( currPtr != m_handCard.front().end() )
 	{
-
-		std::string toPrint = "";
 		unsigned count;
+		std::string toPrint = "";
+
+		// printing the card idx 
+		for( count = 0; count < 10; ++count )
+		{
+			// to prevent we do not go over the last element
+			if( currHandIdx == maxHandIdx )
+			{
+				break;
+			}
+
+			toPrint += std::to_string( currHandIdx++ );
+			if( currHandIdx < 10 )
+			{
+				toPrint += " ";
+			}
+
+			toPrint += " ";
+		}
+		std::cout << "\t" << std::setw( 5 ) << "idx->";
+		std::cout << toPrint << std::endl;
+
+		toPrint = "";
 		for( count = 0; count < 10; ++count )
 		{
 			// to prevent we do not go over the last element
@@ -1076,10 +1128,12 @@ void Hand::PrintHand() const
 
 	// iterating over rest of the m_handCards and print the meld
 	std::cout << "\t" << "Melds: " << std::endl;
+
+	unsigned currMeldIdx = 1;
 	std::vector<std::vector<Card*>>::const_iterator currMeldPtr = m_handCard.begin() + 1;
 	while( currMeldPtr != m_handCard.end() )
 	{
-		std::cout << "\t" << std::setw( 5 ) << "";
+		std::cout << "\t" << std::setw( 5 ) << ( std::to_string( currMeldIdx++ ) + "->" );
 		std::vector<Card*>::const_iterator currPtr = currMeldPtr->begin();
 		while( currPtr != currMeldPtr->end() )
 		{
@@ -1097,7 +1151,8 @@ void Hand::PrintHand() const
 /* *********************************************************************
 Function Name: TallyPoints
 Purpose: To tally up the point of the hand
-Parameters: none
+Parameters:
+			a_wentOut, bool containing if the player went out or not
 Return Value: tallyed up point, does not include go out point
 Algorithm:
 			1) iterate over m_hand at 0th index 10 at a time and print
@@ -1106,7 +1161,7 @@ Algorithm:
 				each vectors of cards by calling GetRankSuit()
 Assistance Received: none
 ********************************************************************* */
-const int Hand::TallyPoints() const
+const int Hand::TallyPoints( bool a_wentOut ) const
 {
 	int totalPoint = 0;
 
@@ -1152,6 +1207,12 @@ const int Hand::TallyPoints() const
 		totalPoint -= m_handCard.front().at( cardIdx )->GetPoint();
 	}
 
+	// adding 100 if the player went out
+	if( a_wentOut )
+	{
+		totalPoint += 100;
+	}
+
 	return totalPoint;
 }
 
@@ -1195,7 +1256,7 @@ std::pair<bool, std::string> Hand::AddCardToMeld( unsigned a_handCardIdx, unsign
 		m_handCard.at( a_meldIdx ).push_back( m_handCard.front().at( a_handCardIdx ) );
 
 		// removing the card from the hand
-		m_handCard.front().at( a_handCardIdx ) == nullptr;
+		m_handCard.front().at( a_handCardIdx ) = nullptr;
 		m_handCard.front().erase( m_handCard.front().begin() + a_handCardIdx );
 
 		SortMeld( a_meldIdx );

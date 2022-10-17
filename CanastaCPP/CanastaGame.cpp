@@ -150,15 +150,24 @@ void CanastaGame::RunGame()
 				m_showMainMenu = true;
 				continue;
 			}
-
 		}
 
 		// at this point game is seted up whether by loading a saved 
 		// file or by creating a new game. So continue playing the 
 		// game
 
-		// continue to play the game 
-		m_showMainMenu = !m_round->ContinueRound();
+		// continue to play the game
+		std::pair<bool, bool> contRoundReturnVal;
+		contRoundReturnVal = m_round->ContinueRound();
+
+		// checking if exits to main menu was pressed
+		m_showMainMenu = contRoundReturnVal.first;
+
+		// if save game was pressed
+		if( contRoundReturnVal.second )
+		{
+			SaveToFile();
+		}
 
 		// now we know that player took the turn 
 		// so player can either 
@@ -166,8 +175,6 @@ void CanastaGame::RunGame()
 		//		card in the discard pile to make a meld or add
 		//		to exiting meld
 		// 2) draw a card from the stock pile
-
-
 	}
 
 	PrintGameTitle();
@@ -261,15 +268,13 @@ std::pair<bool, unsigned> CanastaGame::MainMenuController()
 
 		if( userInputInt >= 1 && userInputInt <= 3 )
 		{
-			m_showMainMenu = false;
 			return { true, userInputInt };
 		}
 	}
-	else
-	{
-		Message::AddMessage( "Invalid Input!!" );
-		return { false, 5 };
-	}
+
+	Message::AddMessage( "Invalid Input!!" );
+	return { false, 5 };
+
 }
 
 /* *********************************************************************
@@ -279,22 +284,16 @@ Parameters:
 		a_userChoice, unsinged interger. Holds the user choice for
 			the menu
 Return Value:
-			boolean value. false if the user quit the game or user input an invalid
-				filename; else ture.
+			boolean value. false if the user quit the game or user input
+				an invalid filename; else ture.
 Algorithm:
-		Todo fix me
-		1) if the userChoice is 3 set m_exit to true and return flase
-		2) get the input from user and validate it
-		3) if the user input is valid then set the state of
-			showMainMenu choice to false and return true and user input
-			else return false and 5
-		4) if user entered '1' then ask for the file name to save
+		1) if the userChoice is 3 set m_exit to true and return false
+		2) get the file name from the user.
+		3) if user entered '1' then ask for the file name to save
 			the game into and then delete m_round and create a new round
-		5) if user entered '2' then ask for the file name to load
+		4) if user entered '2' then ask for the file name to load
 			the game from. Read the data saved in the file and
 			then load the data into m_round
-		6) else exit the program
-
 Assistance Received: none
 ********************************************************************* */
 bool CanastaGame::MainMenuLogic( unsigned a_userChoice )
@@ -335,9 +334,10 @@ bool CanastaGame::MainMenuLogic( unsigned a_userChoice )
 		{
 			// file failed to save failed
 			m_showMainMenu = true;
+			m_fileObj.CloseFile();
+			Message::AddMessage( "Failed to save to file" );
 			return false;
 		}
-		return true;
 	}
 	// 2) load a game
 	else
@@ -347,15 +347,14 @@ bool CanastaGame::MainMenuLogic( unsigned a_userChoice )
 		{
 			// opening or loading of the file failed
 			m_showMainMenu = true;
+			Message::AddMessage( "Failed to load game from file" );
 			return false;
 		}
 
-		return true;
 	}
 
-	// if quit was pressed then returns false
-	return false;
-
+	m_showMainMenu = false;
+	return true;
 }
 
 
@@ -461,6 +460,7 @@ bool CanastaGame::LoadFormFile()
 		{
 			if( !m_fileObj.GetNextLine( nextLine ) )
 			{
+				Message::AddMessage( "Corrupted File!" );
 				return false;
 			}
 

@@ -7,6 +7,7 @@
 
 #pragma once
 #include <vector>
+#include <set>
 #include <string>
 #include <sstream>
 #include <algorithm>
@@ -69,7 +70,7 @@ public:
 	bool AddCardToHand( const Card a_cardToAdd );
 
 	// see if a card can be added to atleast one of the meld or not
-	std::pair<bool, std::string> CanAddToMeld( const Card a_cardToAdd ) const;
+	std::pair<unsigned, std::string> CanAddToMeld( const Card a_cardToAdd ) const;
 
 	// takes the card at index from actual hand and moves 
 	// it to a meld if possible
@@ -99,7 +100,7 @@ public:
 	void PrintHand() const;
 
 	// tallies up all the point
-	const int TallyPoints() const;
+	const int TallyPoints( bool a_wentOut ) const;
 
 	// returns true if the passed meld idx is a valid index
 	bool ValidateMeldIdx( unsigned a_meldIdx ) const { return a_meldIdx < m_handCard.size(); }

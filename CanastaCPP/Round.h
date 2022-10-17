@@ -55,11 +55,11 @@ public:
 	// getter function to get the discard pile
 	const std::vector<Card> GetDiscardPile() const { return m_discardPile; }
 
-	//// getter function to get the discard pile
-	//const std::stack<Card> GetDiscardPileString() const { return m_discardPile; }
+	// Gets the rankSuit of the top card in the discard pile
+	const std::string GetDiscardPileTopRankSuit() const { return m_discardPile.front().GetRankSuit(); }
 
 	// Gets the rankSuit of the top card in the discard pile
-	const std::string GetDiscardPileTopRankSuit() const { return m_discardPile.back().GetRankSuit(); }
+	const Card GetDiscardPileTopCard() const { return m_discardPile.front(); }
 
 	// gets the current player
 	const Player* GetCurrPlayerPtr() const { return m_playerList.at( ( unsigned )m_playerTurn ); }
@@ -83,24 +83,16 @@ public:
 	const ENUM_PlayerTurn GetPlayerTurn() const { return m_playerTurn; }
 
 	// Checks if the round is over
-	bool IsRoundOver() const { return m_playerList.front()->CanGoOut() && m_playerList.back()->CanGoOut(); }
+	bool IsRoundOver() const { return m_playerList.front()->CanGoOut() || m_playerList.back()->CanGoOut(); }
 
 	// increase the round number by one
 	bool IncrementRoundNumber() { return ++m_currRoundNum; }
 
-	// empties the discard pile
-	bool EmptyDiscardPile();
-
-	// adds a card to discardPile
-	bool AddToDiscardPile( Card a_cardToAdd ) { m_discardPile.push_back( a_cardToAdd ); }
-
 	// starts a new round
 	bool StartNewRound();
 
-	bool ContinueRound();
-
-	// simulates a coin toss
-	char TossACoin() { return ( rand() / 2 ) == 0 ? 'h' : 't'; }
+	// continues the round
+	std::pair<bool, bool> ContinueRound();
 
 	// clears the round
 	void ClearScreen();
@@ -116,11 +108,19 @@ private:
 	// holds the current round number
 	unsigned m_currRoundNum;
 
-	// indicates if the round is over or not
-	bool m_roundOver;
+	// indicates if the round is over or not by player going out
+	bool m_playerWentOut;
 
 	// indicates if it is currently start of the round or not
 	bool m_roundStart;
+
+	// indicates if the player drew a red 3 which is also the 
+	// last card in stack
+	bool m_lastCardR3Drwan;
+
+	// indicates if the both the player can not use the discard pile
+	// to make a meld when the stock is empty
+	bool m_endCausedCusDiscardPile;
 
 	// m_playerTurn holds whose turn it could be
 	ENUM_PlayerTurn m_playerTurn;
@@ -139,6 +139,24 @@ private:
 	// additional player can pick up the whole discarded pile if
 	// the last added to the pile help them in making a meld.
 	std::vector<Card> m_discardPile;
+
+	// empties the discard pile
+	bool EmptyDiscardPile();
+
+	// adds a card to discardPile
+	bool AddToDiscardPile( Card a_cardToAdd ) { m_discardPile.insert( m_discardPile.begin(),a_cardToAdd ); return true; }
+
+	// simulates a coin toss
+	char TossACoin() { return ( rand() / 2 ) == 0 ? 'h' : 't'; }
+
+	// holds the logic for before turn controller
+	std::pair<bool, bool> BeforeTurnLogic( unsigned a_userChoice );
+
+	// holds the logic for turn start controller
+	bool TurnStartLogic( unsigned a_userChoice );
+
+	// holds the logic for turn continue controller
+	bool TurnContinueLogic( std::vector<unsigned> a_userChoice );
 
 	// draws discard and stock pile
 	void PrintDiscardAndStock();

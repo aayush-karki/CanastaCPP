@@ -94,11 +94,21 @@ public:
 	// returns the rank and suit as string 
 	const std::string GetRankSuit() const { return std::string( { m_rank, m_suit } ); }
 
-	// converts the passed vector of cards in to string format seperated by space
+	// converts the passed vector of cards in to
+	// string format seperated by space
 	static const std::string ConvertVecToString( const std::vector<Card>& a_cardVec );
 
-	// converts the passed vector of cards pointer in to string format seperated by space
+	// converts the passed vector of cards pointer in to 
+	// string format seperated by space
 	static const std::string ConvertVecToString( const std::vector<Card*>& a_cardVec );
+
+	// converts the passed vector of cards in to string 
+	// format seperated by space and each line has 10 card at max
+	static const std::string ConvertVecToString10PerLine( const std::vector<Card>& a_cardVec );
+
+	// converts the passed vector of cards pointer in to string 
+	// format seperated by space and each line has 10 card at max
+	static const std::string ConvertVecToString10PerLine( const std::vector<Card*>& a_cardVec );
 
 	// prints all the information of the card
 	void Debug();

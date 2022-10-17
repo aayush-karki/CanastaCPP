@@ -585,3 +585,89 @@ const std::string Card::ConvertVecToString( const std::vector<Card*>& a_cardVec 
 
 	return cardStrNoLastSpace;
 }
+
+/* *********************************************************************
+Function Name: ConvertVecToString10PerLine
+Purpose: To returns a strings of card where 10 card are in a line and
+		each cards are seperated by space
+Parameters:
+			a_cardVec, vector of cards passed by reference holds the
+				cards that are to be converted into string.
+Return Value:
+			const string, containing the rank and suit of
+				cards passed to the funciton. Each card
+				is seperated by blank space.
+Algorithm:
+			1) create a string
+			2) add 10 cards at a time to the string no card are left
+Assistance Received: none
+********************************************************************* */
+const std::string Card::ConvertVecToString10PerLine( const std::vector<Card>& a_cardVec )
+{
+	std::string cardStr = "";
+
+	// iterating over m_stock and calling GetRankSuit funciton
+	std::vector<Card>::const_iterator currCardItre = a_cardVec.begin();
+	while( currCardItre != a_cardVec.end() )
+	{
+		unsigned count;
+		for( count = 0; count < 10; ++count )
+		{
+			// to prevent we do not go over the last element
+			if( currCardItre == a_cardVec.end() )
+			{
+				break;
+			}
+
+			cardStr +=  currCardItre->GetRankSuit() + " ";
+			++currCardItre;
+		}
+		cardStr +="\n";
+	}
+
+	return cardStr;
+}
+
+
+/* *********************************************************************
+Function Name: ConvertVecToString10PerLine
+Purpose: To returns a strings of card where 10 card are in a line and
+		each cards are seperated by space
+Parameters:
+			a_cardVec, vector of cards pointer passed by reference 
+				holds the cards that are to be converted into string.
+Return Value:
+			const string, containing the rank and suit of
+				cards passed to the funciton. Each card
+				is seperated by blank space and each line has 
+				10 card at max
+Algorithm:
+			1) create a string
+			2) add 10 cards at a time to the string no card are left
+Assistance Received: none
+********************************************************************* */
+const std::string Card::ConvertVecToString10PerLine( const std::vector<Card*>& a_cardVec )
+{
+	std::string cardStr = "";
+
+	// iterating over m_stock and calling GetRankSuit funciton
+	std::vector<Card*>::const_iterator currCardItre = a_cardVec.begin();
+	while( currCardItre != a_cardVec.end() )
+	{
+		unsigned count;
+		for( count = 0; count < 10; ++count )
+		{
+			// to prevent we do not go over the last element
+			if( currCardItre == a_cardVec.end() )
+			{
+				break;
+			}
+
+			cardStr += (*currCardItre)->GetRankSuit() + " ";
+			++currCardItre;
+		}
+		cardStr += "\n";
+	}
+
+	return cardStr;
+}
