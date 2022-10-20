@@ -48,6 +48,10 @@ public:
 	// getter function to get the actual hand of in the hand
 	const std::vector<Card> GetActualHand() const;
 
+	// getter funciton to get the actual hand in divided format where each
+	// ranks are seperated into its own list
+	std::vector<std::vector<Card>> GetDividedAcualHandCardList() const;
+
 	// getter function to get the melds of in the hand
 	const std::vector<std::vector<Card>> GetMelds() const;
 

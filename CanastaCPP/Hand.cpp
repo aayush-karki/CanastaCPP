@@ -202,6 +202,13 @@ Hand::Hand( std::string a_handCards, std::string a_meldCards ) :
 			break;
 		}
 	}
+
+
+	/*
+		TODO (BUG): Currently wild cards are left in the hand.
+		Change this to the wild cards adding to the melds
+	*/ 
+	
 }
 
 /* *********************************************************************
@@ -336,6 +343,58 @@ const std::vector<Card> Hand::GetActualHand() const
 	}
 
 	return actualHand;
+}
+
+/* *********************************************************************
+Function Name: GetDividedAcualHandCardList
+Purpose: Getter function to get actual hand--that is card that are
+		not in melds--where the all the ranks of the card are seperated
+		into one vector. All the ranks are in decending order.
+Parameters: none
+Return Value:
+			const vector of vector of card where each vector of cards 
+				have the same ranks.
+Algorithm:
+			1) create vector of vector of card.
+			2) for each of the meld in player hand
+			3)		create a vector of card
+			4)		for each card in the meld create a temp card and
+						add that to the back of vector created in step 3
+			5)		add the vector created in step 3 to the vector created
+						in 1
+Assistance Received: none
+********************************************************************* */
+std::vector<std::vector<Card>> Hand::GetDividedAcualHandCardList() const
+{
+	// diving out cards at hand according to its rank
+	std::vector<std::vector<Card>> sameRankHandCardList;
+
+	std::vector<Card> acutalHand = GetActualHand();
+
+	for( unsigned handCardIdx = 0; handCardIdx < acutalHand.size(); ++handCardIdx )
+	{
+		Card currCard = acutalHand.at( handCardIdx );
+
+		// checking if the currCard is in the list or not 
+		if( sameRankHandCardList.empty() )
+		{
+			sameRankHandCardList.push_back( { currCard } );
+			continue;
+		}
+
+		// as the actual hand is sorted 
+		// if the curCard's rank is same as the last cards in the list 
+		if( currCard.GetRank() == sameRankHandCardList.back().front().GetRank() )
+		{
+			sameRankHandCardList.back().push_back( currCard );
+			continue;
+		}
+
+		// else it should be smaller so create a new vector and push it back
+		sameRankHandCardList.push_back( { currCard } );
+	}
+
+	return sameRankHandCardList;
 }
 
 /* *********************************************************************
@@ -684,6 +743,11 @@ std::pair<bool, std::string> Hand::AddWildCardToMeld( unsigned a_handCardIdx, un
 	if( m_handCard.front().at( a_handCardIdx )->GetCardType() != ENUM_CardType::CARDTYPE_wildCard )
 	{
 		return { false, "Card at index " + std::to_string( a_handCardIdx ) + " is not a wild card" };
+	}
+
+	if( m_handCard.at( a_meldIdx ).front()->GetCardType() != ENUM_CardType::CARDTYPE_natural )
+	{
+		return  {false, "Meld is a meld of red three"};
 	}
 
 	// counting the number of wildcard

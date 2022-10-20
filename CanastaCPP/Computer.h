@@ -7,6 +7,10 @@
 
 #pragma once
 #include "Player.h"
+
+// TODO (FEATURE) Change the AI. AI should take the discard pile and opponets meld into considiration
+// TODO (FEATURE) It would be nice if the AI also keeps tracks of "Showed" card or card Counting and factors that in to its decision
+
 class Computer :
 	public Player
 {
@@ -45,6 +49,5 @@ public:
 	// executes the player turn continue controller
 	virtual  std::pair < std::pair<unsigned, std::vector<unsigned>>, std::string> TurnContinueHelp( const std::vector<std::vector<Card>>& a_otherPlayerMeld,
 																									const std::vector<Card>& a_discardPile );
-
 };
 

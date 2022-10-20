@@ -133,7 +133,6 @@ Deck::Deck( std::string a_stock )
 
 		// chekcing if the returedIte is not an error
 		// this should not be the case as we had validated it before 
-		// todo: make this try catch
 		if( returedIte == RankSuitList.end() )
 		{
 			std::cerr << "Extracted Rank and Suit not in the unswapped list!!!!!"
@@ -423,7 +422,10 @@ bool Deck::Shuffel()
 	// moving all the card in m_dealt to m_stock
 	ConsodilateDeck();
 
-	// TODO use a std::chrono::system_clock::now().time_since_epoch().count(); insted of 1 for seed
+	/*
+		TODO(Feature) : Curretnly we are setting the random to a fixed value for consistent testing
+		So, use a std::chrono::system_clock::now().time_since_epoch().count(); insted of 1 for seed
+	*/ 
 	std::shuffle( m_stock.begin(), m_stock.end(), std::default_random_engine( 1 ) );
 
 	return true;

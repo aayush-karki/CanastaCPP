@@ -9,6 +9,9 @@
 #include "Round.h"
 #include "FileAccess.h"
 
+// TODO (REFACTOR): Try to use Try catch blocks in the code
+// TODO (REFACTOR): Use smart pointers instead of regular pointers
+
 class CanastaGame
 {
 public:

@@ -179,84 +179,12 @@ std::pair<std::pair<unsigned, std::vector<unsigned>>, std::string> Computer::Tur
 		return { {2,{2}}, "Can not pick up the pile as it is frozen. So draw card from the stock." };
 	}
 
-	// TODO clean me up
+	bool canPickup = CanPickUpDiscardPile( a_discardPile );
 
-	bool canPickup = false;
-	// see if we can meld the top of the discard pile
-	if( CanAddToMeld( a_discardPile.front() ).first == -1 )
+	if( !canPickup )
 	{
-		// creating a temp computer to check if the top of the card can be melded or not 
-		// and doing as much meld as we can
-		Computer tempComputer( *this );
-
-		tempComputer.PickUpDiscardPile( { a_discardPile.front() } );
-
-		// divinging out cards at hand according to its rank
-		std::vector<std::vector<Card>> sameRankHandCardList;
-
-		for( unsigned handCardIdx = 0; handCardIdx < tempComputer.GetActualHand().size(); ++handCardIdx )
-		{
-			Card currCard = tempComputer.GetActualHand().at( handCardIdx );
-
-			// checking if the currCard is in the list or not 
-			if( sameRankHandCardList.empty() )
-			{
-				sameRankHandCardList.push_back( { currCard } );
-				continue;
-			}
-
-			// as the actual hand is sorted 
-			// if the curCard's rank is same as the last cards in the list 
-			if( currCard.GetRank() == sameRankHandCardList.back().front().GetRank() )
-			{
-				sameRankHandCardList.back().push_back( currCard );
-				continue;
-			}
-
-			// else it should be smaller so create a new vector and push it back
-			sameRankHandCardList.push_back( { currCard } );
-		}
-
-		// checking if we have a wildcard
-		bool hasWildCard = ( sameRankHandCardList.back().front().GetCardType() == ENUM_CardType::CARDTYPE_wildCard );
-
-		// checking if the there is any rank that has 3 cards in them or has 2 card and we have a wild card at hand
-		for( unsigned sameRankCardIdx = 0; sameRankCardIdx < sameRankHandCardList.size(); ++sameRankCardIdx )
-		{
-
-			if( sameRankHandCardList.at( sameRankCardIdx ).size() == 3
-				|| ( sameRankHandCardList.at( sameRankCardIdx ).size() == 2 && hasWildCard ) )
-			{
-				// only procede if we are dealing with natural card
-				if( sameRankHandCardList.at( sameRankCardIdx ).front().GetCardType() != ENUM_CardType::CARDTYPE_natural )
-				{
-					continue;
-				}
-
-				// checking if the meld is going to be made out of the discard pile's top
-				if( sameRankHandCardList.at( sameRankCardIdx ).front().GetRank() != a_discardPile.front().GetRank() )
-				{
-					continue;
-				}
-
-				// calculating the indexs 
-				unsigned idxOfFirstCard = 0;
-
-				for( unsigned newSameRankCardListIdx = 0; newSameRankCardListIdx < sameRankCardIdx; ++newSameRankCardListIdx )
-				{
-					idxOfFirstCard += sameRankHandCardList.at( newSameRankCardListIdx ).size();
-				}
-
-				canPickup = true;
-				break;
-			}
-		}
-
-		if( !canPickup )
-		{
-			// we can not meld the stack so our only option is to draw
-			return { {2,{2}}, "Can not use top of the discard pile to make a meld. So draw a card from the stock." };
-		}
+		// we can not meld the stack so our only option is to draw
+		return { {2,{2}}, "Can not use top of the discard pile to make a meld. So draw a card from the stock." };
 	}
 
 	// creating a temp computer and making it pick up the discard pile
@@ -329,7 +257,6 @@ std::pair<std::pair<unsigned, std::vector<unsigned>>, std::string> Computer::Tur
 	return { {2,{2}}, "Draw from the stock as there is nothing special about the discard pile for now." };
 }
 
-
 /* *********************************************************************
 Function Name: TurnContinueHelp
 Purpose: Decides what to do in the turn continue menu. It choses between
@@ -363,6 +290,8 @@ Assistance Received: none
 std::pair<std::pair<unsigned, std::vector<unsigned>>, std::string> Computer::TurnContinueHelp( const std::vector<std::vector<Card>>& a_otherPlayerMeld,
 																							   const std::vector<Card>& a_discardPile )
 {
+	// TODO (BUG): this whole fuction is deeply bugged and Ai is pretty bad see other TODO comments.
+
 	// now player have 6 choices until they discard or go out:
 	// else it is not the start of the round so they have 5 choices
 	//	4) Go out -> enter 4
@@ -377,6 +306,8 @@ std::pair<std::pair<unsigned, std::vector<unsigned>>, std::string> Computer::Tur
 	{
 		return { {3,{4}}, "Can go out and finish the round" };
 	}
+
+	// TODO (BUG): The program crashs if the hand is empty and computer cannot go out nor discard
 
 	// looping over the card in the hand and seeing if we can meld any thing
 	// if yes the meld it
@@ -393,30 +324,7 @@ std::pair<std::pair<unsigned, std::vector<unsigned>>, std::string> Computer::Tur
 	}
 
 	// divinging out cards at hand according to its rank
-	std::vector<std::vector<Card>> sameRankHandCardList;
-
-	for( unsigned handCardIdx = 0; handCardIdx < GetActualHand().size(); ++handCardIdx )
-	{
-		Card currCard = GetActualHand().at( handCardIdx );
-
-		// checking if the currCard is in the list or not 
-		if( sameRankHandCardList.empty() )
-		{
-			sameRankHandCardList.push_back( { currCard } );
-			continue;
-		}
-
-		// as the actual hand is sorted 
-		// if the curCard's rank is same as the last cards in the list 
-		if( currCard.GetRank() == sameRankHandCardList.back().front().GetRank() )
-		{
-			sameRankHandCardList.back().push_back( currCard );
-			continue;
-		}
-
-		// else it should be smaller so create a new vector and push it back
-		sameRankHandCardList.push_back( { currCard } );
-	}
+	std::vector<std::vector<Card>> sameRankHandCardList = GetDividedAcualHandCardList();
 
 	// checking if we have a wildcard
 	bool hasWildCard = ( sameRankHandCardList.back().front().GetCardType() == ENUM_CardType::CARDTYPE_wildCard );
@@ -469,7 +377,10 @@ std::pair<std::pair<unsigned, std::vector<unsigned>>, std::string> Computer::Tur
 	hasWildCard = false;
 	unsigned wildCardMeldIdx = 0;
 	const std::vector<std::vector<Card>> melds = GetMelds();
-	// if a meld is more than 3 and it has a wild card then test for 
+	// if a meld is more than 3 and it has a wild card then test for any 2 cards of same rank in actual hand
+
+	// checking for any wildcards in a meld where teh meld size is more than 3
+	// if yes we can safly take the wild card out
 	for( unsigned meldIdx = 0; meldIdx < melds.size(); ++meldIdx )
 	{
 		if( melds.at( meldIdx ).size() > 3
@@ -486,7 +397,8 @@ std::pair<std::pair<unsigned, std::vector<unsigned>>, std::string> Computer::Tur
 	{
 		for( unsigned sameRankCardIdx = 0; sameRankCardIdx < sameRankHandCardList.size(); ++sameRankCardIdx )
 		{
-			if( sameRankHandCardList.at( sameRankCardIdx ).size() == 2 )
+			if( sameRankHandCardList.at( sameRankCardIdx ).size() == 2 &&
+				sameRankHandCardList.at( sameRankCardIdx ).front().GetCardType() != ENUM_CardType::CARDTYPE_wildCard )
 			{
 				// calculating the indexs 
 				unsigned idxOfFirstCard = 0;
@@ -526,6 +438,57 @@ std::pair<std::pair<unsigned, std::vector<unsigned>>, std::string> Computer::Tur
 		}
 	}
 
+	// we can be sure that there are no 2 cards with same rank and have a wild card in the hand 
+	// so add the wild cards to the melds with largest size 
+	// checking if we have a wildcard in hand 
+	hasWildCard = ( sameRankHandCardList.back().front().GetCardType() == ENUM_CardType::CARDTYPE_wildCard );
+
+	/*
+		TODO (BUG): curretnly For making a meld, the Ai recommend to add into a wildcard into a meld which alread has 3 wildcards in it.
+			So in the Ai decision it need to consider if the meld already has a 3 wildcard or not.
+			If the meld has 3 wildcards in it it should not recommend adding a wild card into it.
+			One way to do this would be as the wild card is added to the largest meld. choses the next largest meld.
+			again this needs to consider what if there are no other melds other than the meld which has 3 wild card in it.
+	*/
+
+	unsigned largestMeldIdxToAddWC = 0;
+
+	if( hasWildCard )
+	{
+		Card wildCard = sameRankHandCardList.back().front();
+		// checking if we can add a wild card to a meld and tracking the largest valid meld
+		for( unsigned meldIdx = 0; meldIdx < GetMelds().size(); ++meldIdx )
+		{
+			Computer tempComp( *this );
+
+			// trying to add the wild card to each meld
+			auto melds = tempComp.GetMelds();
+			auto actualHand = tempComp.GetActualHand();
+
+			auto addResult = tempComp.AddToMeld( actualHand.size() - 1, meldIdx + 1 );
+
+			if( ( addResult.first ) )
+			{
+				// success
+				//compare the length
+				if( melds.at( meldIdx ).size() - 1 > melds.at( largestMeldIdxToAddWC ).size() )
+				{
+					largestMeldIdxToAddWC = meldIdx;
+				}
+			}
+		}
+		std::vector<unsigned> result;
+		result.push_back( 2 );
+		result.push_back( GetActualHand().size() - 1 );
+		result.push_back( largestMeldIdxToAddWC + 1 );
+
+		std::string message = "Add the the wild card at index " + std::to_string( GetActualHand().size() - 1 );
+		message += " to the meld at index " + std::to_string( largestMeldIdxToAddWC + 1 );
+		message += "\nThis allows for mamimum chances of getting a canasta";
+
+		return { {3, result}, message };
+	}
+
 	// discarding a card
 	// for now discard a card that we have only one of
 	for( unsigned sameRankCardIdx = 0; sameRankCardIdx < sameRankHandCardList.size(); ++sameRankCardIdx )
@@ -543,7 +506,7 @@ std::pair<std::pair<unsigned, std::vector<unsigned>>, std::string> Computer::Tur
 			// to get the index
 			idxOfFirstCard;
 
-			return { {3, {3,idxOfFirstCard }}, "Discard the card at index: "+ std::to_string( idxOfFirstCard )+ " as card that is largest single card" };
+			return { {3, {3,idxOfFirstCard }}, "Discard the card at index: " + std::to_string( idxOfFirstCard ) + " as card that is largest single card" };
 
 		}
 	}

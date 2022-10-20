@@ -50,6 +50,10 @@ public:
 	// set players before turn flag status
 	bool GetTurnStartFlag() const { return m_isStartOfTurn; }
 
+	// getter funciton to get the actual hand in divided format where each
+	// ranks are seperated into its own list
+	std::vector<std::vector<Card>> GetDividedAcualHandCardList() const { return m_playerHand.GetDividedAcualHandCardList(); }
+
 	// set players went out status
 	bool SetPlayerWentOutStatus( bool a_playerWentOut ) { m_wentOut = a_playerWentOut; return true; }
 
@@ -121,6 +125,9 @@ public:
 
 	// resets player's hand, and flags
 	virtual bool ResetPlayerForNewRound();
+
+	// ches to see if the player can pick up the discarded pile
+	bool CanPickUpDiscardPile( const std::vector<Card>& a_discardPile );
 protected:
 
 	// cards of the player

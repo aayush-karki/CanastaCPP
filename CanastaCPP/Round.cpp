@@ -330,8 +330,10 @@ bool Round::StartNewRound()
 
 	//m_playerTurn = ENUM_PlayerTurn::TURN_uninitialized;
 
-	// TODO take the below out into its own function wherer it will be 
-	// executed when the player turn is uninialized
+	/* 
+		TODO (Feature): take the below out into its own function for a consistent MVC approch.
+			where it will be executed if the the m_playerTurn is set to uninialized 
+	*/
 
 	// round setup is complete 
 	// seeing who goes first
@@ -422,7 +424,7 @@ std::pair<bool, bool> Round::ContinueRound()
 	// clearing the messages
 	Message::ClearMessages();
 
-	if( m_playerTurn == ENUM_PlayerTurn::TURN_computer )
+	if( m_playerTurn == ENUM_PlayerTurn::TURN_computer && !m_roundStart )
 	{
 		std::cout << "It is computer turn entry anything to procced a step: ";
 		std::string garbage;
@@ -442,12 +444,47 @@ std::pair<bool, bool> Round::ContinueRound()
 	{
 		std::vector<std::string> playerNameList = { "Computer","Human" };
 
-		//// checking if the discard pile can be picked up if the stock the stock is empty
-		//if( !m_playerWentOut && !m_lastCardR3Drwan && m_deck.GetStock().empty() )
-		//{
-		//	// checking for player for current turn
-		//	Computer tempComputer(*((Computer*)GetCurrPlayerPtr()))
-		//}
+		// checking if the discard pile can be picked up if the stock the stock is empty
+		if( !m_playerWentOut && !m_lastCardR3Drwan && m_deck.GetStock().empty() )
+		{
+			// checking for currClayer for current turn
+			Computer tempComputer( *( ( Computer* )GetCurrPlayerPtr() ) );
+
+			if( tempComputer.CanPickUpDiscardPile( m_discardPile ) )
+			{
+				// forcing the current player to pick up the discard pile
+				TurnStartLogic( 2 );
+				std::string message = " Stock is empty!\n";
+				message += ( m_playerTurn == ENUM_PlayerTurn::TURN_computer ) ? "Computer" : "Human";
+				message += " can pick up the discarded pile. So picking up the discard pile.";
+				Message::AddMessage( message );
+				return { false,false };
+			}
+
+			// checking for OtherPlayer for current turn
+			Computer tempOtherPlayer( *( ( Computer* )GetOtherPlayerPtr() ) );
+
+			if( tempOtherPlayer.CanPickUpDiscardPile( m_discardPile ) )
+			{
+				// setting curr player to other
+				m_playerTurn = ( m_playerTurn == ENUM_PlayerTurn::TURN_computer ) ? ENUM_PlayerTurn::TURN_human : ENUM_PlayerTurn::TURN_computer;
+
+				// forcing the new current player to pick up the discard pile
+				TurnStartLogic( 2 );
+				std::string message = " Stock is empty!\n";
+				message += ( m_playerTurn == ENUM_PlayerTurn::TURN_computer ) ? "Computer" : "Human";
+				message += " can pick up the discarded pile. So picking up the discard pile.";
+				Message::AddMessage( message );
+
+				return { false,false };
+			}
+
+			std::string message = "Stock is empty!\n";
+			message += ( "Neither Human or Computer can pick up the discarded pile. So Ending the game." );
+			Message::AddMessage( message );
+			Message::AddMessage( "" );
+
+		}
 
 		// chekcing if the player wentout or not
 		for( unsigned playerIdx = 0; playerIdx < m_playerList.size(); ++playerIdx )
@@ -710,7 +747,6 @@ bool Round::TurnStartLogic( unsigned a_userChoice )
 		// ask for help
 		case 1:
 		{
-			// TODO add code to ask for help
 			Message::AddMessage( "Asking computer for help!" );
 			Computer tempComp( *( ( Computer* )currPlayerptr ) );
 
@@ -752,78 +788,13 @@ bool Round::TurnStartLogic( unsigned a_userChoice )
 		{
 			// player can not pick up the discard pile if the 
 			// the top card can not be used to be melded
-			bool canPickup = false;
-			// see if we can meld the top of the discard pile
+
+			// see if we can meld the top of the discard pile into any
+			// of the alredy existing melds
 			if( currPlayerptr->CanAddToMeld( m_discardPile.front() ).first == -1 )
 			{
-				// creating a temp computer to check if the top of the card can be melded or not 
-				// and doing as much meld as we can
-				Computer tempComputer( *( ( Computer* )currPlayerptr ) );
 
-				tempComputer.PickUpDiscardPile( { m_discardPile.front() } );
-
-				// divinging out cards at hand according to its rank
-				std::vector<std::vector<Card>> sameRankHandCardList;
-
-				for( unsigned handCardIdx = 0; handCardIdx < tempComputer.GetActualHand().size(); ++handCardIdx )
-				{
-					Card currCard = tempComputer.GetActualHand().at( handCardIdx );
-
-					// checking if the currCard is in the list or not 
-					if( sameRankHandCardList.empty() )
-					{
-						sameRankHandCardList.push_back( { currCard } );
-						continue;
-					}
-
-					// as the actual hand is sorted 
-					// if the curCard's rank is same as the last cards in the list 
-					if( currCard.GetRank() == sameRankHandCardList.back().front().GetRank() )
-					{
-						sameRankHandCardList.back().push_back( currCard );
-						continue;
-					}
-
-					// else it should be smaller so create a new vector and push it back
-					sameRankHandCardList.push_back( { currCard } );
-				}
-
-				// checking if we have a wildcard
-				bool hasWildCard = ( sameRankHandCardList.back().front().GetCardType() == ENUM_CardType::CARDTYPE_wildCard );
-
-				// checking if the there is any rank that has 3 cards in them or has 2 card and we have a wild card at hand
-				for( unsigned sameRankCardIdx = 0; sameRankCardIdx < sameRankHandCardList.size(); ++sameRankCardIdx )
-				{
-
-					if( sameRankHandCardList.at( sameRankCardIdx ).size() == 3
-						|| ( sameRankHandCardList.at( sameRankCardIdx ).size() == 2 && hasWildCard ) )
-					{
-						// only procede if we are dealing with natural card
-						if( sameRankHandCardList.at( sameRankCardIdx ).front().GetCardType() != ENUM_CardType::CARDTYPE_natural )
-						{
-							continue;
-						}
-
-						// checking if the meld is going to be made out of the discard pile's top
-						if( sameRankHandCardList.at( sameRankCardIdx ).front().GetRank() != m_discardPile.front().GetRank() )
-						{
-							continue;
-						}
-
-						// calculating the indexs 
-						unsigned idxOfFirstCard = 0;
-
-						for( unsigned newSameRankCardListIdx = 0; newSameRankCardListIdx < sameRankCardIdx; ++newSameRankCardListIdx )
-						{
-							idxOfFirstCard += sameRankHandCardList.at( newSameRankCardListIdx ).size();
-						}
-
-						canPickup = true;
-						break;
-					}
-				}
-
-				if( !canPickup )
+				if( !currPlayerptr->CanPickUpDiscardPile( m_discardPile ) )
 				{
 					std::string pickedupMessage = ( ( m_playerTurn == ENUM_PlayerTurn::TURN_computer ) ? "Comuputer" : "Human" );
 					// we can not meld the stack so our only option is to draw
@@ -833,7 +804,6 @@ bool Round::TurnStartLogic( unsigned a_userChoice )
 			}
 
 			std::string discardCard = Card::ConvertVecToString10PerLine( m_discardPile );
-
 
 			// adding all the card of the discard pile to the player
 			for( unsigned discardIdx = 0; discardIdx < m_discardPile.size(); ++discardIdx )
@@ -912,7 +882,6 @@ bool Round::TurnContinueLogic( std::vector<unsigned> a_userChoiceVec )
 		// Ask for help
 		case 1:
 		{
-			// TODO call ask for help function ??
 			Message::AddMessage( "Asking computer for help!" );
 			Computer tempComp( *( ( Computer* )currPlayerptr ) );
 
@@ -932,7 +901,6 @@ bool Round::TurnContinueLogic( std::vector<unsigned> a_userChoiceVec )
 			// if the first is false then error
 			if( !result.first )
 			{
-				Message::AddMessage( result.second );
 
 				return false;
 			}
@@ -1004,7 +972,6 @@ bool Round::TurnContinueLogic( std::vector<unsigned> a_userChoiceVec )
 		// Make a new meld
 		case 5:
 		{
-			Card cardToMeld = currPlayerptr->GetActualHand().at( a_userChoiceVec.at( 1 ) );
 
 			// removing the menu idx form the user input
 			std::vector<unsigned> cardIdx = a_userChoiceVec;
@@ -1019,6 +986,7 @@ bool Round::TurnContinueLogic( std::vector<unsigned> a_userChoiceVec )
 				Message::AddMessage( result.second );
 				return false;
 			}
+			Card cardToMeld = currPlayerptr->GetMelds().back().front();
 
 			// concoting message to display
 			std::string displayMessage = ( ( m_playerTurn == ENUM_PlayerTurn::TURN_computer ) ? "Comuputer" : "Human" );

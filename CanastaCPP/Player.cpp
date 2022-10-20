@@ -185,7 +185,7 @@ Purpose: Contains the controller for turn starts. this is executed when
 		"Ask for Help",	"show discard pile", or
 		"show stock card (for debugging)"
 Parameters:
-			a_discardPile, a const reference to vector of cards that 
+			a_discardPile, a const reference to vector of cards that
 				contains the discard pile
 Return Value:
 			pair of <integer ,  std::vector<unsigned>>. The first interger
@@ -246,7 +246,7 @@ Purpose: Contains the controller for turn to continue.aftere the player
 		"show discard pile", "show stock card (for debugging)",
 		or "take out card from meld"
 Parameters:
-			a_discardPile, a const reference to vector of cards that 
+			a_discardPile, a const reference to vector of cards that
 				contains the discard pile
 Return Value:
 			pair of <integer ,  std::vector<unsigned>>. The first
@@ -646,6 +646,78 @@ bool Player::ResetPlayerForNewRound()
 	return true;
 
 }
+
+
+/* *********************************************************************
+Function Name: CanPickUpDiscardPile
+Purpose: Checks to see if we can pick up the discarded pile
+Parameters:
+			a_discardPile, a const vector of cards that contains the
+				discard pile
+Return Value:
+			boolean value, returns true if we can pick up the discard
+			pile else returns false.
+Algorithm:
+		1) create a temporary copy of this player
+		2) Make the tempPlayer pick up the fron of the passed discard pile
+		3) Divide the cards in the player hands into a vector of vector of
+			cards where each card with the same rank are put together as a
+			vector of cards.
+		4) Check to see if a we have a wild card and save the information
+		5) For all the seperated cards list that was made in step 3)
+			check to see if its size is 3 or its size is 2 and we have a
+			wild card then
+		6)		check to see if the front of the list is a natural card if
+					not continue with the loop
+		7)		check to see if the front of the list is same rank as the
+					top of discard pile then return true
+		8) return false
+Assistance Received: none
+********************************************************************* */
+bool Player::CanPickUpDiscardPile( const std::vector<Card>& a_discardPile )
+{
+	// see if we can meld the top of the discard pile
+	if( CanAddToMeld( a_discardPile.front() ).first == -1 )
+	{
+		// creating a temp computer to check if the top of the card can be melded or not 
+		// and doing as much meld as we can
+		Player tempComputer( *this );
+
+		tempComputer.PickUpDiscardPile( { a_discardPile.front() } );
+
+		// diving out cards at hand according to its rank
+		std::vector<std::vector<Card>> sameRankHandCardList = tempComputer.GetDividedAcualHandCardList();
+
+		// checking if we have a wildcard
+		bool hasWildCard = ( sameRankHandCardList.back().front().GetCardType() == ENUM_CardType::CARDTYPE_wildCard );
+
+		// checking if the there is any rank that has 3 cards in them or has 2 card and we have a wild card at hand
+		for( unsigned sameRankCardIdx = 0; sameRankCardIdx < sameRankHandCardList.size(); ++sameRankCardIdx )
+		{
+
+			if( sameRankHandCardList.at( sameRankCardIdx ).size() == 3
+				|| ( sameRankHandCardList.at( sameRankCardIdx ).size() == 2 && hasWildCard ) )
+			{
+				// only procede if we are dealing with natural card
+				if( sameRankHandCardList.at( sameRankCardIdx ).front().GetCardType() != ENUM_CardType::CARDTYPE_natural )
+				{
+					continue;
+				}
+
+				// checking if the meld is going to be made out of the discard pile's top
+				if( sameRankHandCardList.at( sameRankCardIdx ).front().GetRank() != a_discardPile.front().GetRank() )
+				{
+					continue;
+				}
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+}
+
 
 
 /* *********************************************************************

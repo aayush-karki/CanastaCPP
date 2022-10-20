@@ -28,7 +28,6 @@ public:
 private:
 	// m_messages holds the messages that player might need 
 	// as a result of their action
-	// TODO turn this in to a static message class
 	static std::vector<std::string> m_messages;
 };
 
